@@ -18,3 +18,5 @@ run = "pnpm run test"
 run = "pnpm run content:check"
 [tasks."test:browser"]
 run = "pnpm run test:browser"
+[tasks."content:report"]
+run = "pnpm run content:report"

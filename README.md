@@ -2,6 +2,8 @@
 
 日本語話者向け8週間の韓国語学習Web教材です。全56課の完成を目指して制作中です。収録範囲と言語・音声・動作の確認状況は[教材の確認状態](docs/CONTENT_STATUS.md)、出典と制作上の調査は[第1週の調査記録](docs/research/week01.md)を参照してください。
 
+課別の収録状況と集計方法は[教材の制作状況](docs/CONTENT_REPORT.md)を参照してください。`mise run content:report`で再生成できます。
+
 ## 始める
 
 [mise](https://mise.jdx.dev/)を用意し、リポジトリのルートで実行します。Node.jsとpnpmのバージョンはmiseで固定しています。
