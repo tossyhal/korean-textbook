@@ -542,25 +542,39 @@ function LessonPage({
   useEffect(() => {
     update((p) => (p.lastLessonId === l.id ? p : { ...p, lastLessonId: l.id }));
     if (initialPosition.current) document.getElementById(initialPosition.current)?.scrollIntoView();
+    const sections = Array.from(document.querySelectorAll("main section[id]"));
     const observer = new IntersectionObserver(
-      (entries) => {
-        const visible = entries
-          .filter((e) => e.isIntersecting)
-          .sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top)[0];
+      () => {
+        const focused =
+          document.activeElement instanceof HTMLElement ? document.activeElement : null;
+        const rect = focused?.getBoundingClientRect();
+        const visible =
+          (rect &&
+            rect.bottom > 0 &&
+            rect.top < window.innerHeight &&
+            focused?.closest("main section[id]")) ||
+          sections
+            .filter((section) => {
+              const bounds = section.getBoundingClientRect();
+              return (
+                bounds.bottom > window.innerHeight * 0.1 && bounds.top < window.innerHeight * 0.3
+              );
+            })
+            .at(-1);
         if (visible)
           update((p) =>
-            p.positions[l.id] === visible.target.id
+            p.positions[l.id] === visible.id
               ? p
               : {
                   ...p,
                   lastLessonId: l.id,
-                  positions: { ...p.positions, [l.id]: visible.target.id },
+                  positions: { ...p.positions, [l.id]: visible.id },
                 },
           );
       },
       { rootMargin: "-10% 0px -70% 0px" },
     );
-    document.querySelectorAll("main section[id]").forEach((section) => observer.observe(section));
+    sections.forEach((section) => observer.observe(section));
     return () => observer.disconnect();
   }, [l.id]);
   const sections = [
