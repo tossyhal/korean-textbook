@@ -7,6 +7,7 @@ import {
   gradeAnswer,
   newProgress,
   nextStage,
+  resumeLesson,
   scheduleReview,
   summarize,
   summarizeProduction,
@@ -149,10 +150,7 @@ function AppContent() {
   );
 }
 function Home({ progress, update }: { progress: Progress; update: Update }) {
-  const current =
-    lessons.find((l) => progress.positions[l.id] && !progress.completedLessons.includes(l.id)) ??
-    lessons.find((l) => !progress.completedLessons.includes(l.id)) ??
-    lessons[0];
+  const current = resumeLesson(lessons, progress);
   return (
     <main>
       <h1>今日の学習</h1>
@@ -503,6 +501,7 @@ function LessonPage({
   const [hideJapanese, setHideJapanese] = useState(false);
   const initialPosition = useRef(target ?? progress.positions[l.id]);
   useEffect(() => {
+    update((p) => (p.lastLessonId === l.id ? p : { ...p, lastLessonId: l.id }));
     if (initialPosition.current) document.getElementById(initialPosition.current)?.scrollIntoView();
     const observer = new IntersectionObserver(
       (entries) => {
@@ -513,7 +512,11 @@ function LessonPage({
           update((p) =>
             p.positions[l.id] === visible.target.id
               ? p
-              : { ...p, positions: { ...p.positions, [l.id]: visible.target.id } },
+              : {
+                  ...p,
+                  lastLessonId: l.id,
+                  positions: { ...p.positions, [l.id]: visible.target.id },
+                },
           );
       },
       { rootMargin: "-10% 0px -70% 0px" },
@@ -534,7 +537,8 @@ function LessonPage({
     ["exit", "出口テスト"],
     ["sources", "出典"],
   ];
-  const mark = (id: string) => update((p) => ({ ...p, positions: { ...p.positions, [l.id]: id } }));
+  const mark = (id: string) =>
+    update((p) => ({ ...p, lastLessonId: l.id, positions: { ...p.positions, [l.id]: id } }));
   const summary = summarize(l.exitTest, progress.attempts);
   const productionSummary = summarizeProduction(checks, l.production.rubric.length);
   const productionDone = progress.drafts[`${l.id}`]?.trim();

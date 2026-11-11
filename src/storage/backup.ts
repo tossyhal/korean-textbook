@@ -17,6 +17,7 @@ export function parseBackup(
   const data = progressSchema.parse(JSON.parse(json));
   if (validIds) {
     const bad =
+      (data.lastLessonId !== null && !validIds.lessons.has(data.lastLessonId)) ||
       data.completedLessons.some((id) => !validIds.lessons.has(id)) ||
       Object.keys(data.positions).some((id) => !validIds.lessons.has(id)) ||
       Object.entries(data.positions).some(([id, position]) =>

@@ -5,6 +5,7 @@ import {
   gradeAnswer,
   newProgress,
   nextStage,
+  resumeLesson,
   scheduleReview,
   summarize,
 } from "./progress";
@@ -199,4 +200,41 @@ it("作文・発話の評価とルーブリック件数を別々に集計する"
     writing: { checked: 1, total: 1 },
     speaking: { checked: 0, total: 1 },
   });
+});
+
+it("最後の課と完了状態から再開先を選び、旧データも維持する", () => {
+  const lessons = Array.from({ length: 56 }, (_, i) => ({ id: `day-${i + 1}` }));
+  const p = {
+    ...newProgress(),
+    positions: { "day-1": "section-0", "day-10": "exit" },
+    lastLessonId: "day-10",
+  };
+  expect(resumeLesson(lessons, p)?.id).toBe("day-10");
+  expect(resumeLesson(lessons, { ...p, completedLessons: ["day-10"] })?.id).toBe("day-11");
+  expect(resumeLesson(lessons, { ...p, completedLessons: lessons.map((l) => l.id) })?.id).toBe(
+    "day-10",
+  );
+  const old = JSON.parse(JSON.stringify(p));
+  delete old.lastLessonId;
+  const restored = parseBackup(JSON.stringify(old), {
+    ...validIds,
+    lessons: new Set(lessons.map((l) => l.id)),
+    positions: new Map([
+      ["day-1", new Set(["section-0"])],
+      ["day-10", new Set(["exit"])],
+    ]),
+  });
+  expect(restored.lastLessonId).toBeNull();
+  expect(restored.positions).toEqual(p.positions);
+  expect(resumeLesson(lessons, restored)?.id).toBe("day-1");
+  expect(() =>
+    parseBackup(JSON.stringify({ ...p, lastLessonId: "missing" }), {
+      ...validIds,
+      lessons: new Set(lessons.map((l) => l.id)),
+      positions: new Map([
+        ["day-1", new Set(["section-0"])],
+        ["day-10", new Set(["exit"])],
+      ]),
+    }),
+  ).toThrow();
 });

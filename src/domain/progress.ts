@@ -23,6 +23,7 @@ export const reviewSchema = z.object({
 export const progressSchema = z.object({
   version: z.literal(1),
   completedLessons: z.array(z.string()),
+  lastLessonId: z.string().min(1).nullable().default(null),
   positions: z.record(z.string(), z.string()),
   drafts: z.record(z.string(), z.string()),
   attempts: z.array(attemptSchema),
@@ -50,6 +51,7 @@ export type Review = z.infer<typeof reviewSchema>;
 export const newProgress = (): Progress => ({
   version: 1,
   completedLessons: [],
+  lastLessonId: null,
   positions: {},
   drafts: {},
   attempts: [],
@@ -60,6 +62,24 @@ export const newProgress = (): Progress => ({
   productionChecks: {},
   settings: { mode: 90 },
 });
+
+export function resumeLesson<T extends { id: string }>(
+  lessons: T[],
+  progress: Progress,
+): T | undefined {
+  const lastIndex = lessons.findIndex((lesson) => lesson.id === progress.lastLessonId);
+  const incomplete = (lesson: T) => !progress.completedLessons.includes(lesson.id);
+  if (lastIndex >= 0) {
+    const last = lessons[lastIndex];
+    if (incomplete(last)) return last;
+    return lessons.slice(lastIndex + 1).find(incomplete) ?? lessons.find(incomplete) ?? last;
+  }
+  return (
+    lessons.find((lesson) => progress.positions[lesson.id] && incomplete(lesson)) ??
+    lessons.find(incomplete) ??
+    lessons[0]
+  );
+}
 
 export function normalizeAnswer(value: string, mode: Question["normalization"] = "exact"): string {
   const normalized = value.normalize("NFC").trim();
