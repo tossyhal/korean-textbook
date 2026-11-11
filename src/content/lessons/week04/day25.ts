@@ -1,0 +1,258 @@
+import { day23 } from "./day23";
+import { day24 } from "./day24";
+import { day17 } from "../week03/day17";
+import {
+  base,
+  example,
+  listening,
+  questions,
+  source,
+  setTopics,
+  vocabulary,
+} from "../week02/shared";
+
+export const day25 = base(
+  25,
+  "許可と禁止",
+  ["許可を求めて答える", "してはいけないことを伝える"],
+  [
+    {
+      heading: "許可を求める",
+      paragraphs: [
+        "-아/어도 돼요?は「〜してもいいですか」と許可を求めます。네, 돼요は許可、아니요, 안 돼요は不許可です。可能の수 있어요は能力や状況上の可能性を表し、許可とは限りません。",
+        "가다は가도 돼요、먹다は먹어도 돼요、하다は해도 돼요です。既習の아/어形から요を取り도 돼요を続けると考えましょう。되다の丁寧形は돼요で、되요とは書きません。",
+      ],
+    },
+    {
+      heading: "禁止を伝える",
+      paragraphs: [
+        "-(으)면 안 돼요は「〜してはいけません」。먹다→먹으면 안 돼요、가다→가면 안 돼요です。パッチムのある語幹には으면、ない語幹には면を付け、ㄹ語幹は살면のように면を付けます。",
+        "안 먹어도 돼요は「食べなくてもよい」で、먹으면 안 돼요「食べてはいけない」と意味が違います。否定の位置に注意してください。",
+      ],
+    },
+    {
+      heading: "質問と返答",
+      paragraphs: [
+        "도서관에서 물을 마셔도 돼요?は図書館で水を飲んでもよいかの質問です。相手が안 돼요と答えたら許可されていません。場所や対象を加えると、何の許可かが明確になります。",
+        "許可される範囲は場面によって異なります。물은 마셔도 돼요. 커피는 마시면 안 돼요.のように対比して説明できます。",
+      ],
+    },
+    {
+      heading: "実際の場面",
+      paragraphs: [
+        "写真を撮る、窓を開けるなど、他人や施設に関わる行為はまず尋ねます。いいかどうか分からないときは、質問の語尾を上げて相手の返答を待ちます。",
+        "禁止の文は規則の説明に使えますが、人間関係や場面によっては直接的です。ここでは丁寧な해요体で練習します。",
+      ],
+    },
+  ],
+  [
+    example("여기에서 사진을 찍어도 돼요?", "ここで写真を撮ってもいいですか。"),
+    example("네, 찍어도 돼요.", "はい、撮ってもいいです。"),
+    example("창문을 열어도 돼요?", "窓を開けてもいいですか。"),
+    example("여기에서 담배를 피우면 안 돼요.", "ここでたばこを吸ってはいけません。"),
+    example("신발을 벗어도 돼요.", "靴を脱いでもいいです。"),
+    example("물을 가져가도 돼요?", "水を持って行ってもいいですか。"),
+    example("여기에서 뛰면 안 돼요.", "ここで走ってはいけません。"),
+    example("오늘은 안 와도 돼요.", "今日は来なくてもいいです。"),
+  ],
+  [
+    example("여기에서 사진을 찍어도 돼요?", "ここで写真を撮ってもいいですか。"),
+    example("아니요, 사진을 찍으면 안 돼요.", "いいえ、写真を撮ってはいけません。"),
+    example("그럼 창문을 열어도 돼요?", "では窓を開けてもいいですか。"),
+    example("네, 열어도 돼요.", "はい、開けてもいいです。"),
+  ],
+  [
+    ["가다で許可を尋ねる形", "가도 돼요", "가に도 돼요を続けます。", "typing"],
+    ["먹다で許可を尋ねる形", "먹어도 돼요", "먹어に도 돼요を続けます。", "typing"],
+    ["하다で許可を尋ねる形", "해도 돼요|하여도 돼요", "하여도は해도に縮約できます。", "typing"],
+    ["먹다で禁止", "먹으면 안 돼요", "パッチム後は으면です。", "typing"],
+    ["가다で禁止", "가면 안 돼요", "母音後は면です。", "typing"],
+    ["살다で禁止の形", "살면 안 돼요", "ㄹ語幹には면を続けます。", "typing"],
+    [
+      "「안 가도 돼요」の意味",
+      "行かなくてもいい",
+      "義務がないという意味です。",
+      "reading",
+      ["行かなくてもいい", "行ってはいけない", "行かなければならない"],
+    ],
+    [
+      "「가면 안 돼요」の意味",
+      "行ってはいけない",
+      "行為を禁止しています。",
+      "reading",
+      ["行ってはいけない", "行かなくてもいい", "行ってもいい"],
+    ],
+    [
+      "「돼요」の元の形",
+      "되어요",
+      "되어요が돼요に縮約します。",
+      "reading",
+      ["되어요", "되요", "돼어 요"],
+    ],
+    [
+      "사진을、찍다を使い許可を尋ねる",
+      "사진을 찍어도 돼요",
+      "찍어도 돼요で許可を尋ねます。",
+      "writing",
+    ],
+    ["창문을、열다を使い禁止", "창문을 열면 안 돼요", "ㄹ語幹に면を付けます。", "writing"],
+    [
+      "「물을 마셔도 돼요?」への許可の答え",
+      "네, 돼요",
+      "네, 돼요は許可です。",
+      "reading",
+      ["네, 돼요", "아니요, 안 돼요", "안 마셔도 돼요"],
+    ],
+  ],
+  [
+    [
+      "「이 방에서 물은 마셔도 돼요. 커피는 마시면 안 돼요.」飲めるもの",
+      "水",
+      "水は許可、コーヒーは禁止です。",
+      "reading",
+      ["水", "コーヒー", "どちらも禁止"],
+    ],
+    [
+      "「내일은 학교에 안 가도 돼요.」の意味",
+      "行かなくてもよい",
+      "禁止ではなく義務がありません。",
+      "reading",
+      ["行かなくてもよい", "行ってはいけない", "必ず行く"],
+    ],
+    ["집에、가다を使い許可を尋ねる", "집에 가도 돼요", "가도 돼요は許可を尋ねます。", "writing"],
+    [
+      "책을、가져가다を使い禁止",
+      "책을 가져가면 안 돼요",
+      "가져가면 안 돼요は持ち出しの禁止です。",
+      "writing",
+    ],
+    [
+      "「도서관에서 뛰면 안 돼요.」できない行為",
+      "走る",
+      "뛰면 안 돼요は走ることの禁止です。",
+      "reading",
+      ["走る", "座る", "読む"],
+    ],
+    [
+      "「사진을 찍어도 돼요?」への不許可の答え",
+      "아니요, 안 돼요",
+      "아니요, 안 돼요は不許可です。",
+      "reading",
+      ["아니요, 안 돼요", "네, 돼요", "네, 찍어요"],
+    ],
+  ],
+  [
+    source(
+      "国立国語院：韓国語教育資料",
+      "https://www.korean.go.kr/common/download.do?book_seq=284&c_file_name=422cb2da-bab2-4e51-b9c1-85ebf185e61b_0.pdf&downGubun=bookDataView&file_path=bookData&o_file_name=한국어진흥-02-7.pdf",
+      "許可を尋ねる-아/어도 돼요と禁止の-(으)면 안 돼요の対話",
+    ),
+  ],
+);
+day25.recall = questions(25, "recall", [
+  ["먹다の丁寧形", "먹어요", "먹に어요を付けます。", "typing"],
+  ["가다の可能形", "갈 수 있어요", "가능は갈 수 있어요です。", "typing"],
+]);
+day25.exercises.push({
+  ...listening(
+    25,
+    "ex",
+    1,
+    "창문을 열어도 돼요. 하지만 여기에서 뛰면 안 돼요.",
+    "許可されることは？",
+    "窓を開ける",
+    "窓を開けることは許可されています。",
+  ),
+  options: ["窓を開ける", "走る", "写真を撮る"],
+});
+day25.exitTest.push({
+  ...listening(
+    25,
+    "exit",
+    1,
+    "여기에서 물을 마셔도 돼요. 하지만 사진을 찍으면 안 돼요.",
+    "禁止されることは？",
+    "写真を撮る",
+    "사진을 찍으면 안 돼요は撮影禁止です。",
+  ),
+  options: ["写真を撮る", "水を飲む", "本を読む"],
+});
+day25.production = {
+  prompt: "場所を一つ選び、許可を尋ねる文と許可・禁止を含む返答を合わせて3文以上書き、話す。",
+  model: "도서관에서 물을 마셔도 돼요? 네, 물을 마셔도 돼요. 하지만 여기에서 뛰면 안 돼요.",
+  rubric: [
+    "場所と行為を明確にしたか",
+    "許可の質問と返答が対応するか",
+    "禁止に-(으)면 안 돼요を使ったか",
+    "分かち書きを見直し、声に出したか",
+  ],
+};
+setTopics(day25, [
+  ["grammar-permission", "許可", 0],
+  ["grammar-prohibition", "禁止", 1],
+]);
+const day25ExerciseTags = [
+  "permission",
+  "permission",
+  "permission",
+  "prohibition",
+  "prohibition",
+  "prohibition",
+  "permission",
+  "prohibition",
+  "permission",
+  "permission",
+  "prohibition",
+  "permission",
+  "permission",
+];
+const day25ExitTags = [
+  "permission",
+  "permission",
+  "permission",
+  "prohibition",
+  "prohibition",
+  "permission",
+  "prohibition",
+];
+day25.exercises.forEach((q, i) => {
+  q.tags = [`grammar-${day25ExerciseTags[i]}`];
+});
+day25.exitTest.forEach((q, i) => {
+  q.tags = [`grammar-${day25ExitTags[i]}`];
+});
+day25.vocabulary = vocabulary(25, [
+  ["jjikda", "찍다", "撮る", "動詞"],
+  ["changmun", "창문", "窓", "名詞"],
+  ["dambae", "담배", "たばこ", "名詞"],
+  ["piuda", "피우다", "吸う", "動詞"],
+  ["beotda", "벗다", "脱ぐ", "動詞"],
+  ["gajyeogada", "가져가다", "持って行く", "動詞"],
+  ["ttwida", "뛰다", "走る", "動詞"],
+]);
+
+day25.vocabulary.push(...day17.vocabulary.filter((v) => v.id === "vocab-sajin"));
+
+day25.vocabulary.push(
+  ...day23.vocabulary.filter((v) => v.id === "vocab-yeolda"),
+  ...day24.vocabulary.filter((v) => v.id === "vocab-sinbal"),
+);
+
+for (const q of [...day25.exercises, ...day25.exitTest]) {
+  if (q.type === "input") {
+    q.answers = [
+      ...q.answers,
+      ...q.answers.filter((a) => a.endsWith("돼요")).map((a) => a.replace(/돼요$/, "되어요")),
+    ];
+  }
+}
+
+import { day13 } from "../week02/day13";
+import { day15 } from "../week03/day15";
+day25.grammar.push(
+  ...day13.grammar.filter((g) => g.id === "grammar-ability"),
+  ...day15.grammar.filter((g) => g.id === "grammar-conjugation"),
+);
+day25.reviewTargets = day25.grammar.map((g) => g.id);
+day25.recall[0].tags = ["grammar-conjugation"];
+day25.recall[1].tags = ["grammar-ability"];
