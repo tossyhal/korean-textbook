@@ -1,0 +1,3 @@
+# 発音・入力ページの接続
+
+`src/features/reference`から`PronunciationPage`と`KeyboardPage`をexportする。両画面は`AudioProvider`内に置く。`KeyboardPage`には`drafts={progress.drafts}`と`onDraftChange={(id, value) => ...}`を渡し、既存の進捗保存とJSONバックアップに含める。使用するキーは次の有限集合：`reference-keyboard-letter`、`reference-keyboard-syllable`、`reference-keyboard-final`、`reference-keyboard-vowel`、`reference-keyboard-tense`、`reference-keyboard-word`、`reference-keyboard-sentence`、`reference-keyboard-space`、`reference-keyboard-setup1`、`reference-keyboard-setup2`、`reference-keyboard-setup3`、`reference-keyboard-listening`。`PronunciationPage`にpropsはない。画面遷移時の音声停止は音声部品のアンマウント処理が行う。

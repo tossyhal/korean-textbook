@@ -1,0 +1,61 @@
+.reference-page {
+  max-width: 52rem;
+  margin: 0 auto;
+  padding: 1rem;
+  line-height: 1.7;
+}
+.reference-page h2 {
+  margin-top: 2rem;
+}
+.reference-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr));
+  gap: 1rem;
+}
+.reference-grid section,
+.reference-practice {
+  border: 1px solid #c8d0d0;
+  border-radius: 0.5rem;
+  padding: 1rem;
+}
+.reference-practice {
+  margin-block: 0.75rem;
+}
+.reference-practice label {
+  display: block;
+  font-weight: 600;
+}
+.reference-practice input {
+  display: block;
+  width: 100%;
+  max-width: 30rem;
+  min-height: 2.75rem;
+  box-sizing: border-box;
+}
+.reference-page button {
+  min-height: 2.75rem;
+  margin: 0.25rem;
+}
+.reference-key-row {
+  display: grid;
+  grid-template-columns: repeat(10, minmax(0, 1fr));
+  gap: 0.15rem;
+  margin-bottom: 0.15rem;
+}
+.reference-key-row.row-1 {
+  margin-left: 5%;
+}
+.reference-key-row.row-2 {
+  margin-left: 10%;
+}
+.reference-key-row div {
+  border: 1px solid #c8d0d0;
+  border-radius: 0.2rem;
+  text-align: center;
+  line-height: 1.3;
+  min-width: 0;
+}
+.reference-key-row strong,
+.reference-key-row span {
+  display: block;
+}
