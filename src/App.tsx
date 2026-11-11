@@ -312,6 +312,7 @@ function QuestionView({
   const check = () => {
     if (composing || unavailable || !answer.trim() || (q.type === "listening" && !played)) return;
     const result = gradeAnswer(q, answer);
+    const at = new Date().toISOString();
     update((p) => ({
       ...p,
       answerViewedQuestionIds: p.answerViewedQuestionIds.includes(q.id)
@@ -324,7 +325,7 @@ function QuestionView({
           answer,
           result,
           stage: nextStage(p.attempts, q.id, p.answerViewedQuestionIds.includes(q.id)),
-          at: new Date().toISOString(),
+          at,
         },
       ],
       reviews:
@@ -1287,7 +1288,7 @@ function Settings({
       <section>
         <h2>バックアップ</h2>
         <p>
-          進捗はこのブラウザーに保存され、端末間で自動同期されません。別端末や別URLには引き継がれず、ブラウザーのデータ削除で消えます。録音はバックアップに含まれません。
+          進捗はこのブラウザーの配信元（プロトコル・ホスト・ポート）ごとに保存され、端末間で自動同期されません。同じ配信元の画面内移動では共有されます。ブラウザーのデータ削除で消えます。録音はバックアップに含まれません。
         </p>
         <button
           type="button"
