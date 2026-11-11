@@ -30,7 +30,7 @@ export function PronunciationPage() {
       <div className="reference-grid">
         {vowels.map(([letter, syllable, description]) => (
           <section key={letter}>
-            <h3>
+            <h3 lang="ko">
               {letter}：{syllable}
             </h3>
             <p>{description}</p>
@@ -202,7 +202,8 @@ export function KeyboardPage(props: KeyboardProps) {
           「設定」→「一般」→「キーボード」→「キーボード」→「新しいキーボードを追加」で韓国語を追加します。
         </li>
         <li>
-          追加した言語の配列を選びます。2ボル式に対応する配列を選んでください。選択肢の表示名はOS版や端末で確認が必要です。
+          追加した言語の配列を選びます。2ボル式に対応する配列を選んでください。選択肢の表示名はOS版や端末で確認が必要です。選択後にキーボードを表示し、上段が
+          <span lang="ko">ㅂㅈㄷㄱㅅㅛㅕㅑㅐㅔ</span>の順か確かめます。
         </li>
         <li>入力中に地球儀などの切替キーを長押しし、韓国語を選びます。下の入力欄で確かめます。</li>
       </ol>
@@ -214,7 +215,8 @@ export function KeyboardPage(props: KeyboardProps) {
         </li>
         <li>韓国語の言語オプションでMicrosoft IMEとキーボード配列を確認します。</li>
         <li>
-          Win＋Spaceまたはタスクバーの入力言語から韓国語へ切り替え、IMEの韓／英モードを韓国語入力にします。切替キーはキーボードや設定に依存します。切替後に下の欄で確認してください。
+          Win＋Spaceまたはタスクバーの入力言語から韓国語へ切り替えます。Microsoft
+          IMEの「A」アイコンをクリックして「가」にすると韓国語入力になります。右Altキーでも切り替えられます。Win＋Ctrl＋Oでスクリーンキーボードを開いて配列を確認し、下の欄で入力してみましょう。
         </li>
       </ol>
       <p>設定名はOSの版により変わります。両端末の実機手順は未確認です。</p>
@@ -227,6 +229,10 @@ export function KeyboardPage(props: KeyboardProps) {
         、
         <a href="https://support.microsoft.com/en-us/windows/hardware/input-devices/advanced-input-methods-for-east-asian-languages">
           MicrosoftのIME案内
+        </a>
+        、
+        <a href="https://learn.microsoft.com/en-us/globalization/input/korean-ime">
+          韓国語IMEの操作
         </a>
       </p>
       <h2>2ボル式の配列</h2>

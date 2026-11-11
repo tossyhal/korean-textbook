@@ -34,7 +34,8 @@ export function parseBackup(
       Object.keys(data.notes).some((id) => !validIds.lessons.has(id)) ||
       data.answerViewedQuestionIds.some((id) => !validIds.questions.has(id)) ||
       data.attempts.some((a) => !validIds.questions.has(a.questionId)) ||
-      data.reviews.some((r) => !validIds.reviews.has(r.id));
+      data.reviews.some((r) => !validIds.reviews.has(r.id)) ||
+      data.reviewHistory.some((r) => !validIds.reviews.has(r.id));
     if (bad) throw new Error("バックアップに存在しない教材への参照があります");
   }
   return data;

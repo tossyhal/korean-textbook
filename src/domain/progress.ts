@@ -28,6 +28,15 @@ export const progressSchema = z.object({
   attempts: z.array(attemptSchema),
   answerViewedQuestionIds: z.array(z.string()).default([]),
   reviews: z.array(reviewSchema),
+  reviewHistory: z
+    .array(
+      z.object({
+        day: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
+        id: z.string().min(1),
+        outcome: z.enum(["viewed", "recalled", "understood", "missed"]),
+      }),
+    )
+    .default([]),
   notes: z.record(z.string(), z.string()),
   productionChecks: z.record(z.string(), z.array(z.boolean())).default({}),
   settings: z.object({
@@ -46,6 +55,7 @@ export const newProgress = (): Progress => ({
   attempts: [],
   answerViewedQuestionIds: [],
   reviews: [],
+  reviewHistory: [],
   notes: {},
   productionChecks: {},
   settings: { mode: 90 },

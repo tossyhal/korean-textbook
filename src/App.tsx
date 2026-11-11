@@ -14,7 +14,9 @@ import {
 import type { Progress } from "./domain/progress";
 import { exportBackup, parseBackup, tryLoadProgress, trySaveProgress } from "./storage/backup";
 import { AudioButton, AudioDiagnostics, AudioProvider, useAudio } from "./features/audio";
+import { diagnosticQuestions } from "./features/assessment/bank";
 import { Recorder } from "./features/recording";
+import { HangulBuilder } from "./features/learning/HangulBuilder";
 import { KeyboardPage, PronunciationPage } from "./features/reference";
 import "./features/learning/style.css";
 
@@ -85,6 +87,8 @@ function AppContent() {
         <nav aria-label="主なメニュー">
           <a href={link("lessons")}>目次</a>
           <a href={link("review")}>復習</a>
+          <a href={link("diagnostic")}>先取り診断</a>
+          <a href={link("results")}>学習結果</a>
           <a href={link("reference")}>語彙・文法</a>
           <a href={link("pronunciation")}>発音</a>
           <a href={link("keyboard")}>入力</a>
@@ -108,6 +112,10 @@ function AppContent() {
         <Contents progress={progress} />
       ) : route === "review" ? (
         <ReviewPage progress={progress} update={update} />
+      ) : route === "diagnostic" ? (
+        <DiagnosticPage progress={progress} update={update} />
+      ) : route === "results" ? (
+        <ResultsPage progress={progress} />
       ) : route === "reference" ? (
         <Reference />
       ) : route === "pronunciation" ? (
@@ -159,6 +167,10 @@ function Home({ progress, update }: { progress: Progress; update: Update }) {
       )}
       <p>
         <a href={link("review")}>今日の復習：{dueReviews(progress.reviews, today()).length}件</a>
+      </p>
+      <p>
+        <a href={link("diagnostic")}>先取り診断を受ける</a>　
+        <a href={link("results")}>技能別の学習結果を見る</a>
       </p>
       <h2>学習時間の目安</h2>
       <fieldset>
@@ -282,7 +294,7 @@ function QuestionView({
         result === "incorrect"
           ? [
               ...p.reviews,
-              ...q.tags
+              ...[q.id, ...q.tags]
                 .filter((id) => !p.reviews.some((r) => r.id === id))
                 .map((id) => ({ id, due: today(), interval: 0 })),
             ]
@@ -512,6 +524,7 @@ function LessonPage({
     ["objectives", "今日できるようになること"],
     ["recall", "想起練習"],
     ...l.sections.map((s, i) => [`section-${i}`, s.heading]),
+    ...(l.day <= 3 ? [["hangul-builder", "文字を組み立てる"]] : []),
     ["vocabulary", "語彙"],
     ["examples", "例文"],
     ["dialogue", "会話・読解"],
@@ -631,6 +644,7 @@ function LessonPage({
             ))}
           </section>
         ))}
+        {l.day <= 3 && <HangulBuilder key={l.day} day={l.day} />}
         <section id="vocabulary">
           <h2>語彙</h2>
           {l.vocabulary.length ? (
@@ -741,6 +755,12 @@ function LessonPage({
             </label>
           ))}
         </section>
+        {l.day === 55 && (
+          <p>
+            <a href={link("results")}>学習履歴から弱点と復習先を確認する</a>　
+            <a href={link("review")}>今日の復習へ</a>
+          </p>
+        )}
         <section id="exit">
           <h2>出口テスト</h2>
           <p>
@@ -785,6 +805,11 @@ function LessonPage({
             {productionSummary.rubric.total}
             項目。作文・発話は自己評価です。課の完了は成績認定ではありません。
           </p>
+          {l.day === 56 && (
+            <p>
+              <a href={link("results")}>技能別結果と次の2〜4週間の復習案を見る</a>
+            </p>
+          )}
           <button
             type="button"
             disabled={!summary.complete || !productionDone || !selfChecked}
@@ -835,45 +860,184 @@ function LessonPage({
     </div>
   );
 }
+function DiagnosticPage({ progress, update }: { progress: Progress; update: Update }) {
+  const summary = summarize(diagnosticQuestions, progress.attempts);
+  const groups = [
+    diagnosticQuestions.slice(0, 5),
+    diagnosticQuestions.slice(5, 10),
+    diagnosticQuestions.slice(10),
+  ];
+  const passed = groups.map((group) => {
+    const result = summarize(group, progress.attempts);
+    return result.firstAttempted === group.length && result.firstCorrect / group.length >= 0.8;
+  });
+  const recommendation =
+    !passed[0] || !passed[1] ? "第1〜3課から" : !passed[2] ? "第4〜6課から" : "第7課の週テストから";
+  return (
+    <main>
+      <h1>先取り診断</h1>
+      <p>
+        文字・入力・基本文の診断用の問題です。韓国語入力を設定してから取り組んでください。物理2ボル式のキー列は配列の例で、スマートフォンでも示された字母を組み合わせて回答できます。各区分の初回自力正答8割を独自の目安にします。公式認定ではなく、どの課も自由に開けます。聴解は未実施です。
+      </p>
+      <p>
+        初回自力正答 {summary.firstCorrect}/{summary.firstAttempted}、未実施 {summary.unattempted}
+        問。
+      </p>
+      <p>
+        {summary.attempted === diagnosticQuestions.length
+          ? `おすすめ：${recommendation}始めましょう。`
+          : "すべて初回回答すると先取り先を提案します。答えを先に見た問題は自力正答に含めません。"}
+      </p>
+      {groups.map((group, i) => (
+        <section key={i}>
+          <h2>{["文字", "入力", "基本文"][i]}</h2>
+          {group.map((q) => (
+            <QuestionView key={q.id} q={q} progress={progress} update={update} />
+          ))}
+        </section>
+      ))}
+      <p>問題は独自作成で言語的照合は未実施です。音声は使用していません。</p>
+    </main>
+  );
+}
+function ResultsPage({ progress }: { progress: Progress }) {
+  const all = lessons.flatMap((l) => l.exitTest);
+  const result = summarize(all, progress.attempts);
+  const weak = lessons.filter((l) =>
+    [...l.vocabulary, ...l.grammar, ...questions(l)].some((x) =>
+      progress.reviews.some((r) => r.id === x.id && r.due <= today()),
+    ),
+  );
+  return (
+    <main>
+      <h1>技能別の学習結果</h1>
+      <p>各課の出口テストの初回自力回答です。未実施は0点として扱いません。</p>
+      <ul>
+        {(
+          [
+            ["reading", "読解"],
+            ["listening", "聴解"],
+            ["typing", "入力"],
+            ["writing", "作文"],
+            ["speaking", "発話"],
+          ] as const
+        ).map(([skill, label]) => {
+          const r = result.bySkill[skill];
+          return (
+            <li key={skill}>
+              {label}：
+              {r.firstAttempted ? `初回正答${r.firstCorrect}/${r.firstAttempted}` : "初回未実施"}
+              、未実施{r.unattempted}問、問題の自己評価{r.self.attempted}/{r.self.total}
+            </li>
+          );
+        })}
+      </ul>
+      <p>
+        課の作文・発話の自己評価：
+        {Object.values(progress.productionChecks).filter((c) => c.some(Boolean)).length}
+        課に記録があります。自動採点とは別です。
+      </p>
+      <h2>復習先</h2>
+      {weak.length ? (
+        <ul>
+          {weak.map((l) => (
+            <li key={l.id}>
+              <a href={link(`lesson/${l.id}`)}>
+                第{l.day}課 {l.title}
+              </a>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <p>期限到来の弱点はありません。未実施の課も確認しましょう。</p>
+      )}
+      <p>
+        <a href={link("review")}>期限の来た復習へ</a>
+      </p>
+      <h2>次の2〜4週間</h2>
+      <p>
+        1週目は期限の来た弱点を1日最大20件復習し、該当する課の本文へ戻ります。2週目は未実施の技能を試し、作文と発話を自己評価します。3〜4週目は間違えた問題を間隔を空けて再確認し、読解と聴解を交互に練習しましょう。未実施の技能は未実施のままです。
+      </p>
+    </main>
+  );
+}
 function ReviewPage({ progress, update }: { progress: Progress; update: Update }) {
-  const due = dueReviews(progress.reviews, today());
-  const [revealed, setRevealed] = useState<string[]>([]);
+  const day = today();
+  const history = progress.reviewHistory.filter((x) => x.day === day);
+  const done = new Set(history.filter((x) => x.outcome !== "viewed").map((x) => x.id));
+  const viewed = new Set<string>();
+  for (const entry of progress.reviewHistory) {
+    if (entry.outcome === "viewed") viewed.add(entry.id);
+    else viewed.delete(entry.id);
+  }
+  const due = dueReviews(progress.reviews, day).filter((r) => !done.has(r.id));
+  const remaining = Math.max(0, 20 - done.size);
   return (
     <main>
       <h1>復習</h1>
-      <p>今日の予定は{due.length}件です。一度に最大20件を表示します。残りは次回に回せます。</p>
-      <p>弱点は各課に戻って確認できます。第55課の総復習と第56課の技能別評価は準備中です。</p>
-      {due.slice(0, 20).map((r) => {
+      <p>
+        今日の予定は{due.length}件、今日あと{remaining}件まで取り組めます。
+      </p>
+      {due.slice(0, remaining).map((r) => {
         const v = lessons.flatMap((l) => l.vocabulary).find((x) => x.id === r.id);
         const g = lessons.flatMap((l) => l.grammar).find((x) => x.id === r.id);
-        const q = lessons.flatMap(questions).find((x) => x.id === r.id);
-        const source = g && lessons.find((l) => l.day === g.firstDay);
-        const related =
-          source &&
-          [...source.recall, ...source.exercises, ...source.exitTest].find((item) =>
-            item.tags.includes(r.id),
-          );
+        const q = [...lessons.flatMap(questions), ...diagnosticQuestions].find(
+          (x) => x.id === r.id,
+        );
+        const diagnosticGrammar =
+          q && diagnosticQuestions.includes(q)
+            ? lessons.flatMap((l) => l.grammar).find((item) => q.tags.includes(item.id))
+            : undefined;
+        const source = lessons.find(
+          (l) =>
+            (v && l.day === v.firstDay) ||
+            (g && l.day === g.firstDay) ||
+            (diagnosticGrammar && l.day === diagnosticGrammar.firstDay) ||
+            questions(l).some((x) => x.id === r.id),
+        );
+        const related = g && source && questions(source).find((x) => x.tags.includes(r.id));
         return (
           <div className="question" key={r.id}>
-            <p>
-              {v
-                ? ko(v.korean)
-                : g
-                  ? ko(related?.prompt ?? source?.examples[0]?.japanese ?? g.name)
-                  : q
-                    ? ko(q.prompt)
-                    : r.id}
-            </p>
-            <button type="button" onClick={() => setRevealed((s) => [...s, r.id])}>
+            <p>{ko(v?.korean ?? (g ? (related?.prompt ?? g.name) : (q?.prompt ?? r.id)))}</p>
+            {q?.type === "listening" && q.audio && (
+              <AudioButton text={q.audio.text} audio={q.audio} />
+            )}
+            <button
+              type="button"
+              onClick={() =>
+                update((p) => ({
+                  ...p,
+                  reviewHistory: [...p.reviewHistory, { day, id: r.id, outcome: "viewed" }],
+                }))
+              }
+            >
               答えを見る
             </button>
-            {revealed.includes(r.id) && (
-              <p>
-                {v?.meaning ??
-                  (g
-                    ? `${g.name}：${related?.explanation ?? source?.examples[0]?.korean ?? "本文を確認してください"}`
-                    : q?.explanation)}
-              </p>
+            {viewed.has(r.id) && (
+              <div>
+                <p>
+                  {ko(
+                    v?.meaning ??
+                      (g
+                        ? `${g.name}：${related?.explanation ?? "本文を確認してください"}`
+                        : q
+                          ? `答え：${q.answers.join("、") || "自由回答"}。${q.explanation}`
+                          : ""),
+                  )}
+                </p>
+                {q?.type === "listening" && q.audio && <p lang="ko">{q.audio.text}</p>}
+                {source && (
+                  <p>
+                    <a
+                      href={link(
+                        `lesson/${source.id}?${g?.sectionId ?? diagnosticGrammar?.sectionId ?? (v ? "vocabulary" : "exercises")}`,
+                      )}
+                    >
+                      第{source.day}課の本文へ
+                    </a>
+                  </p>
+                )}
+              </div>
             )}
             <div className="actions">
               {(
@@ -886,13 +1050,14 @@ function ReviewPage({ progress, update }: { progress: Progress; update: Update }
                 <button
                   type="button"
                   key={value}
-                  disabled={value === "recalled" && revealed.includes(r.id)}
+                  disabled={value === "recalled" && viewed.has(r.id)}
                   onClick={() =>
                     update((p) => ({
                       ...p,
                       reviews: p.reviews.map((x) =>
-                        x.id === r.id ? scheduleReview(x, value, today()) : x,
+                        x.id === r.id ? scheduleReview(x, value, day) : x,
                       ),
+                      reviewHistory: [...p.reviewHistory, { day, id: r.id, outcome: value }],
                     }))
                   }
                 >
@@ -903,7 +1068,11 @@ function ReviewPage({ progress, update }: { progress: Progress; update: Update }
           </div>
         );
       })}
-      {due.length === 0 && <p>今日の復習はありません。</p>}
+      {remaining === 0 ? (
+        <p>今日の上限に達しました。残りは明日以降に取り組めます。</p>
+      ) : (
+        due.length === 0 && <p>今日の復習はありません。</p>
+      )}
     </main>
   );
 }

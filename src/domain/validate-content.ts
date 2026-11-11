@@ -1,4 +1,5 @@
 import { lessonSchema, type Lesson } from "./content";
+import { diagnosticQuestions } from "../features/assessment/bank";
 
 export function validateContent(input: unknown[], strict = false): string[] {
   const errors: string[] = [];
@@ -120,6 +121,10 @@ export function contentIds(lessons: Lesson[]) {
       reviews.add(question.id);
     }
     for (const item of [...lesson.vocabulary, ...lesson.grammar]) reviews.add(item.id);
+  }
+  for (const q of diagnosticQuestions) {
+    questions.add(q.id);
+    reviews.add(q.id);
   }
   const positions = new Map(
     lessons.map((lesson) => [
