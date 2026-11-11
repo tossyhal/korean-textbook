@@ -1,6 +1,6 @@
 import { lessons } from "../content";
 import { expect, it } from "vitest";
-import { questionSchema } from "./content";
+import { productionSpeakingModel, questionSchema } from "./content";
 import { validateContent } from "./validate-content";
 it("未完成の教材を全課検証で検出する", () => {
   expect(validateContent([], true)).toHaveLength(56);
@@ -103,4 +103,42 @@ it("選択肢付き聴解は許容解を選択肢に含める", () => {
   expect(questionSchema.safeParse(question).success).toBe(true);
   expect(questionSchema.safeParse({ ...question, options: ["ありがとう"] }).success).toBe(false);
   expect(questionSchema.safeParse({ ...question, options: [] }).success).toBe(false);
+});
+
+it("録音の手本は発話例を優先し、省略時は従来の模範例を使う", () => {
+  const production = {
+    prompt: "課題",
+    model: "作文：가요. 発話：와요.",
+    speakingModel: "와요.",
+    rubric: ["確認"],
+  };
+  expect(productionSpeakingModel(production)).toBe("와요.");
+  expect(productionSpeakingModel({ prompt: "課題", model: "가요.", rubric: ["確認"] })).toBe(
+    "가요.",
+  );
+});
+
+it("教材の音声対象に日本語の説明を含めない", () => {
+  for (const lesson of lessons) {
+    const examples = [
+      ...lesson.examples,
+      ...lesson.dialogue,
+      ...(lesson.roleplay?.turns.flatMap((turn) => [turn.partner, ...turn.responseExamples]) ?? []),
+    ];
+    const targets = [
+      productionSpeakingModel(lesson.production),
+      ...examples.flatMap((example) => [
+        example.korean,
+        ...(example.audio ? [example.audio.text] : []),
+      ]),
+      ...[...lesson.recall, ...lesson.exercises, ...lesson.exitTest].flatMap((question) =>
+        question.audio ? [question.audio.text] : [],
+      ),
+      ...(lesson.voiceTransfer
+        ? [lesson.voiceTransfer.sameSentence.korean, lesson.voiceTransfer.newSentence.korean]
+        : []),
+    ];
+    for (const target of targets)
+      expect(target, `Day ${lesson.day}: ${target}`).not.toMatch(/[ぁ-ゟ゠-ヿ一-龯]/u);
+  }
 });

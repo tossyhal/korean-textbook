@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { KoreanText } from "./components/KoreanText";
+import { productionSpeakingModel } from "./domain/content";
 import { lessons } from "./content";
 import type { Lesson, Question } from "./domain/content";
 import { contentIds } from "./domain/validate-content";
@@ -168,7 +169,9 @@ function Home({ progress, update }: { progress: Progress; update: Update }) {
         </p>
       )}
       <p>
-        <a href={link("diagnostic")}>先取り診断を受ける</a>　
+        <a href={link("diagnostic")}>先取り診断を受ける</a>
+      </p>
+      <p>
         <a href={link("results")}>技能別の学習結果を見る</a>
       </p>
       <h2>学習時間の目安</h2>
@@ -796,7 +799,7 @@ function LessonPage({
               </label>
             ))}
           </details>
-          <Recorder sampleText={l.production.model} />
+          <Recorder sampleText={productionSpeakingModel(l.production)} />
           {["作文を自己評価した", "発話を自己評価した"].map((label, offset) => (
             <label key={label}>
               <input

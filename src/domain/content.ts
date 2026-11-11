@@ -80,7 +80,12 @@ export const lessonSchema = z.object({
   examples: z.array(exampleSchema),
   dialogue: z.array(exampleSchema).min(1),
   exercises: z.array(questionSchema),
-  production: z.object({ prompt: text, model: text, rubric: z.array(text).min(1) }),
+  production: z.object({
+    prompt: text,
+    model: text,
+    speakingModel: text.optional(),
+    rubric: z.array(text).min(1),
+  }),
   roleplay: roleplaySchema.optional(),
   voiceTransfer: voiceTransferSchema.optional(),
   exitTest: z.array(questionSchema),
@@ -114,3 +119,7 @@ export const lessonSchema = z.object({
 });
 export type Lesson = z.infer<typeof lessonSchema>;
 export type Question = z.infer<typeof questionSchema>;
+
+export function productionSpeakingModel(production: Lesson["production"]): string {
+  return production.speakingModel ?? production.model;
+}
