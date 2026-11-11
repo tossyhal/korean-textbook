@@ -19,6 +19,10 @@ type AudioContextValue = {
   refresh: () => void;
   play: (text: string, audio?: AudioData, options?: PlayOptions) => Promise<boolean>;
   stop: () => void;
+  registerExternalStop: (stop: () => void) => () => void;
+  beginRecording: () => boolean;
+  endRecording: () => void;
+  beginExternalPlayback: () => boolean;
   supported: boolean;
 };
 const Context = createContext<AudioContextValue | null>(null);
@@ -36,6 +40,8 @@ export function AudioProvider({ children }: { children: ReactNode }) {
   const voicesRef = useRef(voices);
   voicesRef.current = voices;
   const selectedRef = useRef(selected);
+  const externalStops = useRef(new Set<() => void>());
+  const recording = useRef(false);
   selectedRef.current = selected;
   const engine = useMemo(
     () =>
@@ -63,14 +69,65 @@ export function AudioProvider({ children }: { children: ReactNode }) {
       /* storage is optional */
     }
   }, []);
+  const stop = useCallback(() => {
+    engine.stop();
+    externalStops.current.forEach((stopExternal) => stopExternal());
+  }, [engine]);
+  const registerExternalStop = useCallback((stopExternal: () => void) => {
+    externalStops.current.add(stopExternal);
+    return () => {
+      externalStops.current.delete(stopExternal);
+    };
+  }, []);
+  const beginRecording = useCallback(() => {
+    if (recording.current) return false;
+    stop();
+    recording.current = true;
+    return true;
+  }, [stop]);
+  const endRecording = useCallback(() => {
+    recording.current = false;
+  }, []);
+  const beginExternalPlayback = useCallback(() => {
+    if (recording.current) return false;
+    stop();
+    return true;
+  }, [stop]);
   const play = useCallback(
-    (text: string, audio?: AudioData, options?: PlayOptions) => engine.play(text, audio, options),
-    [engine],
+    (text: string, audio?: AudioData, options?: PlayOptions) => {
+      if (recording.current) return Promise.resolve(false);
+      stop();
+      return engine.play(text, audio, options);
+    },
+    [engine, stop],
   );
-  const stop = useCallback(() => engine.stop(), [engine]);
   const value = useMemo(
-    () => ({ voices, selected, select, refresh, play, stop, supported: !!synth }),
-    [voices, selected, select, refresh, play, stop, synth],
+    () => ({
+      voices,
+      selected,
+      select,
+      refresh,
+      play,
+      stop,
+      registerExternalStop,
+      beginRecording,
+      endRecording,
+      beginExternalPlayback,
+      supported: !!synth,
+    }),
+    [
+      voices,
+      selected,
+      select,
+      refresh,
+      play,
+      stop,
+      registerExternalStop,
+      beginRecording,
+      endRecording,
+      beginExternalPlayback,
+      synth,
+    ],
   );
   return <Context.Provider value={value}>{children}</Context.Provider>;
 }
@@ -83,15 +140,18 @@ export function AudioButton({
   text,
   audio,
   onPlaybackComplete,
+  allowFallback = true,
 }: {
   text: string;
   audio?: AudioData;
   onPlaybackComplete?: () => void;
+  allowFallback?: boolean;
 }) {
   const player = useAudio();
   const [rate, setRate] = useState(1);
   const [repeat, setRepeat] = useState(1);
   const [error, setError] = useState(false);
+  const [source, setSource] = useState<"file" | "tts" | null>(null);
   const request = useRef(0);
   useEffect(
     () => () => {
@@ -103,7 +163,13 @@ export function AudioButton({
   const play = async (value: string, data?: AudioData, complete = false) => {
     const id = ++request.current;
     setError(false);
-    const success = await player.play(value, data, { rate, repeat });
+    setSource(null);
+    const success = await player.play(value, data, {
+      rate,
+      repeat,
+      allowFallback,
+      onSource: setSource,
+    });
     if (id !== request.current) return;
     if (success && complete) onPlaybackComplete?.();
     if (!success) setError(true);
@@ -148,9 +214,13 @@ export function AudioButton({
         </div>
       )}
       <small>
-        {audio?.path
-          ? `音声：${audio.source}（${audio.status === "checked" ? "確認済み" : "未確認"}）。利用できない場合は合成音声を使用します。`
-          : "端末の韓国語合成音声を使用します。音声の内容は未確認です。"}
+        {source === "tts"
+          ? "端末の韓国語合成音声を再生しました。音声の内容は未確認です。"
+          : source === "file" && audio
+            ? `再生した音声：${audio.source}（${audio.status === "checked" ? "確認済み" : "未確認"}）。`
+            : audio?.path
+              ? `音声：${audio.source}（${audio.status === "checked" ? "確認済み" : "未確認"}）。${allowFallback ? "利用できない場合は合成音声を使用します。" : "合成音声への切り替えは行いません。"}`
+              : "端末の韓国語合成音声を使用します。音声の内容は未確認です。"}
       </small>
       {error && (
         <p role="status">音声を再生できませんでした。音声診断で韓国語の声を確認してください。</p>

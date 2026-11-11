@@ -12,6 +12,7 @@ export function Recorder({ sampleText, audio }: { sampleText: string; audio?: Au
   const [error, setError] = useState("");
   const mounted = useRef(false);
   const selfAudio = useRef<HTMLAudioElement | null>(null);
+  const startingSelfAudio = useRef(false);
   const sequence = useRef(0);
   useEffect(() => {
     mounted.current = true;
@@ -26,6 +27,17 @@ export function Recorder({ sampleText, audio }: { sampleText: string; audio?: Au
     };
   }, [player.stop]);
   useEffect(
+    () =>
+      player.registerExternalStop(() => {
+        sequence.current++;
+        if (!startingSelfAudio.current) selfAudio.current?.pause();
+        session.current?.dispose();
+        player.endRecording();
+        if (mounted.current) setStatus("idle");
+      }),
+    [player.registerExternalStop, player.endRecording],
+  );
+  useEffect(
     () => () => {
       if (url) URL.revokeObjectURL(url);
     },
@@ -33,20 +45,21 @@ export function Recorder({ sampleText, audio }: { sampleText: string; audio?: Au
   );
   const start = async () => {
     setError("");
+    if (!player.beginRecording()) return;
     setStatus("requesting");
-    sequence.current++;
-    player.stop();
-    selfAudio.current?.pause();
+    const id = ++sequence.current;
     try {
       await session.current?.start((blob) => {
         if (!mounted.current) return;
         setMime(blob.type);
         setUrl(URL.createObjectURL(blob));
         setStatus("idle");
+        player.endRecording();
       });
-      if (mounted.current) setStatus("recording");
+      if (mounted.current && id === sequence.current) setStatus("recording");
     } catch (err) {
-      if (mounted.current) {
+      if (mounted.current && id === sequence.current) {
+        player.endRecording();
         setError(
           err instanceof Error &&
             (err.message.includes("HTTPS") || err.message.includes("対応していません"))
@@ -58,14 +71,17 @@ export function Recorder({ sampleText, audio }: { sampleText: string; audio?: Au
     }
   };
   const compare = async () => {
-    const id = ++sequence.current;
+    ++sequence.current;
     selfAudio.current?.pause();
-    if (!(await player.play(sampleText, audio)) || id !== sequence.current || !selfAudio.current) {
+    const playback = player.play(sampleText, audio);
+    const id = sequence.current;
+    if (!(await playback) || id !== sequence.current || !selfAudio.current) {
       if (id === sequence.current)
         setError("手本を再生できませんでした。音声診断を確認してください。");
       return;
     }
     try {
+      if (!player.beginExternalPlayback()) return;
       selfAudio.current.currentTime = 0;
       await selfAudio.current.play();
     } catch {
@@ -74,9 +90,10 @@ export function Recorder({ sampleText, audio }: { sampleText: string; audio?: Au
   };
   const stop = () => {
     sequence.current++;
-    player.stop();
-    selfAudio.current?.pause();
-    session.current?.stop();
+    if (status === "recording") {
+      session.current?.stop();
+      player.endRecording();
+    } else player.stop();
   };
   const extension = mime.includes("mp4")
     ? "m4a"
@@ -100,8 +117,18 @@ export function Recorder({ sampleText, audio }: { sampleText: string; audio?: Au
       {error && <p role="alert">{error}</p>}
       {url && (
         <>
-          <audio ref={selfAudio} controls src={url} />
-          <button type="button" onClick={() => void compare()}>
+          <audio
+            ref={selfAudio}
+            controls
+            src={url}
+            onPlay={(event) => {
+              startingSelfAudio.current = true;
+              const allowed = player.beginExternalPlayback();
+              startingSelfAudio.current = false;
+              if (!allowed) event.currentTarget.pause();
+            }}
+          />
+          <button type="button" disabled={status !== "idle"} onClick={() => void compare()}>
             手本と録音を順に再生
           </button>
           <button type="button" onClick={stop}>

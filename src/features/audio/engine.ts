@@ -2,7 +2,12 @@ import type { z } from "zod";
 import { audioSchema } from "../../domain/content";
 
 export type AudioData = z.infer<typeof audioSchema>;
-export type PlayOptions = { rate?: number; repeat?: number };
+export type PlayOptions = {
+  rate?: number;
+  repeat?: number;
+  allowFallback?: boolean;
+  onSource?: (source: "file" | "tts") => void;
+};
 export const isJamoOnly = (text: string) =>
   /^[\s\u1100-\u11ff\u3130-\u318f\ua960-\ua97f\ud7b0-\ud7ff]+$/u.test(text);
 export const koreanVoices = (voices: SpeechSynthesisVoice[]) =>
@@ -36,9 +41,14 @@ export class AudioEngine {
     for (let i = 0; i < repeat; i++) {
       if (generation !== this.generation) return false;
       let success = false;
-      if (audio?.path) success = await this.playFile(audio.path, options.rate ?? 1, generation);
-      if (!success && generation === this.generation)
+      if (audio?.path) {
+        success = await this.playFile(audio.path, options.rate ?? 1, generation);
+        if (success) options.onSource?.("file");
+      }
+      if (!success && generation === this.generation && options.allowFallback !== false) {
         success = await this.speak(text, options.rate ?? 1, generation);
+        if (success) options.onSource?.("tts");
+      }
       if (!success) return false;
     }
     return true;
@@ -49,8 +59,10 @@ export class AudioEngine {
       this.current = element;
       this.resolve = resolve;
       element.playbackRate = rate;
+      let settled = false;
       const finish = (ok: boolean) => {
-        if (generation !== this.generation) return;
+        if (settled || generation !== this.generation) return;
+        settled = true;
         this.current = null;
         this.resolve = null;
         resolve(ok);

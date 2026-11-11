@@ -65,4 +65,39 @@ describe("録音", () => {
     expect(stop).toHaveBeenCalled();
     expect(complete.mock.calls[0][0].type).toBe("audio/mp4");
   });
+  it("再録音後に古い録音の停止イベントが届いても結果を上書きしない", async () => {
+    const recorders: FakeRecorder[] = [];
+    class FakeRecorder {
+      static isTypeSupported() {
+        return false;
+      }
+      state = "inactive";
+      mimeType = "audio/mp4";
+      onstop?: () => void;
+      constructor() {
+        recorders.push(this);
+      }
+      start() {
+        this.state = "recording";
+      }
+      stop() {
+        this.state = "inactive";
+      }
+    }
+    vi.stubGlobal("window", { isSecureContext: true });
+    vi.stubGlobal("navigator", {
+      mediaDevices: { getUserMedia: async () => ({ getTracks: () => [{ stop: vi.fn() }] }) },
+    });
+    vi.stubGlobal("MediaRecorder", FakeRecorder);
+    const session = new RecordingSession();
+    const first = vi.fn();
+    const second = vi.fn();
+    await session.start(first);
+    session.stop();
+    await session.start(second);
+    recorders[0].onstop?.();
+    recorders[1].onstop?.();
+    expect(first).not.toHaveBeenCalled();
+    expect(second).toHaveBeenCalledOnce();
+  });
 });
