@@ -15,6 +15,8 @@ import {
 import type { Progress } from "./domain/progress";
 import { exportBackup, parseBackup, tryLoadProgress, trySaveProgress } from "./storage/backup";
 import { AudioButton, AudioDiagnostics, AudioProvider, useAudio } from "./features/audio";
+import { RoleplayView } from "./features/roleplay";
+import { ListeningTransfer } from "./features/listening-transfer";
 import { diagnosticQuestions } from "./features/assessment/bank";
 import { makeRecommendations, skillLabels } from "./features/assessment/results";
 import { Recorder } from "./features/recording";
@@ -533,6 +535,8 @@ function LessonPage({
     ["examples", "例文"],
     ["dialogue", "会話・読解"],
     ["exercises", "練習"],
+    ...(l.roleplay ? [["roleplay", "ロールプレイ"]] : []),
+    ...(l.voiceTransfer ? [["voice-transfer", "別の合成音声で聞く"]] : []),
     ["production", "作文・発話"],
     ["exit", "出口テスト"],
     ["sources", "出典"],
@@ -698,6 +702,18 @@ function LessonPage({
             <QuestionView key={q.id} q={q} progress={progress} update={update} />
           ))}
         </section>
+        {l.roleplay && (
+          <RoleplayView lessonId={l.id} roleplay={l.roleplay} progress={progress} update={update} />
+        )}
+        {l.voiceTransfer && (
+          <ListeningTransfer
+            transfer={l.voiceTransfer}
+            saved={progress.voiceTransferRuns[l.id]}
+            onSelfCheck={(run) =>
+              update((p) => ({ ...p, voiceTransferRuns: { ...p.voiceTransferRuns, [l.id]: run } }))
+            }
+          />
+        )}
         <section id="production">
           <h2>作文・発話</h2>
           <p>{ko(l.production.prompt)}</p>
@@ -817,13 +833,21 @@ function LessonPage({
           )}
           <button
             type="button"
-            disabled={!summary.complete || !productionDone || !selfChecked}
+            disabled={
+              !summary.complete ||
+              !productionDone ||
+              !selfChecked ||
+              (!!l.voiceTransfer && !progress.voiceTransferRuns[l.id])
+            }
             onClick={complete}
           >
             この課を完了する
           </button>
           {(!summary.complete || !productionDone || !selfChecked) && (
             <p>出口テストをすべて実施し、作文と発話を自己評価してから完了できます。</p>
+          )}
+          {l.voiceTransfer && !progress.voiceTransferRuns[l.id] && (
+            <p>別の合成音声での練習を自己確認してから完了できます。</p>
           )}
           {progress.completedLessons.includes(l.id) && <p>完了済みです。</p>}
         </section>
