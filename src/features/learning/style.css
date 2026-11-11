@@ -189,3 +189,52 @@ summary:focus-visible {
     font-size: 1.75rem;
   }
 }
+
+.hangul-builder {
+  background: #e4f2f1;
+  padding: 1rem 1.25rem;
+}
+.hangul-builder-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 1rem;
+}
+.hangul-builder-controls label {
+  flex: 1 1 10rem;
+}
+.hangul-builder-controls select {
+  display: block;
+  width: 100%;
+  min-height: 44px;
+}
+.hangul-builder-result {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  margin: 1.25rem 0;
+}
+.hangul-parts {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  align-items: center;
+  text-align: center;
+  width: 6rem;
+  min-height: 6rem;
+  font-size: 2rem;
+  line-height: 1.2;
+}
+.hangul-parts.horizontal span:first-child,
+.hangul-parts.horizontal span:nth-child(2),
+.hangul-final {
+  grid-column: 1 / -1;
+}
+.hangul-parts.compound {
+  grid-template-columns: 1fr 1.4fr;
+}
+.hangul-equals {
+  font-size: 1.5rem;
+}
+.hangul-syllable {
+  font-size: 4rem;
+  line-height: 1;
+}
