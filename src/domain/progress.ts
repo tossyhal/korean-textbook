@@ -40,6 +40,22 @@ export const progressSchema = z.object({
     .default([]),
   notes: z.record(z.string(), z.string()),
   productionChecks: z.record(z.string(), z.array(z.boolean())).default({}),
+  roleplay: z
+    .record(z.string(), z.object({ turn: z.number().int().min(0), drafts: z.array(z.string()) }))
+    .default({}),
+  voiceTransferRuns: z
+    .record(
+      z.string(),
+      z
+        .object({
+          modelURI: z.string().min(1),
+          alternateURI: z.string().min(1),
+          at: z.iso.datetime(),
+          selfChecked: z.literal(true),
+        })
+        .refine((run) => run.modelURI !== run.alternateURI),
+    )
+    .default({}),
   settings: z.object({
     mode: z.union([z.literal(60), z.literal(90), z.literal(120)]),
     voice: z.string().optional(),
@@ -60,6 +76,8 @@ export const newProgress = (): Progress => ({
   reviewHistory: [],
   notes: {},
   productionChecks: {},
+  roleplay: {},
+  voiceTransferRuns: {},
   settings: { mode: 90 },
 });
 

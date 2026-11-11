@@ -12,6 +12,8 @@ export function parseBackup(
     reviews: Set<string>;
     positions?: Map<string, Set<string>>;
     drafts?: Set<string>;
+    roleplay?: Map<string, number>;
+    voiceTransfer?: Set<string>;
   },
 ): Progress {
   const data = progressSchema.parse(JSON.parse(json));
@@ -32,6 +34,11 @@ export function parseBackup(
           !validIds.lessons.has(id) && !validIds.questions.has(id) && !validIds.drafts?.has(id),
       ) ||
       Object.keys(data.productionChecks).some((id) => !validIds.lessons.has(id)) ||
+      Object.entries(data.roleplay).some(([id, value]) => {
+        const count = validIds.roleplay?.get(id);
+        return count === undefined || value.turn >= count || value.drafts.length > count;
+      }) ||
+      Object.keys(data.voiceTransferRuns).some((id) => !validIds.voiceTransfer?.has(id)) ||
       Object.keys(data.notes).some((id) => !validIds.lessons.has(id)) ||
       data.answerViewedQuestionIds.some((id) => !validIds.questions.has(id)) ||
       data.attempts.some((a) => !validIds.questions.has(a.questionId)) ||

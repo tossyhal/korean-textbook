@@ -138,6 +138,8 @@ export function contentIds(lessons: Lesson[]) {
         "dialogue",
         "exercises",
         "production",
+        ...(lesson.roleplay ? ["roleplay"] : []),
+        ...(lesson.voiceTransfer ? ["voice-transfer"] : []),
         "exit",
         "sources",
       ]),
@@ -159,5 +161,13 @@ export function contentIds(lessons: Lesson[]) {
       "listening",
     ].map((key) => `reference-keyboard-${key}`),
   );
-  return { lessons: lessonIds, questions, reviews, positions, drafts };
+  const roleplay = new Map(
+    lessons
+      .filter((lesson) => lesson.roleplay)
+      .map((lesson) => [lesson.id, lesson.roleplay!.turns.length]),
+  );
+  const voiceTransfer = new Set(
+    lessons.filter((lesson) => lesson.voiceTransfer).map((lesson) => lesson.id),
+  );
+  return { lessons: lessonIds, questions, reviews, positions, drafts, roleplay, voiceTransfer };
 }

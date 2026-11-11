@@ -23,6 +23,23 @@ export const exampleSchema = z.object({
   note: z.string().optional(),
   audio: audioSchema.optional(),
 });
+export const voiceTransferSchema = z.object({
+  sameSentence: z.object({ korean: text, japanese: text }),
+  newSentence: z.object({ korean: text, japanese: text }),
+});
+export const roleplaySchema = z.object({
+  scenario: text,
+  turns: z
+    .array(
+      z.object({
+        partner: exampleSchema,
+        goal: text,
+        responseExamples: z.array(exampleSchema).min(2),
+        rubric: z.array(text).min(1),
+      }),
+    )
+    .min(1),
+});
 export const questionSchema = z
   .object({
     id,
@@ -64,6 +81,8 @@ export const lessonSchema = z.object({
   dialogue: z.array(exampleSchema).min(1),
   exercises: z.array(questionSchema),
   production: z.object({ prompt: text, model: text, rubric: z.array(text).min(1) }),
+  roleplay: roleplaySchema.optional(),
+  voiceTransfer: voiceTransferSchema.optional(),
   exitTest: z.array(questionSchema),
   vocabulary: z.array(
     z.object({

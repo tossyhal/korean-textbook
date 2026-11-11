@@ -3,6 +3,7 @@ import { audioSchema } from "../../domain/content";
 
 export type AudioData = z.infer<typeof audioSchema>;
 export type PlayOptions = {
+  voiceURI?: string;
   rate?: number;
   repeat?: number;
   allowFallback?: boolean;
@@ -24,7 +25,7 @@ export class AudioEngine {
   private resolve: ((result: boolean) => void) | null = null;
   constructor(
     private synth: SpeechSynthesis | null,
-    private voice: () => SpeechSynthesisVoice | undefined,
+    private voice: (uri?: string) => SpeechSynthesisVoice | undefined,
   ) {}
   stop() {
     this.generation++;
@@ -46,7 +47,7 @@ export class AudioEngine {
         if (success) options.onSource?.("file");
       }
       if (!success && generation === this.generation && options.allowFallback !== false) {
-        success = await this.speak(text, options.rate ?? 1, generation);
+        success = await this.speak(text, options.rate ?? 1, generation, options.voiceURI);
         if (success) options.onSource?.("tts");
       }
       if (!success) return false;
@@ -72,8 +73,8 @@ export class AudioEngine {
       void element.play().catch(() => finish(false));
     });
   }
-  private speak(text: string, rate: number, generation: number): Promise<boolean> {
-    const voice = this.voice();
+  private speak(text: string, rate: number, generation: number, uri?: string): Promise<boolean> {
+    const voice = this.voice(uri);
     if (!this.synth || !voice || !text.trim() || isJamoOnly(text)) return Promise.resolve(false);
     return new Promise((resolve) => {
       const utterance = new SpeechSynthesisUtterance(text);

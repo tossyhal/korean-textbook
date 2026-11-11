@@ -45,10 +45,11 @@ export function AudioProvider({ children }: { children: ReactNode }) {
   selectedRef.current = selected;
   const engine = useMemo(
     () =>
-      new AudioEngine(
-        synth,
-        () =>
-          voicesRef.current.find((v) => v.voiceURI === selectedRef.current) ?? voicesRef.current[0],
+      new AudioEngine(synth, (uri) =>
+        uri !== undefined
+          ? voicesRef.current.find((v) => v.voiceURI === uri)
+          : (voicesRef.current.find((v) => v.voiceURI === selectedRef.current) ??
+            voicesRef.current[0]),
       ),
     [synth],
   );
