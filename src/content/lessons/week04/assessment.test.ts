@@ -96,3 +96,31 @@ describe("第4週の修正回帰", () => {
     expect(exam.some((q) => /같이|그래서/.test(q.audio?.text ?? ""))).toBe(false);
   });
 });
+
+describe("尊敬形の標準形", () => {
+  it("一般の丁寧形では複数の標準形を認め、指定された語と空白を守る", () => {
+    const d20 = week03[5];
+    const d27 = week04[5];
+    const d28 = week04[6];
+    for (const [q, answers] of [
+      [d20.exercises[10], ["사세요", "사셔요", "사시어요"]],
+      [d27.exercises[0], ["가세요", "가셔요", "가시어요"]],
+      [d27.exercises[1], ["읽으세요", "읽으셔요", "읽으시어요"]],
+      [d27.exercises[2], ["사세요", "사셔요", "사시어요"]],
+      [d27.exercises[6], ["물을 주세요", "물을 주셔요", "물을 주시어요"]],
+      [
+        d27.exitTest[2],
+        ["선생님이 물을 드세요", "선생님이 물을 드셔요。", "선생님이 물을 드시어요"],
+      ],
+      [d27.exitTest[5], ["책을 주세요", "책을 주셔요", "책을 주시어요"]],
+      [
+        d28.exitTest[15],
+        ["선생님이 도서관에 계세요", "선생님이 도서관에 계셔요", "선생님이 도서관에 계시어요"],
+      ],
+    ] as const)
+      for (const answer of answers) expect(gradeAnswer(q, answer)).toBe("correct");
+    expect(gradeAnswer(d27.exitTest[2], "선생님이 물 드셔요")).toBe("incorrect");
+    expect(gradeAnswer(d27.exitTest[2], "선생님이 물을드셔요")).toBe("incorrect");
+    expect(gradeAnswer(week02[4].exercises[2], "읽으셔요")).toBe("incorrect");
+  });
+});
