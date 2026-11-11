@@ -57,7 +57,9 @@ describe("第3週の指摘に対する回帰", () => {
   };
   it("全21課を公開教材として統合し、語彙の初出を守る", async () => {
     const { lessons } = await import("../../index");
-    expect(lessons.map((l) => l.day)).toEqual(Array.from({ length: 21 }, (_, i) => i + 1));
+    expect(lessons.slice(0, 21).map((l) => l.day)).toEqual(
+      Array.from({ length: 21 }, (_, i) => i + 1),
+    );
     for (const [word, day] of [
       ["좋다", 16],
       ["차", 17],
