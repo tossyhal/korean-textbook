@@ -1,0 +1,80 @@
+import { afterEach, describe, expect, it, vi } from "vitest";
+import { AudioEngine, isJamoOnly, koreanVoices, sentences } from "./engine";
+
+afterEach(() => vi.unstubAllGlobals());
+describe("音声", () => {
+  it("遅れて取得した韓国語音声だけを選ぶ", () => {
+    expect(koreanVoices([])).toEqual([]);
+    const voices = [{ lang: "en-US" }, { lang: "ko-KR" }, { lang: "ko" }] as SpeechSynthesisVoice[];
+    expect(koreanVoices(voices)).toEqual(voices.slice(1));
+  });
+  it("韓国語音声がない場合と単独字母は読み上げない", async () => {
+    const synth = { cancel: vi.fn(), speak: vi.fn() } as unknown as SpeechSynthesis;
+    expect(await new AudioEngine(synth, () => undefined).play("안녕하세요")).toBe(false);
+    expect(isJamoOnly("ㄱ")).toBe(true);
+    expect(
+      await new AudioEngine(synth, () => ({ lang: "ko-KR" }) as SpeechSynthesisVoice).play("ㄱ"),
+    ).toBe(false);
+    expect(synth.speak).not.toHaveBeenCalled();
+  });
+  it("読み上げエラーと停止を失敗として返し、古い再生を完了させない", async () => {
+    class Utterance {
+      lang = "";
+      voice = null;
+      rate = 1;
+      onend?: () => void;
+      onerror?: () => void;
+      constructor(public text: string) {}
+    }
+    vi.stubGlobal("SpeechSynthesisUtterance", Utterance);
+    let current: Utterance | undefined;
+    const synth = {
+      cancel: vi.fn(),
+      speak: (value: Utterance) => {
+        current = value;
+      },
+    } as unknown as SpeechSynthesis;
+    const engine = new AudioEngine(synth, () => ({ lang: "ko" }) as SpeechSynthesisVoice);
+    const first = engine.play("하나");
+    const second = engine.play("둘");
+    expect(await first).toBe(false);
+    current?.onerror?.();
+    expect(await second).toBe(false);
+    expect(sentences("하나. 둘!")).toEqual(["하나.", "둘!"]);
+  });
+  it("同梱音声の失敗後に韓国語音声へ切り替える", async () => {
+    class FileAudio {
+      playbackRate = 1;
+      onended?: () => void;
+      onerror?: () => void;
+      pause() {}
+      play() {
+        return Promise.reject(new Error("missing"));
+      }
+    }
+    class Utterance {
+      lang = "";
+      voice = null;
+      rate = 1;
+      onend?: () => void;
+      constructor(public text: string) {}
+    }
+    vi.stubGlobal("Audio", FileAudio);
+    vi.stubGlobal("SpeechSynthesisUtterance", Utterance);
+    const synth = {
+      cancel: vi.fn(),
+      speak: (u: Utterance) => u.onend?.(),
+    } as unknown as SpeechSynthesis;
+    const engine = new AudioEngine(synth, () => ({ lang: "ko" }) as SpeechSynthesisVoice);
+    expect(
+      await engine.play("안녕", {
+        text: "안녕",
+        path: "/missing",
+        source: "test",
+        license: "test",
+        voice: "test",
+        status: "unverified",
+      }),
+    ).toBe(true);
+  });
+});
