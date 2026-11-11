@@ -40,6 +40,22 @@ describe("第2週の評価", () => {
     expect(gradeAnswer(question("day-11-exit-05"), "스무 개")).toBe("correct");
     expect(gradeAnswer(question("day-11-exit-05"), "스물 개")).toBe("incorrect");
   });
+  it("週末の予定問題は既習の情報を組み合わせ、単独の活用だけでは答えられない", () => {
+    const exam = question("day-14-exit-12");
+    expect(exam.prompt).toContain("내일、집에서、밥을、먹다");
+    for (const answer of ["내일 집에서 밥을 먹을 거예요", "내일 집에서 밥을 먹을 것이에요。"])
+      expect(gradeAnswer(exam, answer)).toBe("correct");
+    for (const answer of [
+      "먹을 거예요",
+      "내일 집에서 밥을 먹어요",
+      "내일 학교에서 밥을 먹을 거예요",
+    ])
+      expect(gradeAnswer(exam, answer)).toBe("incorrect");
+    const previousAnswers = week02
+      .slice(0, 6)
+      .flatMap((lesson) => [...lesson.exercises, ...lesson.exitTest].flatMap((q) => q.answers));
+    for (const answer of exam.answers) expect(previousAnswers).not.toContain(answer);
+  });
   it("聴解は選択肢を持ち、週末音声の文を前課から再利用しない", () => {
     const listening = week02
       .flatMap((l) => [...l.exercises, ...l.exitTest])
