@@ -283,3 +283,12 @@ import { day17 } from "../week03/day17";
 day29.vocabulary = day29.vocabulary.map((v) =>
   v.korean === "차" ? day17.vocabulary.find((x) => x.korean === v.korean)! : v,
 );
+
+import { vocabulary as supplementalVocabulary } from "../week02/shared";
+day29.vocabulary.push(
+  ...supplementalVocabulary(29, [
+    ["piryo", "필요하다", "必要だ", "形容詞"],
+    ["jogeum", "조금", "少し", "副詞"],
+    ["deurida", "드리다", "差し上げる", "動詞"],
+  ]),
+);

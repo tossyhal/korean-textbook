@@ -341,3 +341,13 @@ day34.exitTest.splice(4, 2, ...exit34);
 
 day34.recall[0].tags = ["grammar-request"];
 day34.recall[1].tags = ["grammar-location"];
+
+import { vocabulary as supplementalVocabulary } from "../week02/shared";
+day34.vocabulary.push(
+  ...supplementalVocabulary(34, [
+    ["gachi", "같이", "一緒に", "副詞"],
+    ["neutda", "늦다", "遅れる", "動詞"],
+    ["mianhada", "미안하다", "すまない", "形容詞"],
+    ["eoryeopda", "어렵다", "難しい", "形容詞"],
+  ]),
+);

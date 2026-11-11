@@ -244,3 +244,6 @@ day26.exercises[2] = {
   explanation: "어제 만든は昨日作ったことを示します。",
   tags: ["grammar-verb-modifier-past"],
 };
+
+import { vocabulary as supplementalVocabulary } from "../week02/shared";
+day26.vocabulary.push(...supplementalVocabulary(26, [["mandeulda", "만들다", "作る", "動詞"]]));

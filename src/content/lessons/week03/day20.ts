@@ -227,3 +227,6 @@ assignTags(day20, {
   "grammar-l-s-review": ["day-20-recall-02", "day-20-ex-11", "day-20-ex-12", "day-20-ex-13"],
   "grammar-connect-jiman": ["day-20-exit-06"],
 });
+
+import { vocabulary as supplementalVocabulary } from "../week02/shared";
+day20.vocabulary.push(...supplementalVocabulary(20, [["jigeum", "지금", "今", "名詞・副詞"]]));

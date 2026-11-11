@@ -97,3 +97,10 @@ day01.sections[1].paragraphs.push(
 day01.sections[2].paragraphs.push(
   "한글はハングルという文字の名称です。안녕하세요は『こんにちは』というあいさつを丸ごと覚える表現で、この課では文法を分析しません。",
 );
+
+import { vocabulary as supplementalVocabulary } from "../week02/shared";
+day01.vocabulary.push(
+  ...supplementalVocabulary(1, [
+    ["annyeonghaseyo", "안녕하세요", "こんにちは", "表現（あいさつ）"],
+  ]),
+);

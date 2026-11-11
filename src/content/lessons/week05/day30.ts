@@ -270,3 +270,11 @@ import { day24 } from "../week04/day24";
 import { day26 } from "../week04/day26";
 const prior30 = [...day15.vocabulary, ...day24.vocabulary, ...day26.vocabulary];
 day30.vocabulary = day30.vocabulary.map((v) => prior30.find((x) => x.korean === v.korean) ?? v);
+
+import { vocabulary as supplementalVocabulary } from "../week02/shared";
+day30.vocabulary.push(
+  ...supplementalVocabulary(30, [
+    ["gwaenchanta", "괜찮다", "大丈夫だ", "形容詞"],
+    ["eottaeyo", "어때요", "いかがですか", "表現（問いかけ）"],
+  ]),
+);

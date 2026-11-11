@@ -299,3 +299,6 @@ day32.exercises.push(
 
 day32.recall[0].tags = ["grammar-request"];
 day32.recall[1].tags = ["grammar-location"];
+
+import { vocabulary as supplementalVocabulary } from "../week02/shared";
+day32.vocabulary.push(...supplementalVocabulary(32, [["geurigo", "그리고", "そして", "接続副詞"]]));

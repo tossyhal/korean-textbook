@@ -241,3 +241,6 @@ day39.vocabulary.push(
     ["seontaek", "선택", "選択", "名詞"],
   ]),
 );
+
+import { vocabulary as supplementalVocabulary } from "../week02/shared";
+day39.vocabulary.push(...supplementalVocabulary(39, [["sagwa-fruit", "사과", "りんご", "名詞"]]));
