@@ -20,6 +20,7 @@ import { ListeningTransfer } from "./features/listening-transfer";
 import { diagnosticQuestions } from "./features/assessment/bank";
 import { makeRecommendations, skillLabels } from "./features/assessment/results";
 import { Recorder } from "./features/recording";
+import { addManualReview, removeManualReview } from "./features/review/manual";
 import { HangulBuilder } from "./features/learning/HangulBuilder";
 import { KeyboardPage, PronunciationPage } from "./features/reference";
 import "./features/learning/style.css";
@@ -121,7 +122,7 @@ function AppContent() {
       ) : route === "results" ? (
         <ResultsPage progress={progress} />
       ) : route === "reference" ? (
-        <Reference />
+        <Reference progress={progress} update={update} />
       ) : route === "pronunciation" ? (
         <PronunciationPage />
       ) : route === "keyboard" ? (
@@ -169,6 +170,11 @@ function Home({ progress, update }: { progress: Progress; update: Update }) {
       <p>
         <a href={link("review")}>今日の復習：{dueReviews(progress.reviews, today()).length}件</a>
       </p>
+      {dueReviews(progress.reviews, today()).length > 20 && (
+        <p>
+          復習が20件を超えています。今日は新出を控え、復習を20件まで優先しましょう。課はいつでも開けます。
+        </p>
+      )}
       <p>
         <a href={link("diagnostic")}>先取り診断を受ける</a>　
         <a href={link("results")}>技能別の学習結果を見る</a>
@@ -248,6 +254,36 @@ function Contents({ progress }: { progress: Progress }) {
         </section>
       ))}
     </main>
+  );
+}
+function ReviewControl({
+  id,
+  progress,
+  update,
+}: {
+  id: string;
+  progress: Progress;
+  update: Update;
+}) {
+  const registered = progress.reviews.some((review) => review.id === id);
+  return (
+    <span>
+      {" "}
+      {registered && "登録済み "}
+      <button
+        type="button"
+        onClick={() =>
+          update((p) => ({
+            ...p,
+            reviews: registered
+              ? removeManualReview(p.reviews, id)
+              : addManualReview(p.reviews, id, today()),
+          }))
+        }
+      >
+        {registered ? "復習から外す" : "復習に追加"}
+      </button>
+    </span>
   );
 }
 function QuestionView({
@@ -453,6 +489,7 @@ function QuestionView({
                   : "自由回答"}
               </p>
               <p>{ko(q.explanation)}</p>
+              <ReviewControl id={q.id} progress={progress} update={update} />
               {q.type === "listening" && q.audio && (
                 <details>
                   <summary>音声の原文を確認</summary>
@@ -662,6 +699,7 @@ function LessonPage({
                 <li key={v.id}>
                   <span lang="ko">{v.korean}</span>：{v.meaning}（{v.partOfSpeech}、辞書形
                   <span lang="ko">{v.dictionaryForm}</span>、第{v.firstDay}課）
+                  <ReviewControl id={v.id} progress={progress} update={update} />
                 </li>
               ))}
             </ul>
@@ -1177,7 +1215,7 @@ function ReviewPage({ progress, update }: { progress: Progress; update: Update }
     </main>
   );
 }
-function Reference() {
+function Reference({ progress, update }: { progress: Progress; update: Update }) {
   const [query, setQuery] = useState("");
   const vocab = Array.from(
     new Map(lessons.flatMap((l) => l.vocabulary).map((x) => [x.id, x])).values(),
@@ -1197,6 +1235,7 @@ function Reference() {
         <p id={v.id} key={v.id}>
           <strong lang="ko">{v.korean}</strong>：{v.meaning}（{v.partOfSpeech}、辞書形{" "}
           <span lang="ko">{v.dictionaryForm}</span>、第{v.firstDay}課）
+          <ReviewControl id={v.id} progress={progress} update={update} />
         </p>
       ))}
       <h2>文法</h2>
@@ -1211,6 +1250,7 @@ function Reference() {
             第{g.firstDay}課の本文
           </a>
           ）
+          <ReviewControl id={g.id} progress={progress} update={update} />
         </p>
       ))}
     </main>
