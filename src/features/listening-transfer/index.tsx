@@ -1,3 +1,4 @@
+import { KoreanText } from "../../components/KoreanText";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useAudio } from "../audio";
 import { Recorder } from "../recording";
@@ -174,9 +175,13 @@ export function ListeningTransfer({
       {revealed && (
         <div>
           <p lang="ko">{transfer.sameSentence.korean}</p>
-          <p>{transfer.sameSentence.japanese}</p>
+          <p>
+            <KoreanText text={transfer.sameSentence.japanese} />
+          </p>
           <p lang="ko">{transfer.newSentence.korean}</p>
-          <p>{transfer.newSentence.japanese}</p>
+          <p>
+            <KoreanText text={transfer.newSentence.japanese} />
+          </p>
           <p>原文を見ながら復唱し、録音と聞き比べましょう。自己確認であり自動採点はありません。</p>
           <Recorder sampleText={transfer.newSentence.korean} />
         </div>

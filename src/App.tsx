@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { KoreanText } from "./components/KoreanText";
 import { lessons } from "./content";
 import type { Lesson, Question } from "./domain/content";
 import { contentIds } from "./domain/validate-content";
@@ -18,7 +19,7 @@ import { AudioButton, AudioDiagnostics, AudioProvider, useAudio } from "./featur
 import { RoleplayView } from "./features/roleplay";
 import { ListeningTransfer } from "./features/listening-transfer";
 import { diagnosticQuestions } from "./features/assessment/bank";
-import { makeRecommendations, skillLabels } from "./features/assessment/results";
+import { assessmentScopes, makeRecommendations, skillLabels } from "./features/assessment/results";
 import { Recorder } from "./features/recording";
 import { addManualReview, removeManualReview } from "./features/review/manual";
 import { HangulBuilder } from "./features/learning/HangulBuilder";
@@ -32,16 +33,7 @@ const today = () => {
 const questions = (l: Lesson) => [...l.recall, ...l.exercises, ...l.exitTest];
 const ids = contentIds(lessons);
 const link = (path: string) => `#/${path}`;
-const ko = (text: string) =>
-  text.split(/([가-힣ㄱ-ㅎㅏ-ㅣ]+)/gu).map((part, i) =>
-    /[가-힣ㄱ-ㅎㅏ-ㅣ]/u.test(part) ? (
-      <span lang="ko" key={i}>
-        {part}
-      </span>
-    ) : (
-      part
-    ),
-  );
+const ko = (text: string) => <KoreanText text={text} />;
 
 type Update = (fn: (p: Progress) => Progress) => void;
 function AppContent() {
@@ -161,7 +153,7 @@ function Home({ progress, update }: { progress: Progress; update: Update }) {
       {current ? (
         <p>
           <a className="primary" href={link(`lesson/${current.id}`)}>
-            続きから学ぶ：第{current.day}課 {current.title}
+            続きから学ぶ：第{current.day}課 {ko(current.title)}
           </a>
         </p>
       ) : (
@@ -224,7 +216,7 @@ function Contents({ progress }: { progress: Progress }) {
                 <li key={day}>
                   {l ? (
                     <>
-                      <a href={link(`lesson/${l.id}`)}>{l.title}</a> —{" "}
+                      <a href={link(`lesson/${l.id}`)}>{ko(l.title)}</a> —{" "}
                       {progress.completedLessons.includes(l.id)
                         ? "完了"
                         : progress.positions[l.id]
@@ -619,7 +611,7 @@ function LessonPage({
             {e.korean}
           </p>
         )}
-        {!hideJapanese && <p>{e.japanese}</p>}
+        {!hideJapanese && <p>{ko(e.japanese)}</p>}
         {e.note && <p>{ko(e.note)}</p>}
         <AudioButton text={e.korean} audio={e.audio} />
       </div>
@@ -640,7 +632,7 @@ function LessonPage({
                   document.getElementById(id)?.scrollIntoView();
                 }}
               >
-                {title}
+                {ko(title)}
               </a>
             ))}
           </nav>
@@ -657,7 +649,7 @@ function LessonPage({
         }}
       >
         <h1>
-          第{l.day}課 {l.title}
+          第{l.day}課 {ko(l.title)}
         </h1>
         {progress.positions[l.id] && (
           <p>
@@ -681,7 +673,7 @@ function LessonPage({
               前提：
               {l.prerequisites.map((id) => (
                 <a key={id} href={link(`lesson/${id}`)}>
-                  {lessons.find((x) => x.id === id)?.title ?? id}{" "}
+                  {ko(lessons.find((x) => x.id === id)?.title ?? id)}{" "}
                 </a>
               ))}
             </p>
@@ -699,7 +691,7 @@ function LessonPage({
         </section>
         {l.sections.map((s, i) => (
           <section id={`section-${i}`} key={i} onClick={() => mark(`section-${i}`)}>
-            <h2>{s.heading}</h2>
+            <h2>{ko(s.heading)}</h2>
             {s.paragraphs.map((p, j) => (
               <p key={j}>{ko(p)}</p>
             ))}
@@ -983,7 +975,13 @@ function DiagnosticPage({ progress, update }: { progress: Progress; update: Upda
   );
 }
 function ResultsPage({ progress }: { progress: Progress }) {
-  const { result, production, skills } = makeRecommendations(lessons, progress);
+  const scopes = assessmentScopes(lessons, progress);
+  const [scope, setScope] = useState(
+    () => [...scopes].reverse().find((item) => item.attempted)?.id ?? "all",
+  );
+  const selected = scopes.find((item) => item.id === scope);
+  const evaluated = selected ? lessons.filter((lesson) => lesson.id === selected.id) : lessons;
+  const { result, production, skills } = makeRecommendations(lessons, progress, evaluated);
   const weak = lessons
     .filter((l) =>
       [
@@ -996,7 +994,23 @@ function ResultsPage({ progress }: { progress: Progress }) {
   return (
     <main>
       <h1>技能別の学習結果</h1>
-      <p>各課の出口テストの初回自力回答です。未実施は0点として扱いません。</p>
+      <label>
+        評価範囲
+        <select value={scope} onChange={(event) => setScope(event.target.value)}>
+          <option value="all">全履歴</option>
+          {scopes.map((item) => (
+            <option key={item.id} value={item.id}>
+              第{item.day}課の確認テスト{item.attempted ? "" : "（未実施）"}
+            </option>
+          ))}
+        </select>
+      </label>
+      <p>
+        {selected ? `第${selected.day}課の確認テスト` : "全履歴（各課の出口テスト）"}
+        ：自動採点の実施{result.attempted}/{result.total}問、未実施{result.unattempted}
+        問。未実施は0点として扱いません。
+      </p>
+      <p>自動採点の初回自力回答と問題の自己評価を表示します。公式な資格認定ではありません。</p>
       <ul>
         {(
           [
@@ -1018,8 +1032,8 @@ function ResultsPage({ progress }: { progress: Progress }) {
         })}
       </ul>
       <p>
-        課の自己評価：作文チェック{production.writing}件、発話チェック{production.speaking}件。
-        自動採点とは別の自己確認です。
+        課の自己評価：作文チェック{production.writing}/{evaluated.length}件、発話チェック
+        {production.speaking}/{evaluated.length}件。 自動採点とは別の自己確認です。
       </p>
       <h2>復習先</h2>
       {weak.length ? (
@@ -1027,7 +1041,7 @@ function ResultsPage({ progress }: { progress: Progress }) {
           {weak.map((l) => (
             <li key={l.id}>
               <a href={link(`lesson/${l.id}`)}>
-                第{l.day}課 {l.title}
+                第{l.day}課 {ko(l.title)}
               </a>
             </li>
           ))}
@@ -1107,7 +1121,7 @@ function ResultsPage({ progress }: { progress: Progress }) {
           .map((lesson) => (
             <li key={lesson.id}>
               <a href={link(`lesson/${lesson.id}`)}>
-                第{lesson.day}課 {lesson.title}
+                第{lesson.day}課 {ko(lesson.title)}
               </a>
             </li>
           ))}

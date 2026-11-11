@@ -21,13 +21,33 @@ export function recommendationState(result: {
   return result.firstCorrect / result.firstAttempted < 0.8 ? "review" : "transfer";
 }
 
-export function makeRecommendations(lessons: Lesson[], progress: Progress) {
+export function assessmentScopes(lessons: Lesson[], progress: Progress) {
+  return lessons
+    .filter((lesson) => lesson.day % 7 === 0)
+    .sort((a, b) => a.day - b.day)
+    .map((lesson) => ({
+      id: lesson.id,
+      day: lesson.day,
+      attempted:
+        lesson.exitTest.some((question) =>
+          progress.attempts.some(
+            (attempt) => attempt.questionId === question.id && attempt.result !== "unavailable",
+          ),
+        ) || (progress.productionChecks[lesson.id] ?? []).some(Boolean),
+    }));
+}
+
+export function makeRecommendations(
+  lessons: Lesson[],
+  progress: Progress,
+  evaluated: Lesson[] = lessons,
+) {
   const result = summarize(
-    lessons.flatMap((lesson) => lesson.exitTest),
+    evaluated.flatMap((lesson) => lesson.exitTest),
     progress.attempts,
   );
   const production = { writing: 0, speaking: 0 };
-  for (const lesson of lessons) {
+  for (const lesson of evaluated) {
     const checks = summarizeProduction(
       progress.productionChecks[lesson.id] ?? [],
       lesson.production.rubric.length,
@@ -40,7 +60,7 @@ export function makeRecommendations(lessons: Lesson[], progress: Progress) {
     const related = lessons
       .filter((lesson) => lesson.exitTest.some((q: Question) => q.skill === skill))
       .sort((a, b) => a.day - b.day);
-    const missed = related.filter((lesson) =>
+    const missed = evaluated.filter((lesson) =>
       lesson.exitTest.some(
         (q) =>
           q.skill === skill &&

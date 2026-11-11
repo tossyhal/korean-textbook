@@ -1,3 +1,4 @@
+import { KoreanText } from "../../components/KoreanText";
 import type { Lesson } from "../../domain/content";
 import type { Progress } from "../../domain/progress";
 import { AudioButton } from "../audio";
@@ -30,7 +31,9 @@ export function RoleplayView({
   return (
     <section id="roleplay">
       <h2>ロールプレイ</h2>
-      <p>{roleplay.scenario}</p>
+      <p>
+        <KoreanText text={roleplay.scenario} />
+      </p>
       <p>
         相手の音声を聞き、返答を考えて録音します。次の発話へは自分で進みます。音声や録音が使えない場合は未実施のまま先に進めます。AIによる自動評価はありません。
       </p>
@@ -42,10 +45,19 @@ export function RoleplayView({
         <details>
           <summary>相手の原文と訳を見る</summary>
           <p lang="ko">{turn.partner.korean}</p>
-          <p>{turn.partner.japanese}</p>
-          {turn.partner.note && <p>{turn.partner.note}</p>}
+          <p>
+            <KoreanText text={turn.partner.japanese} />
+          </p>
+          {turn.partner.note && (
+            <p>
+              <KoreanText text={turn.partner.note} />
+            </p>
+          )}
         </details>
-        <p>返答の条件：{turn.goal}</p>
+        <p>
+          返答の条件：
+          <KoreanText text={turn.goal} />
+        </p>
         <label>
           返答の下書き
           <textarea
@@ -73,8 +85,14 @@ export function RoleplayView({
           {turn.responseExamples.map((example, index) => (
             <div key={index}>
               <p lang="ko">{example.korean}</p>
-              <p>{example.japanese}</p>
-              {example.note && <p>{example.note}</p>}
+              <p>
+                <KoreanText text={example.japanese} />
+              </p>
+              {example.note && (
+                <p>
+                  <KoreanText text={example.note} />
+                </p>
+              )}
               <AudioButton text={example.korean} audio={example.audio} />
             </div>
           ))}
@@ -82,7 +100,9 @@ export function RoleplayView({
         <h4>自己確認</h4>
         <ul>
           {turn.rubric.map((item, index) => (
-            <li key={index}>{item}</li>
+            <li key={index}>
+              <KoreanText text={item} />
+            </li>
           ))}
         </ul>
       </div>

@@ -95,3 +95,44 @@ it("初回正答8割未満は誤答課、8割以上は後半の未回答課を�
     ),
   ).toBe(true);
 });
+
+it("選択した確認テストだけを評価し、推薦先は全教材から解決する", () => {
+  const progress = newProgress();
+  const first = lessons.find((lesson) => lesson.day === 7)!;
+  const later = lessons.find((lesson) => lesson.day === 14)!;
+  const oldQuestion = first.exitTest.find((q) => q.skill === "reading" && q.type !== "self")!;
+  const newQuestions = later.exitTest.filter((q) => q.skill === "reading" && q.type !== "self");
+  expect(newQuestions.length).toBeGreaterThan(0);
+  progress.attempts = [oldQuestion, ...newQuestions].map((question, index) => ({
+    questionId: question.id,
+    answer: "",
+    result: index === 0 ? "incorrect" : "correct",
+    stage: "first",
+    at: "2026-11-12",
+  }));
+  const all = makeRecommendations(lessons, progress);
+  const selected = makeRecommendations(lessons, progress, [later]);
+  expect(all.result.bySkill.reading.firstCorrect).toBe(newQuestions.length);
+  expect(all.result.bySkill.reading.firstAttempted).toBe(newQuestions.length + 1);
+  expect(selected.result.bySkill.reading.firstAttempted).toBe(newQuestions.length);
+  expect(selected.result.bySkill.reading.firstCorrect).toBe(newQuestions.length);
+  expect(selected.skills.find((s) => s.skill === "reading")!.missed).toEqual([]);
+  expect(
+    selected.skills
+      .find((s) => s.skill === "reading")!
+      .recommended.every((l) => lessons.includes(l)),
+  ).toBe(true);
+});
+
+it("自己確認と未実施を選択範囲ごとに独立して数える", () => {
+  const progress = newProgress();
+  const first = lessons.find((lesson) => lesson.day === 7)!;
+  const later = lessons.find((lesson) => lesson.day === 14)!;
+  progress.productionChecks[first.id] = Array(first.production.rubric.length)
+    .fill(false)
+    .concat([true, false]);
+  const result = makeRecommendations(lessons, progress, [later]);
+  expect(result.production).toEqual({ writing: 0, speaking: 0 });
+  expect(result.result.firstAttempted).toBe(0);
+  expect(result.result.unattempted).toBe(result.result.total);
+});
