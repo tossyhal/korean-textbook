@@ -1,5 +1,6 @@
 [tools]
 node = "24"
+pnpm = "12.11.2"
 
 [tasks.dev]
 run = "pnpm run dev"
@@ -15,3 +16,5 @@ run = "pnpm run format:check"
 run = "pnpm run test"
 [tasks."content:check"]
 run = "pnpm run content:check"
+[tasks."test:browser"]
+run = "pnpm run test:browser"

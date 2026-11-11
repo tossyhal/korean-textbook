@@ -1,0 +1,44 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24.22.1
+      - run: npm install --global pnpm@12.11.2
+      - id: install
+        run: pnpm install --frozen-lockfile
+      - run: pnpm run format:check
+      - if: always() && steps.install.outcome == 'success'
+        run: pnpm run lint
+      - if: always() && steps.install.outcome == 'success'
+        run: pnpm run typecheck
+      - if: always() && steps.install.outcome == 'success'
+        run: pnpm run test
+      - if: always() && steps.install.outcome == 'success'
+        run: pnpm run content:check
+      - if: always() && steps.install.outcome == 'success'
+        run: pnpm run build
+
+  browser:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24.22.1
+      - run: npm install --global pnpm@12.11.2
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm exec playwright install --with-deps chromium
+      - run: pnpm run test:browser
