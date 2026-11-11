@@ -6,6 +6,10 @@ pnpm = "12.11.2"
 run = "pnpm run dev"
 [tasks.build]
 run = "pnpm run build"
+[tasks.preview]
+run = "pnpm run preview"
+[tasks.format]
+run = "pnpm run format"
 [tasks.typecheck]
 run = "pnpm run typecheck"
 [tasks.lint]
@@ -20,3 +24,5 @@ run = "pnpm run content:check"
 run = "pnpm run test:browser"
 [tasks."content:report"]
 run = "pnpm run content:report"
+[tasks."test:preview"]
+run = "pnpm run test:preview"
