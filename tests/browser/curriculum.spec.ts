@@ -118,7 +118,7 @@ for (const lesson of lessons) {
     }
     for (const source of lesson.sources) {
       await expect(
-        page.locator("#sources").getByRole("link", { name: source.name }),
+        page.locator("#sources").getByRole("link", { name: source.name, exact: true }),
       ).toHaveAttribute("href", source.url);
     }
     for (const prerequisite of lesson.prerequisites) {
