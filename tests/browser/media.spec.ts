@@ -53,6 +53,9 @@ for (const mode of ["webm", "mp4"] as const)
   test(`録音許可、${mode}形式、トラック停止`, async ({ page }) => {
     await mockRecording(page, mode);
     await page.goto("#/lesson/day-01");
+    await expect(
+      page.getByText("手本は端末の韓国語合成音声です。音声内容と発音の品質は未確認です。"),
+    ).toBeVisible();
     await page.getByRole("button", { name: "録音開始" }).click();
     await expect(page.getByText("録音中", { exact: true })).toBeVisible();
     await page.getByRole("button", { name: "録音停止" }).click();
@@ -62,6 +65,13 @@ for (const mode of ["webm", "mp4"] as const)
     );
     expect(await page.evaluate(() => (window as any).recordingMock.stops)).toBeGreaterThan(0);
   });
+
+test("発音ガイドの録音にも手本の音源と確認状態を表示する", async ({ page }) => {
+  await page.goto("#/pronunciation");
+  await expect(
+    page.getByText("手本は端末の韓国語合成音声です。音声内容と発音の品質は未確認です。"),
+  ).toBeVisible();
+});
 
 for (const mode of ["denied", "unsupported"] as const)
   test(`録音${mode}の案内`, async ({ page }) => {

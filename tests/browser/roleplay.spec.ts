@@ -55,6 +55,9 @@ test("相手の再生後に返答し、ターン移動で録音を止めて復�
     Object.defineProperty(window, "MediaRecorder", { value: MockRecorder });
   });
   await page.goto("tests/browser/fixtures/roleplay.html");
+  await expect(
+    page.getByText("手本は端末の韓国語合成音声です。音声内容と発音の品質は未確認です。"),
+  ).toBeVisible();
   await expect(page.getByText("行きますか")).toBeHidden();
   await expect(
     page.getByText("端末の韓国語合成音声を使用します。音声の内容は未確認です。").first(),
