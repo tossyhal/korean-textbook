@@ -1,0 +1,17 @@
+[tools]
+node = "24"
+
+[tasks.dev]
+run = "pnpm run dev"
+[tasks.build]
+run = "pnpm run build"
+[tasks.typecheck]
+run = "pnpm run typecheck"
+[tasks.lint]
+run = "pnpm run lint"
+[tasks."format:check"]
+run = "pnpm run format:check"
+[tasks.test]
+run = "pnpm run test"
+[tasks."content:check"]
+run = "pnpm run content:check"
