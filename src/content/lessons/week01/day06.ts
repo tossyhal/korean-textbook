@@ -45,8 +45,8 @@ export const day06 = base(
     ["学校にいる時の助詞", "에", "存在する場所を表します。"],
     [
       "水を飲みます。分かち書きも含め入力",
-      "물을 마셔요",
-      "물には을、마시다は마셔요です。",
+      "물을 마셔요|물을 마시어요",
+      "물には을、마시다は마셔요または마시어요です。",
       "writing",
     ],
     [
@@ -154,8 +154,8 @@ day06.production = {
 day06.recall = questions(6, "recall", [
   ["所在する場所に付く助詞", "에", "所在の場所には에を使います。"],
 ]);
-day06.exercises.push(
-  listening(
+day06.exercises.push({
+  ...listening(
     6,
     "ex",
     1,
@@ -164,7 +164,8 @@ day06.exercises.push(
     "学校",
     "학교에서は学校で、です。",
   ),
-);
+  options: ["学校", "家"],
+});
 day06.exitTest.push(
   listening(
     6,
@@ -255,8 +256,8 @@ day06.exitTest = questions(6, "exit", [
     ["所在と動作", "肯定と否定"],
   ],
 ]);
-day06.exitTest.push(
-  listening(
+day06.exitTest.push({
+  ...listening(
     6,
     "exit",
     3,
@@ -265,7 +266,8 @@ day06.exitTest.push(
     "コーヒー",
     "커피はコーヒーです。",
   ),
-);
+  options: ["コーヒー", "水"],
+});
 day06.sections[0].paragraphs.push(
   "가다は行く、오다は来る、먹다は食べる、마시다は飲む、공부하다は勉強するという動詞です。물は水、커피はコーヒー、오늘は今日という名詞です。밥はDay3の『ご飯』です。마시어요は마셔요の未縮約形、공부하여요は공부해요の未縮約形です。",
 );
