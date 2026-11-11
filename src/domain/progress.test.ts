@@ -10,6 +10,8 @@ import {
   summarize,
 } from "./progress";
 import { exportBackup, parseBackup } from "../storage/backup";
+import { lessons } from "../content";
+import { contentIds } from "./validate-content";
 import type { Question } from "./content";
 const validIds = {
   lessons: new Set<string>(),
@@ -236,5 +238,28 @@ it("最後の課と完了状態から再開先を選び、旧データも維持�
         ["day-10", new Set(["exit"])],
       ]),
     }),
+  ).toThrow();
+});
+
+it("文字の組み立て位置を第1〜3課でバックアップ往復し、存在しない位置を拒否する", () => {
+  const ids = contentIds(lessons);
+  for (const day of [1, 2, 3]) {
+    const lesson = lessons.find((item) => item.day === day)!;
+    const progress = {
+      ...newProgress(),
+      lastLessonId: lesson.id,
+      positions: { [lesson.id]: "hangul-builder" },
+    };
+    expect(parseBackup(exportBackup(progress), ids)).toEqual(progress);
+    expect(() =>
+      parseBackup(exportBackup({ ...progress, positions: { [lesson.id]: "unknown" } }), ids),
+    ).toThrow();
+  }
+  const day4 = lessons.find((item) => item.day === 4)!;
+  expect(() =>
+    parseBackup(
+      exportBackup({ ...newProgress(), positions: { [day4.id]: "hangul-builder" } }),
+      ids,
+    ),
   ).toThrow();
 });

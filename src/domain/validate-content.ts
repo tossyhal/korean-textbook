@@ -133,6 +133,7 @@ export function contentIds(lessons: Lesson[]) {
         "objectives",
         "recall",
         ...lesson.sections.map((_, i) => `section-${i}`),
+        ...(lesson.day <= 3 ? ["hangul-builder"] : []),
         "vocabulary",
         "examples",
         "dialogue",
