@@ -6,6 +6,7 @@ import { week04 } from "./lessons/week04";
 import { week05 } from "./lessons/week05";
 import { week06 } from "./lessons/week06";
 import { week07 } from "./lessons/week07";
+import { week08 } from "./lessons/week08";
 
 export const lessons: Lesson[] = [
   ...week01,
@@ -15,4 +16,5 @@ export const lessons: Lesson[] = [
   ...week05,
   ...week06,
   ...week07,
+  ...week08,
 ];
