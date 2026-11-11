@@ -41,7 +41,7 @@ export function renderReport(lessons: Lesson[], sourcePath: (day: number) => str
     "",
     `収録課: ${lessons.length}/56課。固定解問題: ${fixed}問、自己評価問題: ${questions.length - fixed}問、例文: ${lessons.reduce((sum, lesson) => sum + lesson.examples.length, 0)}件。語彙は辞書形の異なり数${new Set(vocabulary.map((item) => item.dictionaryForm.normalize("NFC"))).size}、語彙IDの異なり数${new Set(vocabulary.map((item) => item.id)).size}。`,
     "",
-    "問題数は想起・演習・出口テストの合計で、selfを自己評価、それ以外を固定解として数えます。例文はexamplesのみです。語彙は収録課のvocabulary全体を対象に辞書形またはIDで重複を除き、活用形を別途追加しません。課別の新語はfirstDayがその課と一致する語彙ID数です。本文文字数はsectionsのparagraphsの文字数（UTF-16コード単位）で、見出しを含みません。",
+    "問題数は想起・演習・出口テストの合計で、selfを自己評価、それ以外を固定解として数えます。作文・発話のproduction課題とロールプレイは問題数に含みません。例文はexamplesのみです。語彙は収録課のvocabulary全体を対象に辞書形またはIDで重複を除き、活用形を別途追加しません。課別の新語はfirstDayがその課と一致する語彙ID数です。本文文字数はsectionsのparagraphsの文字数（UTF-16コード単位）で、見出しを含みません。",
     "",
     "構造項目の数は存在量であり、品質や検査成功を意味しません。教材検査の結果は実行時に確認してください。言語全文の照合、実音声の聴取、実機確認は別の作業です。編集レビューの結果はファイルの存在から判定しません。[手動の確認状態](CONTENT_STATUS.md)と[ブラウザー検証記録](VERIFICATION-browser.md)を参照してください。",
     "",
