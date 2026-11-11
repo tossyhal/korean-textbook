@@ -172,3 +172,22 @@ it("再挑戦正答は初回誤答を書き換えず、日付変更で復習対�
   expect(dueReviews([{ id: "q", due: "2026-02-01", interval: 1 }], "2026-01-31")).toHaveLength(0);
   expect(dueReviews([{ id: "q", due: "2026-02-01", interval: 1 }], "2026-02-01")).toHaveLength(1);
 });
+
+it("バックアップで自己確認と入力練習を復元し、不明なキーを拒否する", () => {
+  const p = newProgress();
+  p.productionChecks.lesson = [true, false];
+  p.drafts["reference-keyboard-letter"] = "ㅎ";
+  const ids = {
+    ...validIds,
+    lessons: new Set(["lesson"]),
+    drafts: new Set(["reference-keyboard-letter"]),
+  };
+  expect(parseBackup(exportBackup(p), ids)).toEqual(p);
+  expect(() => parseBackup(exportBackup({ ...p, drafts: { unknown: "x" } }), ids)).toThrow();
+  expect(() =>
+    parseBackup(exportBackup({ ...p, productionChecks: { unknown: [true] } }), ids),
+  ).toThrow();
+  const old = JSON.parse(exportBackup(p));
+  delete old.productionChecks;
+  expect(parseBackup(JSON.stringify(old), ids).productionChecks).toEqual({});
+});

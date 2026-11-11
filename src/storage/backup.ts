@@ -27,7 +27,8 @@ export function parseBackup(
             ),
       ) ||
       Object.keys(data.drafts).some(
-        (id) => !validIds.lessons.has(id) && !validIds.questions.has(id) && !validIds.drafts?.has(id),
+        (id) =>
+          !validIds.lessons.has(id) && !validIds.questions.has(id) && !validIds.drafts?.has(id),
       ) ||
       Object.keys(data.productionChecks).some((id) => !validIds.lessons.has(id)) ||
       Object.keys(data.notes).some((id) => !validIds.lessons.has(id)) ||

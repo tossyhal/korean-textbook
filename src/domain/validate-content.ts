@@ -119,6 +119,7 @@ export function contentIds(lessons: Lesson[]) {
         "objectives",
         "recall",
         ...lesson.sections.map((_, i) => `section-${i}`),
+        "vocabulary",
         "examples",
         "dialogue",
         "exercises",
@@ -128,5 +129,21 @@ export function contentIds(lessons: Lesson[]) {
       ]),
     ]),
   );
-  return { lessons: lessonIds, questions, reviews, positions };
+  const drafts = new Set(
+    [
+      "letter",
+      "syllable",
+      "final",
+      "vowel",
+      "tense",
+      "word",
+      "sentence",
+      "space",
+      "setup1",
+      "setup2",
+      "setup3",
+      "listening",
+    ].map((key) => `reference-keyboard-${key}`),
+  );
+  return { lessons: lessonIds, questions, reviews, positions, drafts };
 }
