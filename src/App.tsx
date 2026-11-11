@@ -15,6 +15,7 @@ import type { Progress } from "./domain/progress";
 import { exportBackup, parseBackup, tryLoadProgress, trySaveProgress } from "./storage/backup";
 import { AudioButton, AudioDiagnostics, AudioProvider, useAudio } from "./features/audio";
 import { diagnosticQuestions } from "./features/assessment/bank";
+import { makeRecommendations, skillLabels } from "./features/assessment/results";
 import { Recorder } from "./features/recording";
 import { HangulBuilder } from "./features/learning/HangulBuilder";
 import { KeyboardPage, PronunciationPage } from "./features/reference";
@@ -901,13 +902,16 @@ function DiagnosticPage({ progress, update }: { progress: Progress; update: Upda
   );
 }
 function ResultsPage({ progress }: { progress: Progress }) {
-  const all = lessons.flatMap((l) => l.exitTest);
-  const result = summarize(all, progress.attempts);
-  const weak = lessons.filter((l) =>
-    [...l.vocabulary, ...l.grammar, ...questions(l)].some((x) =>
-      progress.reviews.some((r) => r.id === x.id && r.due <= today()),
-    ),
-  );
+  const { result, production, skills } = makeRecommendations(lessons, progress);
+  const weak = lessons
+    .filter((l) =>
+      [
+        ...l.vocabulary.filter((x) => x.firstDay === l.day),
+        ...l.grammar.filter((x) => x.firstDay === l.day),
+        ...questions(l),
+      ].some((x) => progress.reviews.some((r) => r.id === x.id && r.due <= today())),
+    )
+    .slice(0, 5);
   return (
     <main>
       <h1>技能別の学習結果</h1>
@@ -933,9 +937,8 @@ function ResultsPage({ progress }: { progress: Progress }) {
         })}
       </ul>
       <p>
-        課の作文・発話の自己評価：
-        {Object.values(progress.productionChecks).filter((c) => c.some(Boolean)).length}
-        課に記録があります。自動採点とは別です。
+        課の自己評価：作文チェック{production.writing}件、発話チェック{production.speaking}件。
+        自動採点とは別の自己確認です。
       </p>
       <h2>復習先</h2>
       {weak.length ? (
@@ -956,8 +959,78 @@ function ResultsPage({ progress }: { progress: Progress }) {
       </p>
       <h2>次の2〜4週間</h2>
       <p>
-        1週目は期限の来た弱点を1日最大20件復習し、該当する課の本文へ戻ります。2週目は未実施の技能を試し、作文と発話を自己評価します。3〜4週目は間違えた問題を間隔を空けて再確認し、読解と聴解を交互に練習しましょう。未実施の技能は未実施のままです。
+        1週目は上の期限到来の復習を1日最大20件行い、間違えた課の本文に戻ります。期限到来がなければ、以下の未実施の技能から確認しましょう。
       </p>
+      {skills.some((item) => item.missed.length > 0) && (
+        <p>
+          初回に間違えた課：
+          {Array.from(
+            new Map(
+              skills.flatMap((item) => item.missed).map((lesson) => [lesson.id, lesson]),
+            ).values(),
+          )
+            .slice(0, 5)
+            .map((lesson) => (
+              <span key={lesson.id}>
+                {" "}
+                <a href={link(`lesson/${lesson.id}`)}>第{lesson.day}課</a>
+              </span>
+            ))}
+        </p>
+      )}
+      <p>
+        2週目は技能ごとに次の練習を選びます。初回回答が5問未満で対象問題が残る場合は、判定を急がず回答を増やします。
+      </p>
+      <ul>
+        {skills.map(({ skill, state, related, recommended }) => (
+          <li key={skill}>
+            {skillLabels[skill]}：
+            {state === "unattempted"
+              ? "未実施をまず確認"
+              : state === "more"
+                ? "回答を増やして確認"
+                : state === "review"
+                  ? "初回正答が8割未満のため復習を優先"
+                  : "8割以上のため別文や別声への転移を練習"}
+            。
+            {skill === "writing" &&
+              production.writing === 0 &&
+              "作文課題の自己確認も試しましょう。"}
+            {skill === "speaking" &&
+              production.speaking === 0 &&
+              "発話課題の自己確認も試しましょう。"}
+            {skill === "reading" && "本文や初見の短文を読んで内容を確かめます。"}
+            {skill === "listening" && "音声を聞いて内容を確かめます。"}
+            {skill === "typing" && "韓国語を入力して確認します。"}
+            {skill === "writing" && "課題を入力して自己確認します。"}
+            {skill === "speaking" && "課題を声に出して自己確認します。"}
+            {recommended.map((lesson) => (
+              <span key={lesson.id}>
+                {" "}
+                <a href={link(`lesson/${lesson.id}`)}>第{lesson.day}課</a>
+              </span>
+            ))}
+            {!related.length && "関連する出口テストは収録されていません。"}
+          </li>
+        ))}
+      </ul>
+      <p>
+        3〜4週目は間隔を空けて再評価し、別文や利用可能な別の声で確かめましょう。作文と発話は課題のチェック項目を使って自己評価します。
+      </p>
+      {lessons.some((lesson) => lesson.day >= 43) && (
+        <p>収録済みの第43課以降も技能練習や再評価に活用しましょう。</p>
+      )}
+      <ul>
+        {lessons
+          .filter((lesson) => lesson.day >= 43)
+          .map((lesson) => (
+            <li key={lesson.id}>
+              <a href={link(`lesson/${lesson.id}`)}>
+                第{lesson.day}課 {lesson.title}
+              </a>
+            </li>
+          ))}
+      </ul>
     </main>
   );
 }

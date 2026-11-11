@@ -41,7 +41,7 @@ export function HangulBuilder({ day }: { day: number }) {
               {initials.map(
                 (letter, index) =>
                   (day > 1 || basicInitials.includes(letter)) && (
-                    <option key={letter} value={index}>
+                    <option key={letter} value={index} lang="ko">
                       {letter}
                     </option>
                   ),
@@ -54,7 +54,7 @@ export function HangulBuilder({ day }: { day: number }) {
               {vowels.map(
                 (letter, index) =>
                   (day > 1 || basicVowels.includes(letter)) && (
-                    <option key={letter} value={index}>
+                    <option key={letter} value={index} lang="ko">
                       {letter}
                     </option>
                   ),
@@ -66,7 +66,7 @@ export function HangulBuilder({ day }: { day: number }) {
               終声（パッチム）
               <select value={final} onChange={(e) => setFinal(Number(e.target.value))}>
                 {finals.map(([letter, index]) => (
-                  <option key={letter} value={index}>
+                  <option key={letter} value={index} lang={index === 0 ? undefined : "ko"}>
                     {letter}
                   </option>
                 ))}
@@ -75,7 +75,7 @@ export function HangulBuilder({ day }: { day: number }) {
           )}
         </div>
         <div className="hangul-builder-result" aria-live="polite">
-          <div
+          <figure
             className={`hangul-parts ${horizontal ? "horizontal" : ""} ${compound ? "compound" : ""}`}
             aria-label={`初声 ${initials[initial]}、中声 ${vowels[vowel]}${final ? `、終声 ${finalLetter}` : ""}`}
           >
@@ -86,13 +86,13 @@ export function HangulBuilder({ day }: { day: number }) {
                 {finalLetter}
               </span>
             )}
-          </div>
+          </figure>
           <span className="hangul-equals" aria-hidden="true">
             →
           </span>
-          <strong className="hangul-syllable" aria-label={`組み立てた音節 ${syllable}`}>
+          <output className="hangul-syllable" aria-label={`組み立てた音節 ${syllable}`}>
             <span lang="ko">{syllable}</span>
-          </strong>
+          </output>
         </div>
         <p>
           初声と中声を組み合わせ{final ? "、下に終声を置き" : ""}、一つの音節にします。
