@@ -1,6 +1,7 @@
 # 開発ルール
 
 仕様はkorean_8week_codex_prompt.mdを読む。ユーザー指定は最優先。
+
 - React + TypeScript + Vite、pnpm、mise、oxlint/oxfmt、Vitestを使う。
 - デザインはシンプルに。セカンダリラベル（見出しの上の装飾的な小見出し等）は使わない。
 - 確認テストは練習とは別問題。許容解、解説、弱点リンク、初回/再挑戦/答え閲覧を区別。
