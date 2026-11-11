@@ -137,3 +137,11 @@ export function scheduleReview(
 export function dueReviews(reviews: Review[], today: string): Review[] {
   return reviews.filter((r) => r.due <= today);
 }
+
+export function summarizeProduction(checks: boolean[], rubricLength: number) {
+  return {
+    rubric: { checked: checks.slice(0, rubricLength).filter(Boolean).length, total: rubricLength },
+    writing: { checked: checks[rubricLength] ? 1 : 0, total: 1 },
+    speaking: { checked: checks[rubricLength + 1] ? 1 : 0, total: 1 },
+  };
+}

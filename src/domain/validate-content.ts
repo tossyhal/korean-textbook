@@ -45,6 +45,15 @@ export function validateContent(input: unknown[], strict = false): string[] {
       errors.push(`初出課に定義がありません: ${id}`);
   }
   for (const l of lessons) {
+    for (const term of l.grammar) {
+      const first = lessons.find((lesson) => lesson.day === term.firstDay);
+      if (
+        term.sectionId &&
+        first &&
+        !first.sections.some((_, i) => term.sectionId === `section-${i}`)
+      )
+        errors.push(`文法の参照先がありません: ${term.id} ${term.sectionId}`);
+    }
     for (const id of l.prerequisites)
       if (!lessonIds.has(id)) errors.push(`前提課がありません: ${l.id} ${id}`);
     const checkReference = (id: string, context: string) => {

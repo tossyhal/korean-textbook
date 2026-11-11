@@ -1,4 +1,6 @@
+import { lessons } from "../content";
 import { expect, it } from "vitest";
+import { questionSchema } from "./content";
 import { validateContent } from "./validate-content";
 it("未完成の教材を全課検証で検出する", () => {
   expect(validateContent([], true)).toHaveLength(56);
@@ -71,4 +73,34 @@ it("教材の未来参照、同一問題、欠落、ID衝突を検出する", ()
   expect(errors.join("\n")).toMatch(/練習と出口テストが同一/);
   expect(errors.join("\n")).toMatch(/出口テストがありません/);
   expect(errors.join("\n")).toMatch(/ID接頭辞が不正|定義または初出日の不一致/);
+});
+
+it("文法の節参照を初出課で検証する", () => {
+  const original = lessons.find((lesson) => lesson.day === 4)!;
+  const grammar = original.grammar.find((term) => term.id === "grammar-particles")!;
+  expect(grammar.sectionId).toBe("section-1");
+  const altered = {
+    ...original,
+    grammar: original.grammar.map((term) =>
+      term.id === grammar.id ? { ...term, sectionId: "section-99" } : term,
+    ),
+  };
+  expect(validateContent([altered]).join("\n")).toContain(
+    "文法の参照先がありません: grammar-particles section-99",
+  );
+});
+
+it("選択肢付き聴解は許容解を選択肢に含める", () => {
+  const question = {
+    id: "listening-test",
+    type: "listening",
+    prompt: "意味を選ぶ",
+    answers: ["こんにちは"],
+    explanation: "説明",
+    tags: [],
+    options: ["こんにちは", "ありがとう"],
+  };
+  expect(questionSchema.safeParse(question).success).toBe(true);
+  expect(questionSchema.safeParse({ ...question, options: ["ありがとう"] }).success).toBe(false);
+  expect(questionSchema.safeParse({ ...question, options: [] }).success).toBe(false);
 });

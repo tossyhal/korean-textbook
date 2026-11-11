@@ -161,7 +161,13 @@ const topics = [
     sectionId: "section-0",
     match: /먹다|가다|오다|마시다|縮約|動詞/,
   },
-  { id: "grammar-object", name: "目的語助詞", firstDay: 6, sectionId: "section-1", match: /目的語|물을|밥을/ },
+  {
+    id: "grammar-object",
+    name: "目的語助詞",
+    firstDay: 6,
+    sectionId: "section-1",
+    match: /目的語|물을|밥을/,
+  },
 ];
 export function tagTopics(lesson: Lesson) {
   const available = topics.filter((t) => t.firstDay <= lesson.day);

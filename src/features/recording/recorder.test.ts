@@ -1,5 +1,10 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { RecordingSession, recordingError, supportedMimeType } from "./recorder";
+import {
+  RecordingSession,
+  recordingError,
+  supportedMimeType,
+  cancelUnlessFinalizing,
+} from "./recorder";
 
 afterEach(() => vi.unstubAllGlobals());
 describe("録音", () => {
@@ -100,4 +105,48 @@ describe("録音", () => {
     expect(first).not.toHaveBeenCalled();
     expect(second).toHaveBeenCalledOnce();
   });
+});
+
+it("停止イベント待ちの外部停止では録音を破棄せず完了後に解除する", async () => {
+  const recorders: FakeRecorder[] = [];
+  const stopTrack = vi.fn();
+  class FakeRecorder {
+    static isTypeSupported() {
+      return false;
+    }
+    state = "inactive";
+    mimeType = "audio/webm";
+    ondataavailable?: (event: { data: Blob }) => void;
+    onstop?: () => void;
+    constructor() {
+      recorders.push(this);
+    }
+    start() {
+      this.state = "recording";
+    }
+    stop() {
+      this.state = "inactive";
+    }
+  }
+  vi.stubGlobal("window", { isSecureContext: true });
+  vi.stubGlobal("navigator", {
+    mediaDevices: { getUserMedia: async () => ({ getTracks: () => [{ stop: stopTrack }] }) },
+  });
+  vi.stubGlobal("MediaRecorder", FakeRecorder);
+  const session = new RecordingSession();
+  const complete = vi.fn();
+  const cancel = vi.fn(() => session.dispose());
+  await session.start(complete);
+  session.stop();
+  expect(stopTrack).toHaveBeenCalled();
+  expect(session.finalizing).toBe(true);
+  cancelUnlessFinalizing(session, cancel);
+  expect(cancel).not.toHaveBeenCalled();
+  recorders[0].ondataavailable?.({ data: new Blob(["recorded"]) });
+  recorders[0].onstop?.();
+  expect(complete).toHaveBeenCalledOnce();
+  expect(complete.mock.calls[0][0].size).toBe(8);
+  expect(session.finalizing).toBe(false);
+  cancelUnlessFinalizing(session, cancel);
+  expect(cancel).toHaveBeenCalledOnce();
 });

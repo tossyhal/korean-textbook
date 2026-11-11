@@ -1,3 +1,4 @@
+import { summarizeProduction } from "./progress";
 import { describe, expect, it } from "vitest";
 import {
   dueReviews,
@@ -190,4 +191,12 @@ it("バックアップで自己確認と入力練習を復元し、不明なキ�
   const old = JSON.parse(exportBackup(p));
   delete old.productionChecks;
   expect(parseBackup(JSON.stringify(old), ids).productionChecks).toEqual({});
+});
+
+it("作文・発話の評価とルーブリック件数を別々に集計する", () => {
+  expect(summarizeProduction([true, true, true, true, false], 3)).toEqual({
+    rubric: { checked: 3, total: 3 },
+    writing: { checked: 1, total: 1 },
+    speaking: { checked: 0, total: 1 },
+  });
 });

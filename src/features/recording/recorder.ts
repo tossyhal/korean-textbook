@@ -22,12 +22,14 @@ export class RecordingSession {
   private stream: MediaStream | null = null;
   private recorder: MediaRecorder | null = null;
   private generation = 0;
+  finalizing = false;
   async start(onComplete: (blob: Blob) => void): Promise<void> {
     if (!window.isSecureContext)
       throw new Error("録音にはHTTPSまたはlocalhostの安全な接続が必要です。");
     if (!navigator.mediaDevices?.getUserMedia || typeof MediaRecorder === "undefined")
       throw new Error("このブラウザーは録音に対応していません。");
     const generation = ++this.generation;
+    this.finalizing = false;
     const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
     if (generation !== this.generation) {
       stopTracks(stream);
@@ -43,6 +45,7 @@ export class RecordingSession {
         if (event.data.size) chunks.push(event.data);
       };
       recorder.onstop = () => {
+        if (generation === this.generation) this.finalizing = false;
         stopTracks(stream);
         if (generation === this.generation)
           onComplete(
@@ -57,12 +60,20 @@ export class RecordingSession {
     }
   }
   stop() {
-    if (this.recorder?.state === "recording") this.recorder.stop();
+    if (this.recorder?.state === "recording") {
+      this.finalizing = true;
+      this.recorder.stop();
+    }
     stopTracks(this.stream);
     this.stream = null;
   }
   dispose() {
     this.generation++;
     this.stop();
+    this.finalizing = false;
   }
+}
+
+export function cancelUnlessFinalizing(session: RecordingSession | null, cancel: () => void) {
+  if (!session?.finalizing) cancel();
 }

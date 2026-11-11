@@ -9,6 +9,7 @@ import {
   nextStage,
   scheduleReview,
   summarize,
+  summarizeProduction,
 } from "./domain/progress";
 import type { Progress } from "./domain/progress";
 import { exportBackup, parseBackup, tryLoadProgress, trySaveProgress } from "./storage/backup";
@@ -351,7 +352,7 @@ function QuestionView({
           )}
         </div>
       )}
-      {q.type === "choice" ? (
+      {q.type === "choice" || (q.type === "listening" && q.options) ? (
         <fieldset>
           <legend>回答を選ぶ</legend>
           {q.options?.map((o) => (
@@ -454,11 +455,9 @@ function QuestionView({
                   const source = item && lessons.find((lesson) => lesson.day === item.firstDay);
                   if (!source || !item) return null;
                   const name = "name" in item ? item.name : item.korean;
-                  const index = source.sections.findIndex((section) =>
-                    `${section.heading} ${section.paragraphs.join(" ")}`.includes(name),
-                  );
+                  const sectionId = "name" in item ? (item.sectionId ?? "section-0") : "vocabulary";
                   return (
-                    <a key={id} href={link(`lesson/${source.id}?section-${Math.max(index, 0)}`)}>
+                    <a key={id} href={link(`lesson/${source.id}?${sectionId}`)}>
                       {ko(name)}の本文（第{source.day}課）{" "}
                     </a>
                   );
@@ -523,6 +522,7 @@ function LessonPage({
   ];
   const mark = (id: string) => update((p) => ({ ...p, positions: { ...p.positions, [l.id]: id } }));
   const summary = summarize(l.exitTest, progress.attempts);
+  const productionSummary = summarizeProduction(checks, l.production.rubric.length);
   const productionDone = progress.drafts[`${l.id}`]?.trim();
   const complete = () =>
     update((p) => ({
@@ -770,12 +770,19 @@ function LessonPage({
                   {label}：初回正答{result.firstCorrect}/{result.firstAttempted}、実施
                   {result.attempted}/{result.total}、自己評価{result.self.attempted}/
                   {result.self.total}
+                  {(skill === "writing" || skill === "speaking") && (
+                    <>
+                      、作文・発話の自己評価{productionSummary[skill].checked}/
+                      {productionSummary[skill].total}
+                    </>
+                  )}
                 </li>
               );
             })}
           </ul>
           <p>
-            作文・発話の自己確認：{checks.filter(Boolean).length}/{l.production.rubric.length}
+            作文・発話の自己確認：{productionSummary.rubric.checked}/
+            {productionSummary.rubric.total}
             項目。作文・発話は自己評価です。課の完了は成績認定ではありません。
           </p>
           <button
@@ -926,7 +933,11 @@ function Reference() {
       {grammar.map((g) => (
         <p id={g.id} key={g.id}>
           {ko(g.name)}（
-          <a href={link(`lesson/${lessons.find((l) => l.day === g.firstDay)?.id}?section-0`)}>
+          <a
+            href={link(
+              `lesson/${lessons.find((l) => l.day === g.firstDay)?.id}?${g.sectionId ?? "section-0"}`,
+            )}
+          >
             第{g.firstDay}課の本文
           </a>
           ）

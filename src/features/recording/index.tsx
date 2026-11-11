@@ -1,12 +1,12 @@
 import { useEffect, useRef, useState } from "react";
 import { useAudio } from "../audio";
 import type { AudioData } from "../audio";
-import { RecordingSession, recordingError } from "./recorder";
+import { RecordingSession, recordingError, cancelUnlessFinalizing } from "./recorder";
 
 export function Recorder({ sampleText, audio }: { sampleText: string; audio?: AudioData }) {
   const player = useAudio();
   const session = useRef<RecordingSession | null>(null);
-  const [status, setStatus] = useState<"idle" | "requesting" | "recording">("idle");
+  const [status, setStatus] = useState<"idle" | "requesting" | "recording" | "finalizing">("idle");
   const [url, setUrl] = useState("");
   const [mime, setMime] = useState("");
   const [error, setError] = useState("");
@@ -29,11 +29,13 @@ export function Recorder({ sampleText, audio }: { sampleText: string; audio?: Au
   useEffect(
     () =>
       player.registerExternalStop(() => {
-        sequence.current++;
-        if (!startingSelfAudio.current) selfAudio.current?.pause();
-        session.current?.dispose();
-        player.endRecording();
-        if (mounted.current) setStatus("idle");
+        cancelUnlessFinalizing(session.current, () => {
+          sequence.current++;
+          if (!startingSelfAudio.current) selfAudio.current?.pause();
+          session.current?.dispose();
+          player.endRecording();
+          if (mounted.current) setStatus("idle");
+        });
       }),
     [player.registerExternalStop, player.endRecording],
   );
@@ -91,8 +93,8 @@ export function Recorder({ sampleText, audio }: { sampleText: string; audio?: Au
   const stop = () => {
     sequence.current++;
     if (status === "recording") {
+      setStatus("finalizing");
       session.current?.stop();
-      player.endRecording();
     } else player.stop();
   };
   const extension = mime.includes("mp4")
@@ -114,6 +116,7 @@ export function Recorder({ sampleText, audio }: { sampleText: string; audio?: Au
       </button>
       {status === "requesting" && <p>マイクの許可を待っています。</p>}
       {status === "recording" && <p>録音中</p>}
+      {status === "finalizing" && <p>録音を保存しています。</p>}
       {error && <p role="alert">{error}</p>}
       {url && (
         <>

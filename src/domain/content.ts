@@ -43,8 +43,9 @@ export const questionSchema = z
     if (q.type !== "self" && q.answers.length === 0)
       ctx.addIssue({ code: "custom", message: "固定解問題には許容解が必要です" });
     if (
-      q.type === "choice" &&
-      (!q.options?.length || q.answers.some((answer) => !q.options?.includes(answer)))
+      (q.type === "choice" && !q.options?.length) ||
+      (q.options !== undefined &&
+        (!q.options.length || q.answers.some((answer) => !q.options?.includes(answer))))
     )
       ctx.addIssue({ code: "custom", message: "選択肢には許容解を含めてください" });
     if (q.type === "self" && !q.rubric?.length)
@@ -74,7 +75,14 @@ export const lessonSchema = z.object({
       firstDay: z.number().int().min(1).max(56),
     }),
   ),
-  grammar: z.array(z.object({ id, name: text, firstDay: z.number().int().min(1).max(56) })),
+  grammar: z.array(
+    z.object({
+      id,
+      name: text,
+      firstDay: z.number().int().min(1).max(56),
+      sectionId: text.optional(),
+    }),
+  ),
   reviewTargets: z.array(id),
   modes: z.object({
     60: z.array(text).min(1),
