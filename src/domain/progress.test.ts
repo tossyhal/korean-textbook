@@ -1,5 +1,12 @@
 import { describe, expect, it } from "vitest";
-import { gradeAnswer, newProgress, nextStage, scheduleReview, summarize } from "./progress";
+import {
+  dueReviews,
+  gradeAnswer,
+  newProgress,
+  nextStage,
+  scheduleReview,
+  summarize,
+} from "./progress";
 import { exportBackup, parseBackup } from "../storage/backup";
 import type { Question } from "./content";
 const validIds = {
@@ -65,4 +72,103 @@ it("存在しない教材を参照するバックアップを拒否する", () =
   expect(() =>
     parseBackup(exportBackup(p), { lessons: new Set(), questions: new Set(), reviews: new Set() }),
   ).toThrow();
+});
+
+it("閲覧状態を保存し、閲覧後の回答は実施済みだが初回得点にしない", () => {
+  const progress = newProgress();
+  progress.answerViewedQuestionIds.push("q");
+  const restored = parseBackup(exportBackup(progress), { ...validIds, questions: new Set(["q"]) });
+  const stage = nextStage(restored.attempts, "q", restored.answerViewedQuestionIds.includes("q"));
+  const attempts = [
+    { questionId: "q", answer: "한 글", result: "correct" as const, stage, at: "now" },
+  ];
+  expect(summarize([{ ...q, skill: "writing" }], attempts)).toMatchObject({
+    firstCorrect: 0,
+    firstAttempted: 0,
+    attempted: 1,
+    afterAnswer: 1,
+    unattempted: 0,
+    complete: true,
+    bySkill: { writing: { attempted: 1, firstCorrect: 0 } },
+  });
+});
+
+it("重要な未確認音声と未実施の自己評価を完了扱いにしない", () => {
+  const audio = {
+    text: "가",
+    source: "TTS",
+    license: "端末",
+    voice: "端末",
+    status: "unverified" as const,
+  };
+  const questions: Question[] = [
+    { ...q, type: "listening", skill: "listening", audio, requiresVerifiedAudio: true },
+    { ...q, id: "self", type: "self", skill: "speaking", answers: [], rubric: ["確認"] },
+  ];
+  const attempts = [
+    {
+      questionId: "q",
+      answer: "한 글",
+      result: "correct" as const,
+      stage: "first" as const,
+      at: "now",
+    },
+  ];
+  expect(summarize(questions, attempts)).toMatchObject({
+    attempted: 0,
+    unattempted: 1,
+    complete: false,
+    self: { total: 1, unattempted: 1 },
+  });
+  expect(summarize([{ ...questions[0], requiresVerifiedAudio: false }], attempts).attempted).toBe(
+    1,
+  );
+});
+
+it("存在しない日付、参照、位置を拒否し、旧データの閲覧履歴を補完する", () => {
+  const ids = {
+    lessons: new Set(["day-01"]),
+    questions: new Set(["q"]),
+    reviews: new Set(["q"]),
+    positions: new Map([["day-01", new Set(["section-0"])]]),
+  };
+  const base = newProgress();
+  for (const invalid of [
+    { ...base, reviews: [{ id: "q", due: "2026-02-30", interval: 1 }] },
+    { ...base, drafts: { missing: "x" } },
+    { ...base, notes: { q: "x" } },
+    { ...base, positions: { "day-01": "section-1" } },
+    { ...base, answerViewedQuestionIds: ["missing"] },
+  ])
+    expect(() => parseBackup(JSON.stringify(invalid), ids)).toThrow();
+  const old = JSON.parse(JSON.stringify(base));
+  delete old.answerViewedQuestionIds;
+  expect(parseBackup(JSON.stringify(old), ids).answerViewedQuestionIds).toEqual([]);
+});
+
+it("再挑戦正答は初回誤答を書き換えず、日付変更で復習対象になる", () => {
+  const attempts = [
+    {
+      questionId: "q",
+      answer: "違う",
+      result: "incorrect" as const,
+      stage: "first" as const,
+      at: "1",
+    },
+    {
+      questionId: "q",
+      answer: "한 글",
+      result: "correct" as const,
+      stage: "retry" as const,
+      at: "2",
+    },
+  ];
+  expect(summarize([q], attempts)).toMatchObject({
+    firstAttempted: 1,
+    firstCorrect: 0,
+    attempted: 1,
+    complete: true,
+  });
+  expect(dueReviews([{ id: "q", due: "2026-02-01", interval: 1 }], "2026-01-31")).toHaveLength(0);
+  expect(dueReviews([{ id: "q", due: "2026-02-01", interval: 1 }], "2026-02-01")).toHaveLength(1);
 });

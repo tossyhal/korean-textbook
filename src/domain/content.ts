@@ -36,6 +36,7 @@ export const questionSchema = z
     explanation: text,
     tags: z.array(id),
     audio: audioSchema.optional(),
+    requiresVerifiedAudio: z.boolean().optional(),
     rubric: z.array(text).optional(),
   })
   .superRefine((q, ctx) => {
@@ -52,6 +53,7 @@ export const questionSchema = z
 export const lessonSchema = z.object({
   id,
   day: z.number().int().min(1).max(56),
+  lessonKind: z.enum(["normal", "letters", "exam"]).optional(),
   title: text,
   objectives: z.array(text).min(2),
   prerequisites: z.array(id),
@@ -74,7 +76,11 @@ export const lessonSchema = z.object({
   ),
   grammar: z.array(z.object({ id, name: text, firstDay: z.number().int().min(1).max(56) })),
   reviewTargets: z.array(id),
-  modes: z.object({ 60: z.array(text), 90: z.array(text), 120: z.array(text) }),
+  modes: z.object({
+    60: z.array(text).min(1),
+    90: z.array(text).min(1),
+    120: z.array(text).min(1),
+  }),
   sources: z.array(sourceSchema),
   languageStatus: z.enum(["checked", "unverified"]),
   audioStatus: z.enum(["checked", "unverified"]),

@@ -7,4 +7,8 @@
 - `vocabulary`は辞書形、品詞、意味、初出日を持つ。`grammar`も初出日を持つ。既習の参照も含め、`reviewTargets`はそれらのIDを使う。
 - `modes`の60・90・120はその時間で取り組む教材部分の説明。`production`は自由作文・発話の模範例と自己評価基準。
 - `sources`には実際に確認した資料のみを記載し、確認日と確認事項を記録する。未確認の場合は`languageStatus`と`audioStatus`を`unverified`にする。音声は合成音声等の出典、利用条件、声、確認状況を記録する。
-- 通常課は例文6〜10、演習12以上、出口テスト5問程度を目安とする。文字学習・総合試験は目的に応じて調整する。
+- 通常課は例文6以上、演習12以上、出口テスト5以上を検証する。文字学習・総合試験は`lessonKind`にそれぞれ`letters`・`exam`を指定して目的に応じて調整する。未指定は通常課として扱う。
+
+- 全問題に`skill`と配置に合う`assessmentKind`を指定する。想起・演習は`practice`、出口は`exit`または`transfer`。重要な音対立を評価する聴解は`requiresVerifiedAudio: true`とし、確認済み音声がなければ未実施となる。通常の意味聴解は再生の成否を画面で確認する。
+- 語彙・文法の同一IDの再参照は定義と初出日が一致する場合に限る。問題タグと復習対象は初出日以降に参照する。練習と出口の同一問題、空の演習・出口・例文、欠落したローカル音声を検出する。言い換えだけの再利用や音声の内容は人手で確認する。
+- 保存の`answerViewedQuestionIds`は回答前の閲覧も記録する。`drafts`のキーは課IDまたは問題ID、`notes`は課ID、`positions`は課IDから`objectives`、`recall`、`section-0`以降の実在する本文、`examples`、`dialogue`、`exercises`、`production`、`exit`、`sources`への対応とする。

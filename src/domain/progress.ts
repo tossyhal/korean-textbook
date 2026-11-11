@@ -10,7 +10,13 @@ export const attemptSchema = z.object({
 });
 export const reviewSchema = z.object({
   id: z.string().min(1),
-  due: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
+  due: z
+    .string()
+    .regex(/^\d{4}-\d{2}-\d{2}$/)
+    .refine((value) => {
+      const date = new Date(`${value}T00:00:00Z`);
+      return !Number.isNaN(date.valueOf()) && date.toISOString().slice(0, 10) === value;
+    }),
   interval: z.number().int().min(0),
   outcome: z.enum(["recalled", "understood", "missed"]).optional(),
 });
@@ -20,8 +26,10 @@ export const progressSchema = z.object({
   positions: z.record(z.string(), z.string()),
   drafts: z.record(z.string(), z.string()),
   attempts: z.array(attemptSchema),
+  answerViewedQuestionIds: z.array(z.string()).default([]),
   reviews: z.array(reviewSchema),
   notes: z.record(z.string(), z.string()),
+  productionChecks: z.record(z.string(), z.array(z.boolean())).default({}),
   settings: z.object({
     mode: z.union([z.literal(60), z.literal(90), z.literal(120)]),
     voice: z.string().optional(),
@@ -36,8 +44,10 @@ export const newProgress = (): Progress => ({
   positions: {},
   drafts: {},
   attempts: [],
+  answerViewedQuestionIds: [],
   reviews: [],
   notes: {},
+  productionChecks: {},
   settings: { mode: 90 },
 });
 
@@ -72,21 +82,46 @@ export function nextStage(
     : "first";
 }
 export function summarize(questions: Question[], attempts: Attempt[]) {
-  const results = questions.map((q) => ({
-    question: q,
-    attempt: attempts.find(
-      (a) => a.questionId === q.id && a.stage === "first" && a.result !== "unavailable",
-    ),
-  }));
-  const automatic = results.filter(({ question }) => question.type !== "self");
-  const done = automatic.filter(({ attempt }) => attempt);
-  return {
-    correct: done.filter(({ attempt }) => attempt?.result === "correct").length,
-    attempted: done.length,
-    total: automatic.length,
-    unattempted: automatic.length - done.length,
-    complete: results.every(({ attempt }) => !!attempt),
+  const summarizeGroup = (group: Question[]) => {
+    const rows = group.map((question) => {
+      const available = !question.requiresVerifiedAudio || question.audio?.status === "checked";
+      const records = available
+        ? attempts.filter((a) => a.questionId === question.id && a.result !== "unavailable")
+        : [];
+      return {
+        question,
+        first: records.find((a) => a.stage === "first"),
+        done: records.length > 0,
+        afterAnswer: records.some((a) => a.stage === "after-answer"),
+      };
+    });
+    const automatic = rows.filter((r) => r.question.type !== "self");
+    const selfRows = rows.filter((r) => r.question.type === "self");
+    const firstAttempted = automatic.filter((r) => r.first).length;
+    const firstCorrect = automatic.filter((r) => r.first?.result === "correct").length;
+    const attempted = automatic.filter((r) => r.done).length;
+    return {
+      correct: firstCorrect,
+      attempted,
+      total: automatic.length,
+      unattempted: automatic.length - attempted,
+      firstCorrect,
+      firstAttempted,
+      afterAnswer: automatic.filter((r) => r.afterAnswer).length,
+      self: {
+        total: selfRows.length,
+        attempted: selfRows.filter((r) => r.done).length,
+        unattempted: selfRows.filter((r) => !r.done).length,
+      },
+      complete: rows.every((r) => r.done),
+    };
   };
+  const overall = summarizeGroup(questions);
+  const skills = ["reading", "listening", "writing", "speaking", "typing"] as const;
+  const bySkill = Object.fromEntries(
+    skills.map((skill) => [skill, summarizeGroup(questions.filter((q) => q.skill === skill))]),
+  ) as Record<(typeof skills)[number], typeof overall>;
+  return { ...overall, bySkill };
 }
 export function scheduleReview(
   review: Review,

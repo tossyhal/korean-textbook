@@ -17,26 +17,76 @@ export function validateContent(input: unknown[], strict = false): string[] {
     ids.add(id);
   };
   const lessonIds = new Set(lessons.map((l) => l.id));
-  const terms = new Map<string, number>();
+  const terms = new Map<string, { firstDay: number; definition: string }>();
   for (const l of lessons) {
     add(l.id);
     for (const q of [...l.recall, ...l.exercises, ...l.exitTest]) add(q.id);
-    for (const term of [...l.vocabulary, ...l.grammar]) {
-      const previous = terms.get(term.id);
-      if (previous !== undefined && previous !== term.firstDay)
-        errors.push(`初出日の不一致: ${term.id}`);
-      terms.set(term.id, term.firstDay);
-      if (term.firstDay > l.day) errors.push(`未習事項: ${l.id} ${term.id}`);
+  }
+  for (const l of lessons) {
+    for (const [kind, items] of [
+      ["vocab", l.vocabulary],
+      ["grammar", l.grammar],
+    ] as const) {
+      for (const term of items) {
+        if (!term.id.startsWith(`${kind}-`)) errors.push(`ID接頭辞が不正: ${term.id}`);
+        const definition = JSON.stringify(term);
+        const previous = terms.get(term.id);
+        if (ids.has(term.id)) errors.push(`ID重複: ${term.id}`);
+        if (previous && previous.definition !== definition)
+          errors.push(`定義または初出日の不一致: ${term.id}`);
+        else terms.set(term.id, { firstDay: term.firstDay, definition });
+        if (term.firstDay > l.day) errors.push(`未習事項: ${l.id} ${term.id}`);
+      }
     }
+  }
+  for (const [id, term] of terms) {
+    const first = lessons.find((l) => l.day === term.firstDay);
+    if (first && ![...first.vocabulary, ...first.grammar].some((item) => item.id === id))
+      errors.push(`初出課に定義がありません: ${id}`);
   }
   for (const l of lessons) {
     for (const id of l.prerequisites)
       if (!lessonIds.has(id)) errors.push(`前提課がありません: ${l.id} ${id}`);
-    for (const id of l.reviewTargets)
-      if (!terms.has(id) && !ids.has(id)) errors.push(`復習対象がありません: ${l.id} ${id}`);
-    for (const q of [...l.recall, ...l.exercises, ...l.exitTest])
-      for (const id of q.tags)
-        if (!terms.has(id) && !ids.has(id)) errors.push(`問題タグがありません: ${q.id} ${id}`);
+    const checkReference = (id: string, context: string) => {
+      const term = terms.get(id);
+      if (!term && !ids.has(id)) errors.push(`参照先がありません: ${context} ${id}`);
+      if (term && term.firstDay > l.day) errors.push(`未習事項の参照: ${context} ${id}`);
+    };
+    for (const id of l.reviewTargets) checkReference(id, l.id);
+    for (const [kind, questions] of [
+      ["practice", l.recall],
+      ["practice", l.exercises],
+      ["exit", l.exitTest],
+    ] as const) {
+      for (const q of questions) {
+        if (!q.skill) errors.push(`技能がありません: ${q.id}`);
+        if (
+          !q.assessmentKind ||
+          (kind === "practice"
+            ? q.assessmentKind !== "practice"
+            : !["exit", "transfer"].includes(q.assessmentKind))
+        )
+          errors.push(`評価区分が不正: ${q.id}`);
+        if (q.requiresVerifiedAudio && !q.audio) errors.push(`重要音声がありません: ${q.id}`);
+        for (const id of q.tags) checkReference(id, q.id);
+      }
+    }
+    const fingerprint = (q: Lesson["exercises"][number]) =>
+      JSON.stringify([
+        q.prompt.normalize("NFC").trim(),
+        [...q.answers].map((a) => a.normalize("NFC").trim()).sort(),
+      ]);
+    const practice = new Set(l.exercises.map(fingerprint));
+    for (const q of l.exitTest)
+      if (practice.has(fingerprint(q))) errors.push(`練習と出口テストが同一: ${q.id}`);
+    if (!l.exercises.length) errors.push(`演習がありません: ${l.id}`);
+    if (!l.exitTest.length) errors.push(`出口テストがありません: ${l.id}`);
+    if (!l.examples.length) errors.push(`例文がありません: ${l.id}`);
+    if (!l.lessonKind || l.lessonKind === "normal") {
+      if (l.examples.length < 6) errors.push(`通常課の例文が不足: ${l.id}`);
+      if (l.exercises.length < 12) errors.push(`通常課の演習が不足: ${l.id}`);
+      if (l.exitTest.length < 5) errors.push(`通常課の出口テストが不足: ${l.id}`);
+    }
     if (!l.sources.length) errors.push(`出典がありません: ${l.id}`);
   }
   if (strict)
@@ -62,5 +112,21 @@ export function contentIds(lessons: Lesson[]) {
     }
     for (const item of [...lesson.vocabulary, ...lesson.grammar]) reviews.add(item.id);
   }
-  return { lessons: lessonIds, questions, reviews };
+  const positions = new Map(
+    lessons.map((lesson) => [
+      lesson.id,
+      new Set([
+        "objectives",
+        "recall",
+        ...lesson.sections.map((_, i) => `section-${i}`),
+        "examples",
+        "dialogue",
+        "exercises",
+        "production",
+        "exit",
+        "sources",
+      ]),
+    ]),
+  );
+  return { lessons: lessonIds, questions, reviews, positions };
 }

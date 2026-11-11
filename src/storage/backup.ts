@@ -6,13 +6,32 @@ export function exportBackup(progress: Progress): string {
 }
 export function parseBackup(
   json: string,
-  validIds: { lessons: Set<string>; questions: Set<string>; reviews: Set<string> },
+  validIds: {
+    lessons: Set<string>;
+    questions: Set<string>;
+    reviews: Set<string>;
+    positions?: Map<string, Set<string>>;
+    drafts?: Set<string>;
+  },
 ): Progress {
   const data = progressSchema.parse(JSON.parse(json));
   if (validIds) {
     const bad =
       data.completedLessons.some((id) => !validIds.lessons.has(id)) ||
       Object.keys(data.positions).some((id) => !validIds.lessons.has(id)) ||
+      Object.entries(data.positions).some(([id, position]) =>
+        validIds.positions
+          ? !validIds.positions.get(id)?.has(position)
+          : !/^(objectives|recall|examples|dialogue|exercises|production|exit|sources)$/.test(
+              position,
+            ),
+      ) ||
+      Object.keys(data.drafts).some(
+        (id) => !validIds.lessons.has(id) && !validIds.questions.has(id) && !validIds.drafts?.has(id),
+      ) ||
+      Object.keys(data.productionChecks).some((id) => !validIds.lessons.has(id)) ||
+      Object.keys(data.notes).some((id) => !validIds.lessons.has(id)) ||
+      data.answerViewedQuestionIds.some((id) => !validIds.questions.has(id)) ||
       data.attempts.some((a) => !validIds.questions.has(a.questionId)) ||
       data.reviews.some((r) => !validIds.reviews.has(r.id));
     if (bad) throw new Error("バックアップに存在しない教材への参照があります");
