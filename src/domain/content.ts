@@ -47,7 +47,7 @@ export const questionSchema = z
     prompt: text,
     skill: z.enum(["reading", "listening", "writing", "speaking", "typing"]).optional(),
     assessmentKind: z.enum(["practice", "exit", "transfer"]).optional(),
-    normalization: z.enum(["exact", "spacing", "standard"]).optional(),
+    normalization: z.enum(["exact", "spacing", "standard", "latin"]).optional(),
     options: z.array(text).optional(),
     answers: z.array(text),
     explanation: text,

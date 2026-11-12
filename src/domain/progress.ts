@@ -102,6 +102,13 @@ export function resumeLesson<T extends { id: string }>(
 }
 
 export function normalizeAnswer(value: string, mode: Question["normalization"] = "exact"): string {
+  if (mode === "latin")
+    return value
+      .trim()
+      .replace(/[Ａ-Ｚａ-ｚ０-９]/gu, (character) =>
+        String.fromCharCode(character.charCodeAt(0) - 0xfee0),
+      )
+      .replace(/[A-Z]/gu, (character) => character.toLowerCase());
   const normalized = value.normalize("NFC").trim();
   if (mode === "spacing") return normalized.replace(/\s+/gu, " ");
   if (mode === "standard") return normalized.replace(/\s+/gu, " ").replace(/[.!?。！？]+$/u, "");
@@ -140,6 +147,7 @@ export function summarize(questions: Question[], attempts: Attempt[]) {
         : [];
       return {
         question,
+        available,
         first: records.find((a) => a.stage === "first"),
         done: records.length > 0,
         afterAnswer: records.some((a) => a.stage === "after-answer"),
@@ -154,6 +162,7 @@ export function summarize(questions: Question[], attempts: Attempt[]) {
       correct: firstCorrect,
       attempted,
       total: automatic.length,
+      unavailable: automatic.filter((r) => !r.available).length,
       unattempted: automatic.length - attempted,
       firstCorrect,
       firstAttempted,
@@ -163,7 +172,7 @@ export function summarize(questions: Question[], attempts: Attempt[]) {
         attempted: selfRows.filter((r) => r.done).length,
         unattempted: selfRows.filter((r) => !r.done).length,
       },
-      complete: rows.every((r) => r.done),
+      complete: rows.every((r) => !r.available || r.done),
     };
   };
   const overall = summarizeGroup(questions);

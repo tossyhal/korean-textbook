@@ -124,6 +124,17 @@ it("重要な未確認音声と未実施の自己評価を完了扱いにしな�
     complete: false,
     self: { total: 1, unattempted: 1 },
   });
+  expect(summarize([questions[0]], attempts)).toMatchObject({
+    total: 1,
+    unavailable: 1,
+    attempted: 0,
+    unattempted: 1,
+    complete: true,
+    bySkill: { listening: { total: 1, unavailable: 1, unattempted: 1 } },
+  });
+  expect(
+    summarize([{ ...questions[0], audio: { ...audio, status: "checked" } }], []).complete,
+  ).toBe(false);
   expect(summarize([{ ...questions[0], requiresVerifiedAudio: false }], attempts).attempted).toBe(
     1,
   );
@@ -286,5 +297,72 @@ it("文字の学習位置を第1〜3課でバックアップ往復し、存在�
     expect(() =>
       parseBackup(exportBackup({ ...newProgress(), positions: { [day4.id]: position } }), ids),
     ).toThrow();
+  }
+});
+
+it("日本語の許容表現と韓国語の分かち書きを個別に判定する", () => {
+  const question = (day: number, fragment: string) => {
+    const lesson = lessons[day - 1];
+    const found = [...lesson.recall, ...lesson.exercises, ...lesson.exitTest].find((item) =>
+      item.prompt.includes(fragment),
+    );
+    if (!found) throw new Error(fragment);
+    return found;
+  };
+  for (const [day, fragment, good, bad] of [
+    [2, "濃音に使う修飾キー", "shift", "Ctrl"],
+    [3, "代表音の数", "７", "８"],
+    [3, "最後にどこを閉じるか", "両唇", "舌"],
+    [7, "책이 없어요の意味", "本がない", "本があります"],
+    [10, "行かない予定", "가지 않을 거예요", "가지 않을거예요"],
+    [17, "忙しいが来ました", "바빴지만 왔어요", "바빴지만왔어요"],
+    [23, "水を飲む必要があります", "물을 마셔야 돼요", "물을 마셔야돼요"],
+  ] as const) {
+    const item = question(day, fragment);
+    expect(gradeAnswer(item, good)).toBe("correct");
+    expect(gradeAnswer(item, bad)).toBe("incorrect");
+  }
+});
+
+it("第43・44節は未確認の重要音声を未実施のまま他の問題を完了できる", () => {
+  for (const lesson of lessons.slice(42, 44)) {
+    const questions = lesson.exitTest;
+    expect(
+      questions.some((item) => item.requiresVerifiedAudio && item.audio?.status !== "checked"),
+    ).toBe(true);
+    const attempts = questions
+      .filter((item) => !item.requiresVerifiedAudio || item.audio?.status === "checked")
+      .map((item) => ({
+        questionId: item.id,
+        answer: "",
+        result: "correct" as const,
+        stage: "first" as const,
+        at: "now",
+      }));
+    const result = summarize(questions, attempts);
+    expect(result.complete).toBe(true);
+    expect(result.unavailable).toBeGreaterThan(0);
+    expect(result.unattempted).toBeGreaterThanOrEqual(result.unavailable);
+    expect(summarize(questions, attempts.slice(1)).complete).toBe(false);
+  }
+});
+
+it("キー名の正規化は英数字に限定し、字母とキー位置は区別する", () => {
+  const key = lessons[1].exercises.find((item) => item.prompt.includes("濃音に使う修飾キー"))!;
+  for (const answer of ["SHIFT", "sHiFt", " ＳＨｉｆｔ "]) {
+    expect(gradeAnswer(key, answer)).toBe("correct");
+  }
+  for (const answer of ["Ctrl", "shift key", "ｓｈｉｆｔᄀ"]) {
+    expect(gradeAnswer(key, answer)).toBe("incorrect");
+  }
+  const latinJamo = { ...key, answers: ["ㄱ"] };
+  expect(gradeAnswer(latinJamo, "ᄀ")).toBe("incorrect");
+  const letterPosition = { ...key, normalization: "exact" as const, answers: ["q"] };
+  expect(gradeAnswer(letterPosition, "Q")).toBe("incorrect");
+  const translation = lessons[6].exercises.find((item) =>
+    item.prompt.includes("책이 없어요の意味"),
+  )!;
+  for (const answer of ["本が無い", "本はないです", "本が無いです"]) {
+    expect(gradeAnswer(translation, answer)).toBe("correct");
   }
 });
