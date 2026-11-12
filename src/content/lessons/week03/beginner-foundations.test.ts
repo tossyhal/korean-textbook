@@ -11,7 +11,11 @@ describe("初学者の前提", () => {
     expect(day05.sections.flatMap((s) => s.paragraphs).join(" ")).toContain("없어요");
     expect(day05.sections.flatMap((s) => s.paragraphs).join(" ")).toContain("[업써요]");
     expect(day08.sections.flatMap((s) => s.paragraphs).join(" ")).toContain("읽어요[일거요]");
-    expect(day15.sections[0].paragraphs[0]).toContain("[일꼬]");
+    expect(
+      day15.sections
+        .flatMap((s) => s.paragraphs)
+        .some((p) => p.includes("읽고") && p.includes("[일꼬]")),
+    ).toBe(true);
   });
   it("形容詞の述語を接続形の前に示し、未登録だった寝るを辞書形で収録する", () => {
     const paragraphs = day16.sections.flatMap((s) => s.paragraphs);
