@@ -1,5 +1,7 @@
 # Desktop WebKit回帰検証
 
+> 改訂前の記録です。現行版は[改訂版の検証記録](VERIFICATION-refinement.md)を参照してください。
+
 全56課の最終固定版は、同じ公式コンテナによる88件が成功した。[最終検証](VERIFICATION-final.md)に結果と未確認範囲を記録する。
 
 ## 初期の19件の検証記録
