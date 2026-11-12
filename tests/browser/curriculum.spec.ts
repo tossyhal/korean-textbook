@@ -128,20 +128,10 @@ for (const lesson of lessons) {
       for (const question of questions)
         await expect(page.locator(`#${id} #${question.id}`)).toBeVisible();
     }
-    await page.getByRole("tab", { name: "出典・メモ" }).click();
-    for (const source of lesson.sources) {
-      await expect(
-        page.locator("#sources").getByRole("link", { name: source.name, exact: true }),
-      ).toHaveAttribute("href", source.url);
-    }
     await page.getByRole("tab", { name: "本文" }).click();
-    const next = lessons.find((item) => item.day === lesson.day + 1);
-    if (next)
-      await expect(page.getByRole("link", { name: "次の節へ" })).toHaveAttribute(
-        "href",
-        `#/lesson/${next.id}`,
-      );
-    else await expect(page.getByRole("link", { name: "次の節へ" })).toHaveCount(0);
+    await expect(page.getByRole("button", { name: /未実施を残して学習を終え/ })).toBeHidden();
+    await page.getByRole("tab", { name: "確認テスト" }).click();
+    await expect(page.getByRole("button", { name: /未実施を残して学習を終え/ })).toBeVisible();
 
     const q = chooseActivity([...lesson.exercises, ...lesson.exitTest]);
     if (q) {
@@ -196,11 +186,14 @@ for (const lesson of lessons) {
         );
       }
     }
-    await page.getByRole("tab", { name: "出典・メモ" }).click();
-    await page.locator("#sources textarea").fill("確認メモ");
-    await page.getByRole("tab", { name: "作文・発話" }).click();
-    await page.getByLabel("自分の文章").fill("안녕하세요");
-    await page.getByLabel("作文を自己評価した").check();
+    await page.getByRole("tab", { name: "実践" }).click();
+    const draftLabel = lesson.production.kind === "typing" ? "入力した文字" : "自分の文章";
+    const checkLabel =
+      lesson.production.kind === "typing" ? "文字入力を自己評価した" : "作文を自己評価した";
+    if (lesson.production.kind !== "speaking") {
+      await page.getByLabel(draftLabel).fill("안녕하세요");
+      await page.getByLabel(checkLabel).check();
+    } else await page.getByLabel("発話を自己評価した").check();
     await page.getByRole("tab", { name: "練習" }).click();
     if (lesson.roleplay) {
       await expect(page.locator("#roleplay")).toContainText(lesson.roleplay.scenario);
@@ -230,12 +223,11 @@ for (const lesson of lessons) {
       key,
     );
     await page.reload();
-    await page.getByRole("tab", { name: "作文・発話" }).click();
-    await expect(page.getByLabel("作文を自己評価した")).toBeChecked();
-    await page.getByRole("tab", { name: "出典・メモ" }).click();
-    await expect(page.locator("#sources textarea")).toHaveValue("確認メモ");
-    await page.getByRole("tab", { name: "作文・発話" }).click();
-    await expect(page.getByLabel("自分の文章")).toHaveValue("안녕하세요");
+    await page.getByRole("tab", { name: "実践" }).click();
+    if (lesson.production.kind !== "speaking") {
+      await expect(page.getByLabel(checkLabel)).toBeChecked();
+      await expect(page.getByLabel(draftLabel)).toHaveValue("안녕하세요");
+    } else await expect(page.getByLabel("発話を自己評価した")).toBeChecked();
     if (lesson.roleplay) {
       await page.getByRole("tab", { name: "練習" }).click();
       await expect(page.getByLabel("返答の下書き")).toHaveValue("네");
@@ -269,10 +261,9 @@ test("主要画面への移動", async ({ page }) => {
     ["目次", "lessons"],
     ["復習", "review"],
     ["学習結果", "results"],
-    ["語彙・文法", "reference"],
+    ["単語帳・文法", "reference"],
     ["発音", "pronunciation"],
     ["入力", "keyboard"],
-    ["設定", "settings"],
   ] as const) {
     await page
       .getByRole("navigation", { name: "主なメニュー" })

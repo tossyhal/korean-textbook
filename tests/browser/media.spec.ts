@@ -73,6 +73,54 @@ test("発音ガイドの録音にも手本の音源と確認状態を表示す�
   ).toBeVisible();
 });
 
+test("発音ページで音声の検出と声の選択を確認できる", async ({ page }) => {
+  await page.addInitScript(() => {
+    const synth = new EventTarget() as EventTarget & {
+      voices: unknown[];
+      cancels: number;
+      spoken: string[];
+      getVoices: () => unknown[];
+      speak: (utterance: any) => void;
+      cancel: () => void;
+    };
+    synth.voices = [];
+    synth.cancels = 0;
+    synth.spoken = [];
+    synth.getVoices = () => synth.voices;
+    synth.speak = (utterance) => synth.spoken.push(utterance.voice?.voiceURI);
+    synth.cancel = () => synth.cancels++;
+    Object.defineProperty(window, "speechSynthesis", { value: synth });
+    Object.defineProperty(window, "SpeechSynthesisUtterance", { value: class {} });
+    (window as any).synthMock = synth;
+  });
+  await page.goto("#/pronunciation");
+  await expect(page.getByRole("link", { name: "設定", exact: true })).toHaveCount(0);
+  await expect(
+    page.getByText("韓国語の声を取得中、または利用できません。", { exact: false }),
+  ).toHaveCount(0);
+  await page.getByText("音声が出ないとき").click();
+  await expect(
+    page.getByText("韓国語の声を取得中、または利用できません。", { exact: false }),
+  ).toBeVisible();
+  await page.evaluate(() => {
+    const synth = (window as any).synthMock;
+    synth.voices = [
+      { name: "Voice A", lang: "ko-KR", voiceURI: "a", localService: true },
+      { name: "Voice B", lang: "ko-KR", voiceURI: "b", localService: true },
+    ];
+    synth.dispatchEvent(new Event("voiceschanged"));
+  });
+  await page.getByLabel("韓国語の声").selectOption("b");
+  await page.getByRole("button", { name: "Voice Bの声を試聴" }).click();
+  expect(await page.evaluate(() => (window as any).synthMock.spoken)).toEqual(["b"]);
+  const cancels = await page.evaluate(() => (window as any).synthMock.cancels);
+  await page.goto("#/home");
+  expect(await page.evaluate(() => (window as any).synthMock.cancels)).toBeGreaterThan(cancels);
+  await page.goto("#/pronunciation");
+  await page.getByText("音声が出ないとき").click();
+  await expect(page.getByLabel("韓国語の声")).toHaveValue("b");
+});
+
 for (const mode of ["denied", "unsupported"] as const)
   test(`録音${mode}の案内`, async ({ page }) => {
     await mockRecording(page, mode);
@@ -115,24 +163,22 @@ test("遅れて届くvoiceschanged、再生エラーと停止・遷移", async (
     Object.defineProperty(window, "SpeechSynthesisUtterance", { value: class {} });
     (window as any).synthMock = synth;
   });
-  await page.goto("#/settings");
-  await expect(page.getByText(/韓国語の声を取得中/)).toBeVisible();
+  await page.goto("#/lesson/day-01");
   await page.evaluate(() => {
     const s = (window as any).synthMock;
     s.voices = [{ name: "Mock Korean", lang: "ko-KR", voiceURI: "mock" }];
     s.dispatchEvent(new Event("voiceschanged"));
   });
-  await expect(page.getByRole("option", { name: /Mock Korean/ })).toBeAttached();
-  await page.goto("#/lesson/day-01");
+
   const audio = page.getByRole("button", { name: "音声を再生" }).first();
   await audio.click();
   await expect(
-    page.getByText("音声を再生できませんでした。音声設定で韓国語の声を確認してください。").first(),
+    page.getByText("音声を再生できませんでした。端末の音声設定を確認してください。").first(),
   ).toBeVisible();
   const stop = audio.locator("..").getByRole("button", { name: "停止" });
   await stop.click();
   await stop.click();
-  await page.goto("#/settings");
+  await page.goto("#/home");
   expect(await page.evaluate(() => (window as any).synthMock.cancels)).toBeGreaterThan(1);
 });
 

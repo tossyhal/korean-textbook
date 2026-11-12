@@ -190,30 +190,33 @@ export function AudioButton({
       >
         停止
       </button>{" "}
-      <label>
-        速度{" "}
-        <select value={rate} onChange={(e) => setRate(Number(e.target.value))}>
-          <option value={1}>通常</option>
-          <option value={0.75}>ゆっくり</option>
-        </select>
-      </label>{" "}
-      <label>
-        繰り返し{" "}
-        <select value={repeat} onChange={(e) => setRepeat(Number(e.target.value))}>
-          <option value={1}>1回</option>
-          <option value={2}>2回</option>
-          <option value={3}>3回</option>
-        </select>
-      </label>
-      {sentences(text).length > 1 && (
-        <div>
-          {sentences(text).map((s, i) => (
-            <button type="button" key={`${i}-${s}`} onClick={() => void play(s)}>
-              文{i + 1}を再生
-            </button>
-          ))}
-        </div>
-      )}
+      <details className="audio-options">
+        <summary>再生オプション</summary>
+        <label>
+          速度{" "}
+          <select value={rate} onChange={(e) => setRate(Number(e.target.value))}>
+            <option value={1}>通常</option>
+            <option value={0.75}>ゆっくり</option>
+          </select>
+        </label>{" "}
+        <label>
+          繰り返し{" "}
+          <select value={repeat} onChange={(e) => setRepeat(Number(e.target.value))}>
+            <option value={1}>1回</option>
+            <option value={2}>2回</option>
+            <option value={3}>3回</option>
+          </select>
+        </label>
+        {sentences(text).length > 1 && (
+          <div>
+            {sentences(text).map((s, i) => (
+              <button type="button" key={`${i}-${s}`} onClick={() => void play(s)}>
+                文{i + 1}を再生
+              </button>
+            ))}
+          </div>
+        )}
+      </details>
       <small>
         {source === "tts"
           ? "端末の韓国語合成音声を再生しました。音声の内容は未確認です。"
@@ -223,9 +226,7 @@ export function AudioButton({
               ? `音声：${audio.source}（${audio.status === "checked" ? "確認済み" : "未確認"}）。${allowFallback ? "利用できない場合は合成音声を使用します。" : "合成音声への切り替えは行いません。"}`
               : "端末の韓国語合成音声を使用します。音声の内容は未確認です。"}
       </small>
-      {error && (
-        <p role="status">音声を再生できませんでした。音声設定で韓国語の声を確認してください。</p>
-      )}
+      {error && <p role="status">音声を再生できませんでした。端末の音声設定を確認してください。</p>}
     </div>
   );
 }
@@ -233,18 +234,29 @@ export function AudioDiagnostics() {
   const { voices, selected, select, refresh, play, stop, supported } = useAudio();
   const [error, setError] = useState(false);
   const request = useRef(0);
+  const previewing = useRef(false);
+  useEffect(
+    () => () => {
+      request.current++;
+      if (previewing.current) stop();
+    },
+    [stop],
+  );
   const active = voices.find((voice) => voice.voiceURI === selected) ?? preferredVoice(voices);
   const preview = async (uri: string) => {
     const id = ++request.current;
+    previewing.current = true;
     setError(false);
     const success = await play("안녕하세요. 만나서 반갑습니다.", undefined, { voiceURI: uri });
-    if (id === request.current && !success) setError(true);
+    if (id === request.current) {
+      previewing.current = false;
+      if (!success) setError(true);
+    }
   };
   return (
     <section>
-      <h2>音声設定</h2>
       <p>
-        端末やブラウザーで使える韓国語の合成音声です。同じ文を聞き比べて選べます。発音の品質は未確認です。
+        端末やブラウザーで使える韓国語の合成音声を自動で選びます。声が複数ある場合は聞き比べて選べます。発音の品質は未確認です。
       </p>
       {!supported ? (
         <p>このブラウザーは読み上げに対応していません。</p>
@@ -301,6 +313,7 @@ export function AudioDiagnostics() {
             type="button"
             onClick={() => {
               request.current++;
+              previewing.current = false;
               stop();
               setError(false);
             }}

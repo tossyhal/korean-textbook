@@ -122,25 +122,71 @@ section {
 }
 .lesson-layout main {
   width: 100%;
+  max-width: 1040px;
+  display: grid;
+  grid-template-columns: 170px minmax(0, 720px);
+  column-gap: 2rem;
+  align-items: start;
+}
+.lesson-layout h1 {
+  grid-column: 2;
 }
 .lesson-tabs {
+  grid-column: 1;
+  grid-row: 2;
   display: flex;
-  flex-wrap: wrap;
-  gap: 0.25rem;
-  border-bottom: 1px solid #81979b;
-  margin: 1.5rem 0;
+  flex-direction: column;
+  position: sticky;
+  top: 1rem;
+  border-right: 1px solid #ccdade;
 }
 .lesson-tabs button {
-  white-space: nowrap;
+  text-align: left;
   border: 0;
   border-radius: 0;
-  border-bottom: 3px solid transparent;
   color: #36545b;
 }
 .lesson-tabs button[aria-selected="true"] {
-  border-bottom-color: #176a72;
+  background: #e4f2f1;
   color: #155d64;
   font-weight: 700;
+}
+.lesson-layout [role="tabpanel"] {
+  grid-column: 2;
+  grid-row: 2;
+  min-width: 0;
+}
+.lesson-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 3rem;
+  align-items: center;
+}
+.lesson-actions .primary {
+  margin-left: auto;
+}
+.review-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  padding: 0.55rem;
+  border: 0;
+  vertical-align: middle;
+}
+.review-toggle svg {
+  width: 22px;
+  height: 22px;
+}
+.data-management {
+  border-top: 1px solid #ccdade;
+  margin-top: 3rem;
+  padding-top: 1rem;
+}
+.data-management summary {
+  cursor: pointer;
+  color: #176a72;
 }
 .contents-list {
   list-style: none;
@@ -201,6 +247,19 @@ summary:focus-visible {
   }
   .lesson-layout main {
     padding-top: 0.5rem;
+    display: block;
+  }
+  .lesson-tabs {
+    position: static;
+    flex-direction: row;
+    flex-wrap: wrap;
+    border-right: 0;
+    border-bottom: 1px solid #ccdade;
+    margin: 1rem 0;
+  }
+  .lesson-tabs button {
+    flex: 1 1 auto;
+    text-align: center;
   }
   h1 {
     font-size: 1.75rem;
@@ -255,4 +314,101 @@ summary:focus-visible {
 .hangul-syllable {
   font-size: 4rem;
   line-height: 1;
+}
+
+.wordbook-entry {
+  border-top: 1px solid #ccdade;
+  padding: 0.45rem 0;
+}
+.wordbook-entry p {
+  margin: 0.25rem 0;
+}
+.word-audio {
+  min-width: 44px;
+  border: 0;
+  padding: 0.4rem 0.2rem;
+  color: #176a72;
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 0.18em;
+}
+.audio-options {
+  margin: 0.4rem 0;
+}
+.audio-options summary {
+  cursor: pointer;
+  color: #176a72;
+}
+
+.wordbook-nav,
+.wordbook-filters,
+.wordbook-pagination {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem 1rem;
+}
+.wordbook-nav {
+  border-bottom: 1px solid #ccdade;
+  margin-bottom: 1rem;
+}
+.wordbook-nav button {
+  border: 0;
+  border-bottom: 3px solid transparent;
+  border-radius: 0;
+  background: transparent;
+  min-height: 44px;
+}
+.wordbook-nav button[aria-pressed="true"] {
+  border-bottom-color: #176a72;
+  color: #176a72;
+  font-weight: 700;
+}
+.wordbook-filters label {
+  margin-block: 0.5rem;
+}
+.wordbook-entry-main,
+.grammar-entry {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 0.5rem;
+}
+.wordbook-entry-main > div,
+.grammar-entry details {
+  min-width: 0;
+  flex: 1;
+}
+.wordbook-entry small {
+  display: block;
+  color: #52656d;
+}
+.wordbook-meaning {
+  margin-left: 0.75rem;
+}
+.wordbook-pagination {
+  justify-content: center;
+  margin-block: 1rem;
+}
+.grammar-entry {
+  border-top: 1px solid #ccdade;
+  padding-block: 0.25rem;
+}
+.grammar-entry summary {
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  font-weight: 700;
+}
+.grammar-entry summary::before {
+  content: "▸";
+  margin-right: 0.5rem;
+  color: #176a72;
+}
+.grammar-entry details[open] summary::before {
+  content: "▾";
+}
+.grammar-entry details p {
+  margin-top: 0;
 }

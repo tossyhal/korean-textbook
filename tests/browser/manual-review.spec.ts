@@ -9,11 +9,14 @@ test("手動登録を保存・バックアップし、解除しても回答履�
   await expect(question.getByText("正解", { exact: true })).toBeVisible();
   await question.getByRole("button", { name: "復習に追加" }).click();
   await page.goto("#/reference");
-  const word = page.locator("main p[id]").first();
+  const word = page.locator(".wordbook-entry").first();
   const wordId = await word.getAttribute("id");
-  const wordText = await word.locator("strong").innerText();
+  const wordText = await word.locator("[lang=ko]").first().innerText();
   await word.getByRole("button", { name: "復習に追加" }).click();
-  await expect(word).toContainText("登録済み");
+  await expect(word.getByRole("button", { name: "復習から外す" })).toHaveAttribute(
+    "aria-pressed",
+    "true",
+  );
   await page.reload();
   await expect(word.getByRole("button", { name: "復習から外す" })).toBeVisible();
   await page.goto("#/review");
@@ -22,7 +25,8 @@ test("手動登録を保存・バックアップし、解除しても回答履�
     .filter({ hasText: wordText })
     .getByRole("button", { name: "答えを見る", exact: true })
     .click();
-  await page.goto("#/settings");
+  await page.goto("#/home");
+  await page.getByText("データ管理", { exact: true }).click();
   const downloadPromise = page.waitForEvent("download");
   await page.getByRole("button", { name: "バックアップを書き出す" }).click();
   const download = await downloadPromise;

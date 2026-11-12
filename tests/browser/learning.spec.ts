@@ -12,16 +12,17 @@ test("回答の保存、再挑戦と答え閲覧後の区別", async ({ page }) 
   await q.getByLabel("回答").fill("ㅓ");
   await q.getByRole("button", { name: "答え合わせ" }).click();
   await expect(q.getByRole("status")).toContainText("初回");
+  await expect(q.getByRole("status")).not.toContainText("答え：");
   await page.reload();
   await q.getByLabel("回答").fill("ㅏ");
   await q.getByRole("button", { name: "答え合わせ" }).click();
-  await expect(q.getByRole("status")).toContainText("答え閲覧後");
+  await expect(q.getByRole("status")).toContainText("再挑戦");
   const attempts = (await progress(page)).attempts.filter(
     (a: { questionId: string }) => a.questionId === "day-01-ex-01",
   );
   expect(attempts.map((a: { result: string; stage: string }) => [a.result, a.stage])).toEqual([
     ["incorrect", "first"],
-    ["correct", "after-answer"],
+    ["correct", "retry"],
   ]);
   const q2 = page.locator("#day-01-ex-02");
   await q2.getByRole("button", { name: "答えを見る" }).click();
@@ -53,33 +54,33 @@ test("IME変換中は採点せず、確定後の入力・修正・削除を保�
 
 test("作文と自己評価を保存する", async ({ page }) => {
   await page.goto(lesson);
-  await page.getByRole("tab", { name: "作文・発話" }).click();
-  await page.getByLabel("自分の文章").fill("안녕하세요");
-  await page.getByText("模範例と自己確認").click();
-  const rubric = page.locator("#production details input").first();
+  await page.getByRole("tab", { name: "実践" }).click();
+  await page.getByLabel("入力した文字").fill("안녕하세요");
+  const rubric = page.locator("#production input[type=checkbox]").first();
   await rubric.check();
-  await page.getByLabel("作文を自己評価した").check();
+  await page.getByLabel("文字入力を自己評価した").check();
   await page.reload();
-  await expect(page.getByLabel("自分の文章")).toHaveValue("안녕하세요");
-  await page.getByText("模範例と自己確認").click();
+  await expect(page.getByLabel("入力した文字")).toHaveValue("안녕하세요");
   await expect(rubric).toBeChecked();
-  await expect(page.getByLabel("作文を自己評価した")).toBeChecked();
+  await expect(page.getByLabel("文字入力を自己評価した")).toBeChecked();
 });
 
 test("JSON書き出し、取消、適用と破損拒否", async ({ page }) => {
   await page.goto(lesson);
-  await page.getByRole("tab", { name: "作文・発話" }).click();
-  await page.getByLabel("自分の文章").fill("저장");
-  await page.goto("#/settings");
+  await page.getByRole("tab", { name: "実践" }).click();
+  await page.getByLabel("入力した文字").fill("저장");
+  await page.goto("#/home");
+  await page.getByText("データ管理", { exact: true }).click();
   const downloadPromise = page.waitForEvent("download");
   await page.getByRole("button", { name: "バックアップを書き出す" }).click();
   const download = await downloadPromise;
   const path = await download.path();
   expect(path).toBeTruthy();
   await page.goto(lesson);
-  await page.getByRole("tab", { name: "作文・発話" }).click();
-  await page.getByLabel("自分の文章").fill("変更");
-  await page.goto("#/settings");
+  await page.getByRole("tab", { name: "実践" }).click();
+  await page.getByLabel("入力した文字").fill("変更");
+  await page.goto("#/home");
+  await page.getByText("データ管理", { exact: true }).click();
   const before = await progress(page);
   const file = page.locator("input[type=file]");
   await file.setInputFiles(path!);
@@ -96,7 +97,7 @@ test("JSON書き出し、取消、適用と破損拒否", async ({ page }) => {
   await file.setInputFiles(path!);
   await page.getByRole("button", { name: "この内容を適用" }).click();
   await page.goto(lesson);
-  await expect(page.getByLabel("自分の文章")).toHaveValue("저장");
+  await expect(page.getByLabel("入力した文字")).toHaveValue("저장");
 });
 
 for (const width of [390, 1280])
@@ -136,14 +137,43 @@ test("出口テストの初回誤答は後の正答で上書きされない", as
   await page.goto(lesson);
   await page.getByRole("tab", { name: "確認テスト" }).click();
   const exit = page.locator("#exit");
+  const skills = exit.locator(":scope > ul");
+  await expect(skills.getByRole("listitem").filter({ hasText: /^入力：/ })).toContainText(
+    "実践の自己評価",
+  );
+  await expect(skills.getByRole("listitem").filter({ hasText: /^聴解：/ })).toHaveCount(0);
+  await expect(skills.getByRole("listitem").filter({ hasText: /^作文：/ })).toHaveCount(0);
   const question = exit.locator(".question").first();
   await question.getByLabel("回答").fill("가");
   await question.getByRole("button", { name: "答え合わせ" }).click();
   await expect(exit.getByText(/初回の自力正答：0\/1問/)).toBeVisible();
   await question.getByLabel("回答").fill("바");
   await question.getByRole("button", { name: "答え合わせ" }).click();
-  await expect(question.getByRole("status")).toContainText("答え閲覧後");
+  await expect(question.getByRole("status")).toContainText("再挑戦");
   await expect(exit.getByText(/初回の自力正答：0\/1問/)).toBeVisible();
   await page.reload();
   await expect(exit.getByText(/初回の自力正答：0\/1問/)).toBeVisible();
+});
+
+test("節のタブを上下キーとHome・Endで操作する", async ({ page }) => {
+  await page.goto(lesson);
+  await expect(page.getByRole("tablist", { name: "節の内容" })).toHaveAttribute(
+    "aria-orientation",
+    "vertical",
+  );
+  const text = page.getByRole("tab", { name: "本文" });
+  const practice = page.getByRole("tab", { name: "練習" });
+  const last = page.getByRole("tab", { name: "確認テスト" });
+  await text.focus();
+  await page.keyboard.press("ArrowDown");
+  await expect(practice).toBeFocused();
+  await expect(practice).toHaveAttribute("aria-selected", "true");
+  await page.keyboard.press("End");
+  await expect(last).toBeFocused();
+  await page.keyboard.press("ArrowDown");
+  await expect(text).toBeFocused();
+  await page.keyboard.press("ArrowUp");
+  await expect(last).toBeFocused();
+  await page.keyboard.press("Home");
+  await expect(text).toBeFocused();
 });

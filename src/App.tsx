@@ -2,12 +2,14 @@ import { useEffect, useRef, useState } from "react";
 import { KoreanText } from "./components/KoreanText";
 import { productionSpeakingModel } from "./domain/content";
 import { lessons } from "./content";
+import { wordbook } from "./content/wordbook";
 import type { Lesson, Question } from "./domain/content";
 import { contentIds } from "./domain/validate-content";
 import {
   dueReviews,
   gradeAnswer,
   newProgress,
+  productionComplete,
   nextStage,
   resumeLesson,
   scheduleReview,
@@ -16,7 +18,7 @@ import {
 } from "./domain/progress";
 import type { Progress } from "./domain/progress";
 import { exportBackup, parseBackup, tryLoadProgress, trySaveProgress } from "./storage/backup";
-import { AudioButton, AudioDiagnostics, AudioProvider, useAudio } from "./features/audio";
+import { AudioButton, AudioProvider, useAudio } from "./features/audio";
 import { RoleplayView } from "./features/roleplay";
 import { ListeningTransfer } from "./features/listening-transfer";
 import { diagnosticQuestions } from "./features/assessment/bank";
@@ -34,7 +36,10 @@ const today = () => {
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
 };
 const questions = (l: Lesson) => [...l.recall, ...l.exercises, ...l.exitTest];
-const ids = contentIds(lessons);
+const ids = contentIds(
+  lessons,
+  wordbook.map((word) => word.id),
+);
 const link = (path: string) => `#/${path}`;
 const ko = (text: string) => (
   <KoreanText
@@ -55,13 +60,12 @@ const chapterTitles = [
   "音と処理速度",
   "統合して確認する",
 ];
-type LessonTab = "text" | "practice" | "production" | "exit" | "sources";
+type LessonTab = "text" | "practice" | "production" | "exit";
 const tabs: [LessonTab, string][] = [
   ["text", "本文"],
   ["practice", "練習"],
-  ["production", "作文・発話"],
+  ["production", "実践"],
   ["exit", "確認テスト"],
-  ["sources", "出典・メモ"],
 ];
 const tabForPosition = (id?: string): LessonTab =>
   id === "exercises" || id === "roleplay" || id === "voice-transfer" || id === "recall"
@@ -70,9 +74,7 @@ const tabForPosition = (id?: string): LessonTab =>
       ? "production"
       : id === "exit"
         ? "exit"
-        : id === "sources"
-          ? "sources"
-          : "text";
+        : "text";
 
 type Update = (fn: (p: Progress) => Progress) => void;
 function AppContent() {
@@ -124,15 +126,15 @@ function AppContent() {
           <a href={link("lessons")}>目次</a>
           <a href={link("review")}>復習</a>
           <a href={link("results")}>学習結果</a>
-          <a href={link("reference")}>語彙・文法</a>
+          <a href={link("reference")}>単語帳・文法</a>
           <a href={link("pronunciation")}>発音</a>
           <a href={link("keyboard")}>入力</a>
-          <a href={link("settings")}>設定</a>
         </nav>
       </header>
       {error && (
         <div role="alert" className="notice">
-          {error} {!writable && "設定から有効なバックアップを読み込むまで自動保存しません。"}
+          {error}{" "}
+          {!writable && "ホームのデータ管理から有効なバックアップを読み込むまで自動保存しません。"}
         </div>
       )}
       {lesson ? (
@@ -162,8 +164,8 @@ function AppContent() {
             update((p) => ({ ...p, drafts: { ...p.drafts, [id]: value } }))
           }
         />
-      ) : route === "settings" ? (
-        <Settings
+      ) : (
+        <Home
           progress={progress}
           update={update}
           apply={(p) => {
@@ -176,13 +178,19 @@ function AppContent() {
             } else setError(result.error);
           }}
         />
-      ) : (
-        <Home progress={progress} update={update} />
       )}
     </>
   );
 }
-function Home({ progress, update }: { progress: Progress; update: Update }) {
+function Home({
+  progress,
+  update,
+  apply,
+}: {
+  progress: Progress;
+  update: Update;
+  apply: (p: Progress) => void;
+}) {
   const current = resumeLesson(lessons, progress);
   return (
     <main>
@@ -234,6 +242,7 @@ function Home({ progress, update }: { progress: Progress; update: Update }) {
       <p>
         <a href={link("lessons")}>すべての節を見る</a>
       </p>
+      <DataManagement progress={progress} apply={apply} />
     </main>
   );
 }
@@ -287,9 +296,11 @@ function Contents({ progress }: { progress: Progress }) {
                         </svg>
                         {progress.completedLessons.includes(l.id)
                           ? "完了"
-                          : progress.positions[l.id]
-                            ? "学習中"
-                            : "未着手"}
+                          : progress.partiallyFinishedLessons.includes(l.id)
+                            ? "未実施を残して終了"
+                            : progress.positions[l.id]
+                              ? "学習中"
+                              : "未着手"}
                       </span>
                     </a>
                   ) : day === 55 ? (
@@ -320,9 +331,10 @@ function ReviewControl({
   const registered = progress.reviews.some((review) => review.id === id);
   return (
     <span>
-      {" "}
-      {registered && "登録済み "}
       <button
+        className="review-toggle"
+        aria-label={registered ? "復習から外す" : "復習に追加"}
+        aria-pressed={registered}
         type="button"
         onClick={() =>
           update((p) => ({
@@ -333,7 +345,15 @@ function ReviewControl({
           }))
         }
       >
-        {registered ? "復習から外す" : "復習に追加"}
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path
+            d="M6 3h12v18l-6-4-6 4z"
+            fill={registered ? "currentColor" : "none"}
+            stroke="currentColor"
+            strokeWidth="1.8"
+            strokeLinejoin="round"
+          />
+        </svg>
       </button>
     </span>
   );
@@ -367,9 +387,10 @@ function QuestionView({
     const at = new Date().toISOString();
     update((p) => ({
       ...p,
-      answerViewedQuestionIds: p.answerViewedQuestionIds.includes(q.id)
-        ? p.answerViewedQuestionIds
-        : [...p.answerViewedQuestionIds, q.id],
+      answerViewedQuestionIds:
+        result === "incorrect" || p.answerViewedQuestionIds.includes(q.id)
+          ? p.answerViewedQuestionIds
+          : [...p.answerViewedQuestionIds, q.id],
       attempts: [
         ...p.attempts,
         {
@@ -448,9 +469,7 @@ function QuestionView({
           </label>
           <p>音声の内容は未確認です。再生できない場合は未実施のままにできます。</p>
           {playError && (
-            <p role="status">
-              再生できませんでした。<a href={link("settings")}>音声設定</a>を確認してください。
-            </p>
+            <p role="status">再生できませんでした。端末の音声設定を確認してください。</p>
           )}
         </div>
       )}
@@ -529,7 +548,7 @@ function QuestionView({
               ）
             </p>
           )}
-          {(viewed || last) && (
+          {(viewed || (last && last.result !== "incorrect")) && (
             <>
               <p>
                 答え：
@@ -586,12 +605,18 @@ function LessonPage({
   target?: string;
 }) {
   const checks = progress.productionChecks[l.id] ?? [];
-  const selfChecked =
-    l.production.rubric.every((_, i) => checks[i]) &&
-    checks[l.production.rubric.length] &&
-    checks[l.production.rubric.length + 1];
+  const [vocabularyAudioError, setVocabularyAudioError] = useState("");
   const [hideKorean, setHideKorean] = useState(false);
   const [hideJapanese, setHideJapanese] = useState(false);
+  const [verticalTabs, setVerticalTabs] = useState(
+    () => window.matchMedia("(min-width: 701px)").matches,
+  );
+  useEffect(() => {
+    const media = window.matchMedia("(min-width: 701px)");
+    const onChange = () => setVerticalTabs(media.matches);
+    media.addEventListener("change", onChange);
+    return () => media.removeEventListener("change", onChange);
+  }, []);
   const initialPosition = useRef<string | undefined>(target ?? progress.positions[l.id]);
   const [activeTab, setActiveTab] = useState<LessonTab>(() =>
     tabForPosition(initialPosition.current),
@@ -600,6 +625,7 @@ function LessonPage({
   const selectTab = (tab: LessonTab, position?: string) => {
     audio.stop();
     setActiveTab(tab);
+    window.scrollTo(0, 0);
     mark(
       position ??
         (
@@ -608,7 +634,6 @@ function LessonPage({
             practice: "recall",
             production: "production",
             exit: "exit",
-            sources: "sources",
           } as const
         )[tab],
     );
@@ -657,11 +682,16 @@ function LessonPage({
   const mark = (id: string) =>
     update((p) => ({ ...p, lastLessonId: l.id, positions: { ...p.positions, [l.id]: id } }));
   const summary = summarize(l.exitTest, progress.attempts);
-  const productionSummary = summarizeProduction(checks, l.production.rubric.length);
-  const productionDone = progress.drafts[`${l.id}`]?.trim();
+  const productionSummary = summarizeProduction(
+    checks,
+    l.production.rubric.length,
+    l.production.kind,
+  );
+  const productionDone = productionComplete(l.production, checks, progress.drafts[l.id]);
   const complete = () =>
     update((p) => ({
       ...p,
+      partiallyFinishedLessons: p.partiallyFinishedLessons.filter((id) => id !== l.id),
       completedLessons: p.completedLessons.includes(l.id)
         ? p.completedLessons
         : [...p.completedLessons, l.id],
@@ -704,12 +734,13 @@ function LessonPage({
           className="lesson-tabs"
           role="tablist"
           aria-label="節の内容"
+          aria-orientation={verticalTabs ? "vertical" : "horizontal"}
           onKeyDown={(e) => {
             const index = tabs.findIndex(([id]) => id === activeTab);
             const next =
-              e.key === "ArrowRight"
+              e.key === "ArrowRight" || e.key === "ArrowDown"
                 ? (index + 1) % tabs.length
-                : e.key === "ArrowLeft"
+                : e.key === "ArrowLeft" || e.key === "ArrowUp"
                   ? (index + tabs.length - 1) % tabs.length
                   : e.key === "Home"
                     ? 0
@@ -766,15 +797,54 @@ function LessonPage({
           <section id="vocabulary">
             <h2>語彙</h2>
             {l.vocabulary.length ? (
-              <ul>
+              <>
+                <p>韓国語を押すと端末の合成音声で再生します。音声の内容は未確認です。</p>
+                {vocabularyAudioError && <p role="status">{vocabularyAudioError}</p>}
                 {l.vocabulary.map((v) => (
-                  <li key={v.id}>
-                    <span lang="ko">{v.korean}</span>：{v.meaning}（{v.partOfSpeech}、辞書形
-                    <span lang="ko">{v.dictionaryForm}</span>、{lessonLabel(v.firstDay)}）
-                    <ReviewControl id={v.id} progress={progress} update={update} />
-                  </li>
+                  <div className="wordbook-entry" key={v.id}>
+                    <div className="wordbook-entry-main">
+                      <div>
+                        {/[가-힣]/.test(v.dictionaryForm) ? (
+                          <button
+                            className="word-audio"
+                            lang="ko"
+                            aria-label={`${v.korean}の音声を再生`}
+                            onClick={() => {
+                              setVocabularyAudioError("");
+                              void audio.play(v.dictionaryForm).then(
+                                (ok) => {
+                                  if (!ok)
+                                    setVocabularyAudioError(
+                                      "音声を再生できませんでした。端末の音声設定を確認してください。",
+                                    );
+                                },
+                                () =>
+                                  setVocabularyAudioError(
+                                    "音声を再生できませんでした。端末の音声設定を確認してください。",
+                                  ),
+                              );
+                            }}
+                          >
+                            {v.korean}
+                          </button>
+                        ) : (
+                          <strong lang="ko">{v.korean}</strong>
+                        )}
+                        <span className="wordbook-meaning">{v.meaning}</span>
+                        <small>
+                          {v.partOfSpeech}
+                          {v.dictionaryForm !== v.korean && (
+                            <>
+                              ・辞書形<span lang="ko">{v.dictionaryForm}</span>
+                            </>
+                          )}
+                        </small>
+                      </div>
+                      <ReviewControl id={v.id} progress={progress} update={update} />
+                    </div>
+                  </div>
                 ))}
-              </ul>
+              </>
             ) : (
               <p>語彙の登録はありません。</p>
             )}
@@ -806,6 +876,11 @@ function LessonPage({
             <h2>会話・読解</h2>
             {examples(l.dialogue)}
           </section>
+          <div className="lesson-actions">
+            <button className="primary" onClick={() => selectTab("practice")}>
+              練習へ進む
+            </button>
+          </div>
         </div>
         <div
           role="tabpanel"
@@ -850,6 +925,12 @@ function LessonPage({
               }
             />
           )}
+          <div className="lesson-actions">
+            <button onClick={() => selectTab("text")}>本文に戻る</button>
+            <button className="primary" onClick={() => selectTab("production")}>
+              実践へ進む
+            </button>
+          </div>
         </div>
         <div
           role="tabpanel"
@@ -859,20 +940,25 @@ function LessonPage({
           hidden={activeTab !== "production"}
         >
           <section id="production">
-            <h2>作文・発話</h2>
+            <h2>実践</h2>
             <p>{ko(l.production.prompt)}</p>
-            <label>
-              自分の文章
-              <textarea
-                value={progress.drafts[l.id] ?? ""}
-                onChange={(e) =>
-                  update((p) => ({ ...p, drafts: { ...p.drafts, [l.id]: e.target.value } }))
-                }
-              />
-            </label>
+            {l.production.kind !== "speaking" && (
+              <label>
+                {l.production.kind === "typing" ? "入力した文字" : "自分の文章"}
+                <textarea
+                  value={progress.drafts[l.id] ?? ""}
+                  onChange={(e) =>
+                    update((p) => ({ ...p, drafts: { ...p.drafts, [l.id]: e.target.value } }))
+                  }
+                />
+              </label>
+            )}
             <details>
-              <summary>模範例と自己確認</summary>
+              <summary>模範例を見る</summary>
               <p>{ko(l.production.model)}</p>
+            </details>
+            <div>
+              <h3>自己確認</h3>
               {l.production.rubric.map((x, i) => (
                 <label key={x}>
                   <input
@@ -894,33 +980,38 @@ function LessonPage({
                   {ko(x)}
                 </label>
               ))}
-            </details>
+            </div>
             {activeTab === "production" && (
               <Recorder sampleText={productionSpeakingModel(l.production)} />
             )}
-            {["作文を自己評価した", "発話を自己評価した"].map((label, offset) => (
-              <label key={label}>
-                <input
-                  type="checkbox"
-                  checked={checks[l.production.rubric.length + offset] ?? false}
-                  onChange={(e) => {
-                    const checked = e.target.checked;
-                    update((p) => ({
-                      ...p,
-                      productionChecks: {
-                        ...p.productionChecks,
-                        [l.id]: Array.from({ length: l.production.rubric.length + 2 }, (_, i) =>
-                          i === l.production.rubric.length + offset
-                            ? checked
-                            : (p.productionChecks[l.id]?.[i] ?? false),
-                        ),
-                      },
-                    }));
-                  }}
-                />
-                {label}
-              </label>
-            ))}
+            {[
+              l.production.kind === "typing" ? "文字入力を自己評価した" : "作文を自己評価した",
+              "発話を自己評価した",
+            ].map((label, offset) =>
+              l.production.kind === "speaking" && offset === 0 ? null : (
+                <label key={label}>
+                  <input
+                    type="checkbox"
+                    checked={checks[l.production.rubric.length + offset] ?? false}
+                    onChange={(e) => {
+                      const checked = e.target.checked;
+                      update((p) => ({
+                        ...p,
+                        productionChecks: {
+                          ...p.productionChecks,
+                          [l.id]: Array.from({ length: l.production.rubric.length + 2 }, (_, i) =>
+                            i === l.production.rubric.length + offset
+                              ? checked
+                              : (p.productionChecks[l.id]?.[i] ?? false),
+                          ),
+                        },
+                      }));
+                    }}
+                  />
+                  {label}
+                </label>
+              ),
+            )}
           </section>
           {l.day === 55 && (
             <p>
@@ -928,6 +1019,12 @@ function LessonPage({
               <a href={link("review")}>今日の復習へ</a>
             </p>
           )}
+          <div className="lesson-actions">
+            <button onClick={() => selectTab("practice")}>練習に戻る</button>
+            <button className="primary" onClick={() => selectTab("exit")}>
+              確認テストへ進む
+            </button>
+          </div>
         </div>
         <div
           role="tabpanel"
@@ -960,94 +1057,84 @@ function LessonPage({
                 ] as const
               ).map(([skill, label]) => {
                 const result = summary.bySkill[skill];
-                return (
+                const production =
+                  skill === "writing" || skill === "speaking" || skill === "typing"
+                    ? productionSummary[skill]
+                    : null;
+                const details = [
+                  result.total > 0 &&
+                    `初回正答${result.firstCorrect}/${result.firstAttempted}、実施${result.attempted}/${result.total}`,
+                  result.self.total > 0 && `自己評価${result.self.attempted}/${result.self.total}`,
+                  production &&
+                    production.total > 0 &&
+                    `実践の自己評価${production.checked}/${production.total}`,
+                ].filter(Boolean);
+                return details.length > 0 ? (
                   <li key={skill}>
-                    {label}：初回正答{result.firstCorrect}/{result.firstAttempted}、実施
-                    {result.attempted}/{result.total}、自己評価{result.self.attempted}/
-                    {result.self.total}
-                    {(skill === "writing" || skill === "speaking") && (
-                      <>
-                        、作文・発話の自己評価{productionSummary[skill].checked}/
-                        {productionSummary[skill].total}
-                      </>
-                    )}
+                    {label}：{details.join("、")}
                   </li>
-                );
+                ) : null;
               })}
             </ul>
             <p>
-              作文・発話の自己確認：{productionSummary.rubric.checked}/
-              {productionSummary.rubric.total}
-              項目。作文・発話は自己評価です。節の完了は成績認定ではありません。
+              実践の自己確認：{productionSummary.rubric.checked}/{productionSummary.rubric.total}
+              項目。実践は自己評価です。節の完了は成績認定ではありません。
             </p>
             {l.day === 56 && (
               <p>
                 <a href={link("results")}>技能別結果と次の2〜4週間の復習案を見る</a>
               </p>
             )}
-            <button
-              type="button"
-              disabled={
-                !summary.complete ||
-                !productionDone ||
-                !selfChecked ||
-                (!!l.voiceTransfer && !progress.voiceTransferRuns[l.id])
-              }
-              onClick={complete}
-            >
-              この節を完了する
-            </button>
-            {(!summary.complete || !productionDone || !selfChecked) && (
-              <p>出口テストをすべて実施し、作文と発話を自己評価してから完了できます。</p>
-            )}
+            <p>未実施の確認テスト：{summary.unattempted + summary.self.unattempted}問</p>
+            <p>
+              未確認の実践項目：{productionSummary.rubric.total - productionSummary.rubric.checked}
+              項目
+              {!productionDone && "。作文・入力や発話の自己評価も確認してください。"}
+            </p>
             {l.voiceTransfer && !progress.voiceTransferRuns[l.id] && (
-              <p>別の合成音声での練習を自己確認してから完了できます。</p>
+              <p>別の合成音声での練習は未実施です。</p>
             )}
             {progress.completedLessons.includes(l.id) && <p>完了済みです。</p>}
+            {progress.partiallyFinishedLessons.includes(l.id) && (
+              <p>未実施を残して終了しました。いつでも戻って続けられます。</p>
+            )}
           </section>
-        </div>
-        <div
-          role="tabpanel"
-          tabIndex={0}
-          id="panel-sources"
-          aria-labelledby="tab-sources"
-          hidden={activeTab !== "sources"}
-        >
-          <section id="sources">
-            <h2>出典と確認状況</h2>
-            <p>
-              言語内容：{l.languageStatus === "checked" ? "確認済み" : "未確認"}／音声：
-              {l.audioStatus === "checked" ? "確認済み" : "未確認"}
-            </p>
-            <ul>
-              {l.sources.map((s) => (
-                <li key={s.url}>
-                  <a href={s.url}>{s.name}</a>（{s.checkedAt}、
-                  {s.status === "checked" ? "確認済み" : "未確認"}）：{s.checked}
-                </li>
-              ))}
-            </ul>
-            <label>
-              メモ
-              <textarea
-                value={progress.notes[l.id] ?? ""}
-                onChange={(e) =>
-                  update((p) => ({ ...p, notes: { ...p.notes, [l.id]: e.target.value } }))
-                }
-              />
-            </label>
-          </section>
-        </div>
-        {lessons.find((x) => x.day === l.day + 1) && (
-          <p>
-            <a
+          <div className="lesson-actions">
+            <button onClick={() => selectTab("production")}>実践に戻る</button>
+            <button
               className="primary"
-              href={link(`lesson/${lessons.find((x) => x.day === l.day + 1)?.id}`)}
+              onClick={() => {
+                if (
+                  summary.complete &&
+                  productionDone &&
+                  (!l.voiceTransfer || progress.voiceTransferRuns[l.id])
+                ) {
+                  complete();
+                } else {
+                  update((p) => ({
+                    ...p,
+                    partiallyFinishedLessons:
+                      p.completedLessons.includes(l.id) || p.partiallyFinishedLessons.includes(l.id)
+                        ? p.partiallyFinishedLessons
+                        : [...p.partiallyFinishedLessons, l.id],
+                  }));
+                }
+                const next = lessons.find((x) => x.day === l.day + 1);
+                window.location.hash = link(next ? `lesson/${next.id}` : "lessons");
+              }}
             >
-              次の節へ
-            </a>
-          </p>
-        )}
+              {summary.complete &&
+              productionDone &&
+              (!l.voiceTransfer || progress.voiceTransferRuns[l.id])
+                ? l.day === 56
+                  ? "完了して目次へ"
+                  : "完了して次へ"
+                : l.day === 56
+                  ? "未実施を残して学習を終え、目次へ"
+                  : "未実施を残して学習を終えて次へ"}
+            </button>
+          </div>
+        </div>
       </main>
     </div>
   );
@@ -1110,8 +1197,16 @@ function ResultsPage({ progress }: { progress: Progress }) {
         })}
       </ul>
       <p>
-        節の自己評価：作文チェック{production.writing}/{evaluated.length}件、発話チェック
-        {production.speaking}/{evaluated.length}件。 自動採点とは別の自己確認です。
+        節の自己評価：作文チェック{production.writing}/
+        {
+          evaluated.filter(
+            (lesson) => !lesson.production.kind || lesson.production.kind === "writing",
+          ).length
+        }
+        件、入力チェック{production.typing}/
+        {evaluated.filter((lesson) => lesson.production.kind === "typing").length}件、
+        発話チェック（発音練習を含む）{production.speaking}/{evaluated.length}件。
+        自動採点とは別の自己確認です。
       </p>
       <h2>復習先</h2>
       {weak.length ? (
@@ -1225,7 +1320,7 @@ function ReviewPage({ progress, update }: { progress: Progress; update: Update }
         今日の予定は{due.length}件、今日あと{remaining}件まで取り組めます。
       </p>
       {due.slice(0, remaining).map((r) => {
-        const v = lessons.flatMap((l) => l.vocabulary).find((x) => x.id === r.id);
+        const v = wordbook.find((x) => x.id === r.id);
         const g = lessons.flatMap((l) => l.grammar).find((x) => x.id === r.id);
         const q = [...lessons.flatMap(questions), ...diagnosticQuestions].find(
           (x) => x.id === r.id,
@@ -1324,59 +1419,258 @@ function ReviewPage({ progress, update }: { progress: Progress; update: Update }
 }
 function Reference({ progress, update }: { progress: Progress; update: Update }) {
   const [query, setQuery] = useState("");
-  const vocab = Array.from(
-    new Map(lessons.flatMap((l) => l.vocabulary).map((x) => [x.id, x])).values(),
-  ).filter((x) => `${x.korean} ${x.meaning} ${x.dictionaryForm}`.includes(query));
+  const [part, setPart] = useState("");
+  const [hideMeaning, setHideMeaning] = useState(false);
+  const [view, setView] = useState<"vocabulary" | "grammar">("vocabulary");
+  const [page, setPage] = useState(0);
+  const [audioError, setAudioError] = useState("");
+  const request = useRef(0);
+  const pageRange = useRef<HTMLParagraphElement>(null);
+  const focusPageRange = useRef(false);
+  const audio = useAudio();
+  useEffect(() => {
+    if (focusPageRange.current) {
+      focusPageRange.current = false;
+      pageRange.current?.focus();
+    }
+  }, [page]);
+  useEffect(
+    () => () => {
+      request.current++;
+      audio.stop();
+    },
+    [audio.stop],
+  );
+  const stopAudio = () => {
+    request.current++;
+    audio.stop();
+    setAudioError("");
+  };
+  const playAudio = (text: string) => {
+    const id = ++request.current;
+    setAudioError("");
+    void audio.play(text).then(
+      (ok) => {
+        if (id === request.current && !ok)
+          setAudioError("音声を再生できませんでした。端末の音声設定を確認してください。");
+      },
+      () => {
+        if (id === request.current)
+          setAudioError("音声を再生できませんでした。端末の音声設定を確認してください。");
+      },
+    );
+  };
+  const parts = Array.from(new Set(wordbook.map((word) => word.partOfSpeech))).sort();
+  const search = query.trim().toLowerCase();
+  const vocab = wordbook.filter(
+    (word) =>
+      (!part || word.partOfSpeech === part) &&
+      `${word.korean} ${word.meaning} ${word.dictionaryForm}`.toLowerCase().includes(search),
+  );
   const grammar = Array.from(
     new Map(lessons.flatMap((l) => l.grammar).map((x) => [x.id, x])).values(),
-  ).filter((x) => x.name.includes(query));
+  )
+    .map((item) => {
+      const lesson = lessons.find((l) => l.day === item.firstDay);
+      const index = /^section-(\d+)$/.exec(item.sectionId ?? "");
+      const section = index ? lesson?.sections[Number(index[1])] : undefined;
+      return { item, lesson, section };
+    })
+    .filter(({ item, section }) =>
+      `${item.name} ${section?.paragraphs.join(" ") ?? ""}`.toLowerCase().includes(search),
+    );
+  const pageSize = 40;
+  const pageCount = Math.ceil(vocab.length / pageSize);
   return (
-    <main>
-      <h1>語彙・文法</h1>
+    <main className="wordbook-page">
+      <h1>単語帳・文法</h1>
+      <nav className="wordbook-nav" aria-label="単語帳と文法の切り替え">
+        <button
+          type="button"
+          aria-pressed={view === "vocabulary"}
+          onClick={() => {
+            stopAudio();
+            setView("vocabulary");
+          }}
+        >
+          単語帳
+        </button>
+        <button
+          type="button"
+          aria-pressed={view === "grammar"}
+          onClick={() => {
+            stopAudio();
+            setView("grammar");
+          }}
+        >
+          文法
+        </button>
+      </nav>
       <label>
         検索
-        <input type="search" value={query} onChange={(e) => setQuery(e.target.value)} />
+        <input
+          type="search"
+          value={query}
+          onChange={(e) => {
+            stopAudio();
+            setQuery(e.target.value);
+            setPage(0);
+          }}
+        />
       </label>
-      <h2>語彙</h2>
-      {vocab.map((v) => (
-        <p id={v.id} key={v.id}>
-          <strong lang="ko">{v.korean}</strong>：{v.meaning}（{v.partOfSpeech}、辞書形{" "}
-          <span lang="ko">{v.dictionaryForm}</span>、{lessonLabel(v.firstDay)}）
-          <ReviewControl id={v.id} progress={progress} update={update} />
-        </p>
-      ))}
-      <h2>文法</h2>
-      {grammar.map((g) => (
-        <p id={g.id} key={g.id}>
-          {ko(g.name)}（
-          <a
-            href={link(
-              `lesson/${lessons.find((l) => l.day === g.firstDay)?.id}?${g.sectionId ?? "section-0"}`,
-            )}
-          >
-            {lessonLabel(g.firstDay)}の本文
-          </a>
-          ）
-          <ReviewControl id={g.id} progress={progress} update={update} />
-        </p>
-      ))}
+      {view === "vocabulary" ? (
+        <>
+          <div className="wordbook-filters">
+            <label>
+              品詞
+              <select
+                value={part}
+                onChange={(e) => {
+                  stopAudio();
+                  setPart(e.target.value);
+                  setPage(0);
+                }}
+              >
+                <option value="">すべて</option>
+                {parts.map((item) => (
+                  <option key={item}>{item}</option>
+                ))}
+              </select>
+            </label>
+            <label>
+              <input
+                type="checkbox"
+                checked={hideMeaning}
+                onChange={(e) => setHideMeaning(e.target.checked)}
+              />
+              意味を隠す
+            </label>
+          </div>
+          <p>
+            頻度順（順位未照合の語は末尾）。頻度資料：{" "}
+            <a href="https://www.korean.go.kr/front/etcData/etcDataView.do?etc_seq=70&amp;mn_id=46&amp;pageIndex=26">
+              国立国語院（2003年／2002年）
+            </a>
+          </p>
+          <p ref={pageRange} tabIndex={-1}>
+            {vocab.length}語
+            {vocab.length > 0 &&
+              `（${page * pageSize + 1}〜${Math.min((page + 1) * pageSize, vocab.length)}語を表示）`}
+            。韓国語を押すと端末の合成音声で再生します。音声の内容は未確認です。
+          </p>
+          {audioError && <p role="status">{audioError}</p>}
+          {vocab.length === 0 && <p>該当する単語はありません。</p>}
+          {vocab.slice(page * pageSize, (page + 1) * pageSize).map((v) => (
+            <div className="wordbook-entry" id={v.id} key={v.id}>
+              <div className="wordbook-entry-main">
+                <div>
+                  {/[가-힣]/.test(v.dictionaryForm) ? (
+                    <button
+                      className="word-audio"
+                      lang="ko"
+                      aria-label={`${v.korean}の音声を再生`}
+                      onClick={() => playAudio(v.dictionaryForm)}
+                    >
+                      {v.korean}
+                    </button>
+                  ) : (
+                    <strong lang="ko">{v.korean}</strong>
+                  )}
+                  {!hideMeaning && <span className="wordbook-meaning">{v.meaning}</span>}
+                  <small>
+                    {v.partOfSpeech}
+                    {v.frequencyRank ? `・頻度順位${v.frequencyRank}` : "・順位未照合"}
+                    {v.firstDay ? `・${lessonLabel(v.firstDay)}` : ""}
+                  </small>
+                </div>
+                <ReviewControl id={v.id} progress={progress} update={update} />
+              </div>
+              {v.example && (
+                <p>
+                  <span lang="ko">{v.example.korean}</span>
+                  {!hideMeaning && <>：{v.example.japanese}</>}
+                </p>
+              )}
+            </div>
+          ))}
+          {pageCount > 1 && (
+            <nav className="wordbook-pagination" aria-label="単語帳のページ">
+              <button
+                type="button"
+                disabled={page === 0}
+                onClick={() => {
+                  stopAudio();
+                  focusPageRange.current = true;
+                  setPage(page - 1);
+                }}
+              >
+                前へ
+              </button>
+              <span>
+                {page + 1} / {pageCount}
+              </span>
+              <button
+                type="button"
+                disabled={page + 1 >= pageCount}
+                onClick={() => {
+                  stopAudio();
+                  focusPageRange.current = true;
+                  setPage(page + 1);
+                }}
+              >
+                次へ
+              </button>
+            </nav>
+          )}
+        </>
+      ) : (
+        <>
+          <p>
+            教科書順・{grammar.length}
+            件。韓国語を押すと端末の合成音声で再生します。音声の内容は未確認です。
+          </p>
+          {audioError && <p role="status">{audioError}</p>}
+          {grammar.length === 0 && <p>該当する文法はありません。</p>}
+          {grammar.map(({ item: g, lesson, section }) => (
+            <div className="grammar-entry" id={g.id} key={g.id}>
+              <details>
+                <summary>{ko(g.name)}</summary>
+                {section ? <p>{ko(section.paragraphs[0])}</p> : <p>説明は本文で確認できます。</p>}
+                {lesson?.examples[0] && (
+                  <p>
+                    同じ節の例文：
+                    <button
+                      type="button"
+                      className="word-audio"
+                      lang="ko"
+                      aria-label={`${lesson.examples[0].korean}の音声を再生`}
+                      onClick={() => playAudio(lesson.examples[0].korean)}
+                    >
+                      {lesson.examples[0].korean}
+                    </button>
+                    ：{lesson.examples[0].japanese}
+                  </p>
+                )}
+                {lesson && (
+                  <a href={link(`lesson/${lesson.id}?${g.sectionId ?? "section-0"}`)}>
+                    {lessonLabel(g.firstDay)}の本文を読む
+                  </a>
+                )}
+              </details>
+              <ReviewControl id={g.id} progress={progress} update={update} />
+            </div>
+          ))}
+        </>
+      )}
     </main>
   );
 }
-function Settings({
-  progress,
-  apply,
-}: {
-  progress: Progress;
-  update: Update;
-  apply: (p: Progress) => void;
-}) {
+function DataManagement({ progress, apply }: { progress: Progress; apply: (p: Progress) => void }) {
   const [preview, setPreview] = useState<Progress | null>(null);
   const [error, setError] = useState("");
   return (
-    <main>
-      <h1>設定とバックアップ</h1>
-      <AudioDiagnostics />
+    <details className="data-management">
+      <summary>データ管理</summary>
       <section>
         <h2>バックアップ</h2>
         <p>
@@ -1444,7 +1738,7 @@ function Settings({
           </div>
         )}
       </section>
-    </main>
+    </details>
   );
 }
 export default function App() {

@@ -1,5 +1,5 @@
 import { useRef, useState } from "react";
-import { AudioButton } from "../audio";
+import { AudioButton, AudioDiagnostics } from "../audio";
 import { Recorder } from "../recording";
 import "./style.css";
 
@@ -17,12 +17,17 @@ const vowels = [
 ];
 
 export function PronunciationPage() {
+  const [showAudioHelp, setShowAudioHelp] = useState(false);
   return (
     <main className="reference-page">
       <h1>発音リファレンス</h1>
       <p>
         字母の名前と音節の中の音は別です。以下の音声は音節や単語を読み上げます。端末の合成音声は発音の内容が未確認です。
       </p>
+      <details onToggle={(event) => setShowAudioHelp(event.currentTarget.open)}>
+        <summary>音声が出ないとき</summary>
+        {showAudioHelp && <AudioDiagnostics />}
+      </details>
       <h2>基本母音</h2>
       <p>
         口の形を鏡で見ながら音節を聞き、似た音を交互にまねします。カタカナへの置き換えは目安になりません。
