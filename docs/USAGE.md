@@ -4,7 +4,7 @@
 
 リポジトリのルートで初回に`mise install --locked`、`pnpm install --frozen-lockfile`を実行します。`mise run dev`で起動し、表示されたURLの`/korean-textbook/`を開きます。終了はCtrl+Cです。通常は`mise run dev`だけで再起動できます。
 
-`mise run build`で型検査とビルドを実行し、`dist/`を生成します。`mise run preview`で生成物をローカル確認できます。表示されたURLの`/korean-textbook/`を開き、Ctrl+Cで終了します。公開手順と配信状態は[配信準備](DEPLOYMENT.md)を参照してください。
+`mise run build`で型検査とビルドを実行し、`dist/`を生成します。`mise run preview`で生成物をローカル確認できます。表示されたURLの`/korean-textbook/`を開き、Ctrl+Cで終了します。公開手順と配信状態は[配信](DEPLOYMENT.md)を参照してください。
 
 ## 学習
 

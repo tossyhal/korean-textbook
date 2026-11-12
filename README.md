@@ -20,4 +20,4 @@ mise run dev
 
 進捗はブラウザーの配信元（プロトコル・ホスト・ポート）ごとに保存され、同じ配信元のハッシュ移動では共有されます。端末間の自動同期はなく、ブラウザーのデータ削除で消えるため、ホームの「データ管理」からJSONをバックアップしてください。録音は含まれません。
 
-GitHub Pagesへの初回配信は準備中です。[配信手順](docs/DEPLOYMENT.md)に設定と確認事項を記録しています。
+[GitHub Pagesで教材を開く](https://tossyhal.github.io/korean-textbook/)。[配信手順](docs/DEPLOYMENT.md)に設定と確認事項を記録しています。
