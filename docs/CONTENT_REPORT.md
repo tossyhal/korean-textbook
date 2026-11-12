@@ -10,13 +10,13 @@
 
 | 章・節（内部day） | 収録・元ファイル                                                             | 本文項目 | 本文文字 | 例文 | 対話 | 演習 | 出口 | 新語ID | 言語       | 音声       | 音声データ                | 出典 |
 | ----------------- | ---------------------------------------------------------------------------- | -------: | -------: | ---: | ---: | ---: | ---: | -----: | ---------- | ---------- | ------------------------- | ---- |
-| 第1章 第1節（1）  | [ハングルの組み立てと入力](../src/content/lessons/week01/day01.ts)           |        3 |     1409 |    6 |    1 |   12 |    5 |      1 | unverified | unverified | checked 0 / unverified 7  | 2件  |
-| 第1章 第2節（2）  | [複合母音と子音の対立](../src/content/lessons/week01/day02.ts)               |        3 |     1024 |    6 |    1 |   12 |    5 |      0 | unverified | unverified | checked 0 / unverified 7  | 1件  |
-| 第1章 第3節（3）  | [パッチムと音の変化](../src/content/lessons/week01/day03.ts)                 |        2 |     1059 |    6 |    1 |   12 |    5 |      3 | unverified | unverified | checked 0 / unverified 7  | 1件  |
+| 第1章 第1節（1）  | [ハングルの組み立てと入力](../src/content/lessons/week01/day01.ts)           |        3 |     1382 |    6 |    1 |   12 |    5 |      1 | unverified | unverified | checked 0 / unverified 7  | 2件  |
+| 第1章 第2節（2）  | [複合母音と子音の対立](../src/content/lessons/week01/day02.ts)               |        3 |      998 |    6 |    1 |   12 |    5 |      0 | unverified | unverified | checked 0 / unverified 7  | 1件  |
+| 第1章 第3節（3）  | [パッチムと音の変化](../src/content/lessons/week01/day03.ts)                 |        2 |     1033 |    6 |    1 |   12 |    5 |      3 | unverified | unverified | checked 0 / unverified 7  | 1件  |
 | 第1章 第4節（4）  | [自己紹介と名詞の文](../src/content/lessons/week01/day04.ts)                 |        3 |     1110 |    6 |    3 |   13 |    6 |     11 | unverified | unverified | checked 0 / unverified 11 | 2件  |
 | 第1章 第5節（5）  | [存在と場所](../src/content/lessons/week01/day05.ts)                         |        2 |      721 |    6 |    2 |   15 |    6 |     15 | unverified | unverified | checked 0 / unverified 10 | 3件  |
 | 第1章 第6節（6）  | [動作と丁寧な現在形](../src/content/lessons/week01/day06.ts)                 |        2 |      817 |    7 |    2 |   13 |    6 |     12 | unverified | unverified | checked 0 / unverified 11 | 2件  |
-| 第1章 第7節（7）  | [第1週の確認](../src/content/lessons/week01/day07.ts)                        |        1 |      336 |    1 |    1 |    1 |   20 |      0 | unverified | unverified | checked 0 / unverified 6  | 1件  |
+| 第1章 第7節（7）  | [第1週の確認](../src/content/lessons/week01/day07.ts)                        |        1 |      307 |    1 |    1 |    1 |   20 |      0 | unverified | unverified | checked 0 / unverified 6  | 1件  |
 | 第2章 第1節（8）  | [しない・できない](../src/content/lessons/week02/day08.ts)                   |        5 |      935 |    8 |    4 |   14 |    7 |     14 | unverified | unverified | checked 0 / unverified 14 | 7件  |
 | 第2章 第2節（9）  | [過去の出来事](../src/content/lessons/week02/day09.ts)                       |        5 |      804 |    8 |    4 |   13 |    7 |      8 | unverified | unverified | checked 0 / unverified 14 | 3件  |
 | 第2章 第3節（10） | [これからの予定](../src/content/lessons/week02/day10.ts)                     |        5 |      709 |    8 |    4 |   13 |    7 |     10 | unverified | unverified | checked 0 / unverified 14 | 1件  |
@@ -29,43 +29,43 @@
 | 第3章 第3節（17） | [対比と理由を伝える](../src/content/lessons/week03/day17.ts)                 |        4 |      736 |    8 |   11 |   13 |    7 |     11 | unverified | unverified | checked 0 / unverified 21 | 2件  |
 | 第3章 第4節（18） | [範囲・追加・限定](../src/content/lessons/week03/day18.ts)                   |        5 |     1001 |   10 |    4 |   15 |    7 |     16 | unverified | unverified | checked 0 / unverified 16 | 2件  |
 | 第3章 第5節（19） | [性質を説明する](../src/content/lessons/week03/day19.ts)                     |        4 |      856 |   12 |    4 |   13 |    7 |     12 | unverified | unverified | checked 0 / unverified 18 | 3件  |
-| 第3章 第6節（20） | [頻出形を整理する](../src/content/lessons/week03/day20.ts)                   |        4 |      931 |   11 |    4 |   14 |    7 |     12 | unverified | unverified | checked 0 / unverified 17 | 3件  |
+| 第3章 第6節（20） | [頻出形を整理する](../src/content/lessons/week03/day20.ts)                   |        4 |      924 |   11 |    4 |   14 |    7 |     12 | unverified | unverified | checked 0 / unverified 17 | 3件  |
 | 第3章 第7節（21） | [第3週の確認](../src/content/lessons/week03/day21.ts)                        |        1 |      245 |    1 |    1 |    1 |   20 |      0 | unverified | unverified | checked 0 / unverified 6  | 1件  |
 | 第4章 第1節（22） | [今していること](../src/content/lessons/week04/day22.ts)                     |        5 |     1166 |   15 |    4 |   13 |    7 |     10 | unverified | unverified | checked 0 / unverified 21 | 1件  |
-| 第4章 第2節（23） | [必要なことを伝える](../src/content/lessons/week04/day23.ts)                 |        5 |     1144 |   16 |    4 |   13 |    7 |     12 | unverified | unverified | checked 0 / unverified 22 | 1件  |
+| 第4章 第2節（23） | [必要なことを伝える](../src/content/lessons/week04/day23.ts)                 |        5 |     1132 |   16 |    4 |   13 |    7 |     12 | unverified | unverified | checked 0 / unverified 22 | 1件  |
 | 第4章 第3節（24） | [条件を伝える](../src/content/lessons/week04/day24.ts)                       |        5 |     1072 |   16 |    4 |   13 |    7 |     12 | unverified | unverified | checked 0 / unverified 22 | 2件  |
 | 第4章 第4節（25） | [許可と禁止](../src/content/lessons/week04/day25.ts)                         |        4 |      929 |    8 |    4 |   13 |    7 |      7 | unverified | unverified | checked 0 / unverified 14 | 1件  |
 | 第4章 第5節（26） | [名詞を詳しく説明する](../src/content/lessons/week04/day26.ts)               |        5 |     1246 |   13 |    4 |   13 |    7 |     12 | unverified | unverified | checked 0 / unverified 19 | 1件  |
 | 第4章 第6節（27） | [敬語と丁寧さ](../src/content/lessons/week04/day27.ts)                       |        5 |     1512 |   13 |    4 |   13 |    7 |     12 | unverified | unverified | checked 0 / unverified 19 | 2件  |
 | 第4章 第7節（28） | [中間総合確認](../src/content/lessons/week04/day28.ts)                       |        2 |      359 |    1 |    1 |    1 |   24 |      0 | unverified | unverified | checked 0 / unverified 8  | 1件  |
-| 第5章 第1節（29） | [飲食店で注文する](../src/content/lessons/week05/day29.ts)                   |        4 |     1368 |    8 |    8 |   13 |    7 |     24 | unverified | unverified | checked 0 / unverified 30 | 2件  |
+| 第5章 第1節（29） | [飲食店で注文する](../src/content/lessons/week05/day29.ts)                   |        4 |     1404 |    8 |    8 |   13 |    7 |     24 | unverified | unverified | checked 0 / unverified 30 | 2件  |
 | 第5章 第2節（30） | [買い物で尋ねる](../src/content/lessons/week05/day30.ts)                     |        4 |     1397 |    8 |    8 |   13 |    7 |     23 | unverified | unverified | checked 0 / unverified 30 | 1件  |
 | 第5章 第3節（31） | [交通機関を使う](../src/content/lessons/week05/day31.ts)                     |        4 |     1306 |    8 |    8 |   13 |    7 |     20 | unverified | unverified | checked 0 / unverified 30 | 1件  |
 | 第5章 第4節（32） | [場所と道案内](../src/content/lessons/week05/day32.ts)                       |        4 |     1329 |   10 |    8 |   15 |    7 |     20 | unverified | unverified | checked 0 / unverified 32 | 1件  |
 | 第5章 第5節（33） | [宿泊先で困ったとき](../src/content/lessons/week05/day33.ts)                 |        4 |     1400 |   11 |    8 |   16 |    7 |     21 | unverified | unverified | checked 0 / unverified 36 | 1件  |
 | 第5章 第6節（34） | [待ち合わせと予定変更](../src/content/lessons/week05/day34.ts)               |        4 |     1706 |   10 |    6 |   16 |    7 |     23 | unverified | unverified | checked 0 / unverified 30 | 1件  |
-| 第5章 第7節（35） | [場面別の総合確認](../src/content/lessons/week05/day35.ts)                   |        1 |      444 |    1 |    1 |    1 |   24 |      0 | unverified | unverified | checked 0 / unverified 20 | 1件  |
-| 第6章 第1節（36） | [趣味と好きなこと](../src/content/lessons/week06/day36.ts)                   |        4 |      959 |    8 |    6 |   14 |    7 |     21 | unverified | unverified | checked 0 / unverified 28 | 1件  |
-| 第6章 第2節（37） | [大学・研究・仕事を紹介する](../src/content/lessons/week06/day37.ts)         |        4 |      779 |    8 |    6 |   13 |    7 |     24 | unverified | unverified | checked 0 / unverified 25 | 3件  |
+| 第5章 第7節（35） | [場面別の総合確認](../src/content/lessons/week05/day35.ts)                   |        1 |      501 |    1 |    1 |    1 |   24 |      0 | unverified | unverified | checked 0 / unverified 20 | 1件  |
+| 第6章 第1節（36） | [趣味と好きなこと](../src/content/lessons/week06/day36.ts)                   |        4 |     1014 |    8 |    6 |   14 |    7 |     21 | unverified | unverified | checked 0 / unverified 28 | 1件  |
+| 第6章 第2節（37） | [大学・研究・仕事を紹介する](../src/content/lessons/week06/day37.ts)         |        4 |      829 |    8 |    6 |   13 |    7 |     24 | unverified | unverified | checked 0 / unverified 25 | 3件  |
 | 第6章 第3節（38） | [家族・友人と人物の紹介](../src/content/lessons/week06/day38.ts)             |        4 |      780 |    8 |    6 |   13 |    7 |     23 | unverified | unverified | checked 0 / unverified 25 | 2件  |
-| 第6章 第4節（39） | [感想と比較](../src/content/lessons/week06/day39.ts)                         |        4 |      715 |    8 |    6 |   13 |    7 |     19 | unverified | unverified | checked 0 / unverified 25 | 1件  |
-| 第6章 第5節（40） | [過去の出来事と順序](../src/content/lessons/week06/day40.ts)                 |        4 |      668 |    8 |    6 |   14 |    7 |     18 | unverified | unverified | checked 0 / unverified 25 | 2件  |
-| 第6章 第6節（41） | [希望と計画、その理由](../src/content/lessons/week06/day41.ts)               |        4 |      828 |    8 |    6 |   14 |    7 |     18 | unverified | unverified | checked 0 / unverified 25 | 1件  |
+| 第6章 第4節（39） | [感想と比較](../src/content/lessons/week06/day39.ts)                         |        4 |      933 |    8 |    6 |   13 |    7 |     19 | unverified | unverified | checked 0 / unverified 25 | 1件  |
+| 第6章 第5節（40） | [過去の出来事と順序](../src/content/lessons/week06/day40.ts)                 |        4 |     1087 |    8 |    6 |   14 |    7 |     18 | unverified | unverified | checked 0 / unverified 25 | 2件  |
+| 第6章 第6節（41） | [希望と計画、その理由](../src/content/lessons/week06/day41.ts)               |        4 |     1315 |    8 |    6 |   14 |    7 |     18 | unverified | unverified | checked 0 / unverified 25 | 1件  |
 | 第6章 第7節（42） | [会話の総合確認](../src/content/lessons/week06/day42.ts)                     |        1 |      189 |    1 |    1 |    1 |   24 |      0 | unverified | unverified | checked 0 / unverified 26 | 1件  |
-| 第7章 第1節（43） | [母音と平音・激音・濃音を聞き分ける](../src/content/lessons/week07/day43.ts) |        4 |      915 |   16 |    4 |   13 |    7 |      4 | unverified | unverified | checked 0 / unverified 21 | 3件  |
-| 第7章 第2節（44） | [パッチムと音のつながり](../src/content/lessons/week07/day44.ts)             |        4 |     1223 |   16 |    2 |   13 |    7 |      2 | unverified | unverified | checked 0 / unverified 19 | 5件  |
+| 第7章 第1節（43） | [母音と平音・激音・濃音を聞き分ける](../src/content/lessons/week07/day43.ts) |        4 |      875 |   16 |    4 |   13 |    7 |      4 | unverified | unverified | checked 0 / unverified 21 | 3件  |
+| 第7章 第2節（44） | [パッチムと音のつながり](../src/content/lessons/week07/day44.ts)             |        4 |     1216 |   16 |    2 |   13 |    7 |      2 | unverified | unverified | checked 0 / unverified 19 | 5件  |
 | 第7章 第3節（45） | [質問と数字を素早く理解する](../src/content/lessons/week07/day45.ts)         |        4 |      551 |    8 |    4 |   17 |   10 |      0 | unverified | unverified | checked 0 / unverified 21 | 1件  |
 | 第7章 第4節（46） | [短い会話を聞いて書き取る](../src/content/lessons/week07/day46.ts)           |        4 |      526 |    6 |    2 |   13 |    7 |      0 | unverified | unverified | checked 0 / unverified 15 | 2件  |
-| 第7章 第5節（47） | [予定の時・場所・行動を聞き取る](../src/content/lessons/week07/day47.ts)     |        4 |      599 |    6 |    2 |   13 |    7 |      0 | unverified | unverified | checked 0 / unverified 16 | 2件  |
+| 第7章 第5節（47） | [予定の時・場所・行動を聞き取る](../src/content/lessons/week07/day47.ts)     |        4 |      581 |    6 |    2 |   13 |    7 |      0 | unverified | unverified | checked 0 / unverified 16 | 2件  |
 | 第7章 第6節（48） | [初めて聞く会話から情報を取り出す](../src/content/lessons/week07/day48.ts)   |        4 |      501 |    6 |    2 |   13 |    7 |      0 | unverified | unverified | checked 0 / unverified 15 | 2件  |
 | 第7章 第7節（49） | [聴解と弱点の確認](../src/content/lessons/week07/day49.ts)                   |        3 |      423 |    1 |    1 |    1 |   24 |      0 | unverified | unverified | checked 0 / unverified 14 | 2件  |
-| 第8章 第1節（50） | [初めて読む短文から情報を取り出す](../src/content/lessons/week08/day50.ts)   |        4 |      877 |    8 |    2 |   14 |    7 |      2 | unverified | unverified | checked 0 / unverified 14 | 2件  |
+| 第8章 第1節（50） | [初めて読む短文から情報を取り出す](../src/content/lessons/week08/day50.ts)   |        4 |      973 |    8 |    2 |   14 |    7 |      2 | unverified | unverified | checked 0 / unverified 14 | 2件  |
 | 第8章 第2節（51） | [日記とメッセージを書く](../src/content/lessons/week08/day51.ts)             |        4 |      878 |    8 |    2 |   14 |    7 |      2 | unverified | unverified | checked 0 / unverified 14 | 2件  |
-| 第8章 第3節（52） | [聞いた内容を自分の言葉で伝える](../src/content/lessons/week08/day52.ts)     |        4 |      762 |    6 |    2 |   14 |    7 |      1 | unverified | unverified | checked 0 / unverified 13 | 2件  |
+| 第8章 第3節（52） | [聞いた内容を自分の言葉で伝える](../src/content/lessons/week08/day52.ts)     |        4 |      748 |    6 |    2 |   14 |    7 |      1 | unverified | unverified | checked 0 / unverified 13 | 2件  |
 | 第8章 第4節（53） | [条件を伝える買い物](../src/content/lessons/week08/day53.ts)                 |        4 |      748 |    8 |    4 |   12 |    5 |      3 | unverified | unverified | checked 0 / unverified 27 | 3件  |
 | 第8章 第5節（54） | [身近な話題で会話する](../src/content/lessons/week08/day54.ts)               |        4 |      672 |    8 |    5 |   12 |    5 |      0 | unverified | unverified | checked 0 / unverified 25 | 2件  |
-| 第8章 第6節（55） | [弱点を見つけて補強する](../src/content/lessons/week08/day55.ts)             |        5 |      806 |    8 |    4 |   12 |    5 |      0 | unverified | unverified | checked 0 / unverified 12 | 2件  |
-| 第8章 第7節（56） | [最終総合テストとこれからの復習](../src/content/lessons/week08/day56.ts)     |        3 |      937 |    6 |    2 |   12 |   24 |      0 | unverified | unverified | checked 0 / unverified 28 | 2件  |
+| 第8章 第6節（55） | [弱点を見つけて補強する](../src/content/lessons/week08/day55.ts)             |        5 |      807 |    8 |    4 |   12 |    5 |      0 | unverified | unverified | checked 0 / unverified 12 | 2件  |
+| 第8章 第7節（56） | [最終総合テストとこれからの復習](../src/content/lessons/week08/day56.ts)     |        3 |      923 |    6 |    2 |   12 |   24 |      0 | unverified | unverified | checked 0 / unverified 28 | 2件  |
 
 ## 出典の記録
 
