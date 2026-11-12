@@ -74,9 +74,7 @@ export function ListeningTransfer({
   return (
     <section id="voice-transfer">
       <h2>別の合成音声で聞く</h2>
-      <p>
-        端末の韓国語合成音声を使います。音声の内容と発音は未確認です。異なる声でも同一話者の別バリエーションかは不明で、実際の話者差を代表しません。
-      </p>
+      <p>同じ文を2種類の合成音声で聞き比べます。</p>
       <p>
         利用できる声：
         {voices.length ? voices.map((v) => `${v.name} (${v.lang})`).join("、") : "なし"}

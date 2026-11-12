@@ -14,5 +14,9 @@ test("課の進行に応じて字母を選び、音節を組み立てる", async
   await builder.getByLabel("初声（最初の子音）").selectOption({ label: "ㅎ" });
   await builder.getByLabel("終声（パッチム）").selectOption({ label: "ㄴ" });
   await expect(builder.getByLabel("組み立てた音節 한")).toBeVisible();
-  await expect(builder.getByText("合成音声の発音は未確認です。")).toBeVisible();
+  await expect(
+    builder.getByLabel("組み立てた音節 한").getByRole("button", { name: "한を聞く" }),
+  ).toHaveText("한");
+  await expect(builder.getByRole("button")).toHaveCount(1);
+  await expect(builder.getByText("合成音声の発音は未確認です。")).toHaveCount(0);
 });

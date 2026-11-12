@@ -108,11 +108,6 @@ export function Recorder({ sampleText, audio }: { sampleText: string; audio?: Au
     <section>
       <h3>録音して比べる</h3>
       <p>録音はこの画面のメモリに保持され、送信されません。自動採点は行いません。</p>
-      <p>
-        {audio?.path
-          ? "手本は音声ファイル、または再生できない場合は端末の韓国語合成音声を使います。音声内容と発音の品質は未確認です。"
-          : "手本は端末の韓国語合成音声です。音声内容と発音の品質は未確認です。"}
-      </p>
       <button type="button" disabled={status !== "idle"} onClick={() => void start()}>
         録音開始
       </button>

@@ -18,12 +18,11 @@ import {
 } from "./domain/progress";
 import type { Progress } from "./domain/progress";
 import { exportBackup, parseBackup, tryLoadProgress, trySaveProgress } from "./storage/backup";
-import { AudioButton, AudioProvider, useAudio } from "./features/audio";
+import { AudioButton, AudioProvider, SpeakableText, useAudio } from "./features/audio";
 import { RoleplayView } from "./features/roleplay";
 import { ListeningTransfer } from "./features/listening-transfer";
 import { diagnosticQuestions } from "./features/assessment/bank";
 import { displayOptions } from "./features/assessment/options";
-import { assessmentScopes, makeRecommendations, skillLabels } from "./features/assessment/results";
 import { Recorder } from "./features/recording";
 import { addManualReview, removeManualReview } from "./features/review/manual";
 import { HangulBuilder } from "./features/learning/HangulBuilder";
@@ -41,8 +40,9 @@ const ids = contentIds(
   wordbook.map((word) => word.id),
 );
 const link = (path: string) => `#/${path}`;
-const ko = (text: string) => (
+const ko = (text: string, playable = false) => (
   <KoreanText
+    playable={playable}
     text={text
       .replace(/第(\d+)課/g, (_, day: string) => lessonLabel(Number(day)))
       .replace(/第([1-8])週/g, "第$1章")}
@@ -125,7 +125,6 @@ function AppContent() {
         <nav aria-label="主なメニュー">
           <a href={link("lessons")}>目次</a>
           <a href={link("review")}>復習</a>
-          <a href={link("results")}>学習結果</a>
           <a href={link("reference")}>単語帳・文法</a>
           <a href={link("pronunciation")}>発音</a>
           <a href={link("keyboard")}>入力</a>
@@ -152,7 +151,7 @@ function AppContent() {
       ) : route === "diagnostic" ? (
         <Contents progress={progress} />
       ) : route === "results" ? (
-        <ResultsPage progress={progress} />
+        <ReviewPage progress={progress} update={update} />
       ) : route === "reference" ? (
         <Reference progress={progress} update={update} />
       ) : route === "pronunciation" ? (
@@ -167,7 +166,6 @@ function AppContent() {
       ) : (
         <Home
           progress={progress}
-          update={update}
           apply={(p) => {
             const result = trySaveProgress(localStorage, p);
             if (result.ok) {
@@ -182,15 +180,7 @@ function AppContent() {
     </>
   );
 }
-function Home({
-  progress,
-  update,
-  apply,
-}: {
-  progress: Progress;
-  update: Update;
-  apply: (p: Progress) => void;
-}) {
+function Home({ progress, apply }: { progress: Progress; apply: (p: Progress) => void }) {
   const current = resumeLesson(lessons, progress);
   return (
     <main>
@@ -212,32 +202,6 @@ function Home({
         <p>
           復習が20件を超えています。今日は新出を控え、復習を20件まで優先しましょう。節はいつでも開けます。
         </p>
-      )}
-      <p>
-        <a href={link("results")}>技能別の学習結果を見る</a>
-      </p>
-      <h2>学習時間の目安</h2>
-      <fieldset>
-        <legend>今日の時間</legend>
-        {([60, 90, 120] as const).map((n) => (
-          <label className="inline" key={n}>
-            <input
-              type="radio"
-              name="mode"
-              checked={progress.settings.mode === n}
-              onChange={() => update((p) => ({ ...p, settings: { ...p.settings, mode: n } }))}
-            />
-            {n}分
-          </label>
-        ))}
-      </fieldset>
-      <p>60分では一部を次回に繰り越します。90分と同じ内容を同じ日数で終える目安ではありません。</p>
-      {current && (
-        <ul>
-          {current.modes[progress.settings.mode].map((x) => (
-            <li key={x}>{ko(x)}</li>
-          ))}
-        </ul>
       )}
       <p>
         <a href={link("lessons")}>すべての節を見る</a>
@@ -467,7 +431,6 @@ function QuestionView({
               <option value={3}>3回</option>
             </select>
           </label>
-          <p>音声の内容は未確認です。再生できない場合は未実施のままにできます。</p>
           {playError && (
             <p role="status">再生できませんでした。端末の音声設定を確認してください。</p>
           )}
@@ -605,7 +568,22 @@ function LessonPage({
   target?: string;
 }) {
   const checks = progress.productionChecks[l.id] ?? [];
-  const [vocabularyAudioError, setVocabularyAudioError] = useState("");
+  const [sidebarOpen, setSidebarOpen] = useState(() => {
+    try {
+      return localStorage.getItem("lesson-sidebar-open") !== "false";
+    } catch {
+      return true;
+    }
+  });
+  const sidebarToggle = useRef<HTMLButtonElement>(null);
+  const toggleSidebar = (open: boolean) => {
+    setSidebarOpen(open);
+    try {
+      localStorage.setItem("lesson-sidebar-open", String(open));
+    } catch {
+      /* UI preference is optional. */
+    }
+  };
   const [hideKorean, setHideKorean] = useState(false);
   const [hideJapanese, setHideJapanese] = useState(false);
   const [verticalTabs, setVerticalTabs] = useState(
@@ -706,17 +684,16 @@ function LessonPage({
     items.map((e, i) => (
       <div className="example" key={i}>
         {!hideKorean && (
-          <p lang="ko" className="korean">
-            {e.korean}
+          <p className="korean">
+            <SpeakableText text={e.korean} audio={e.audio} />
           </p>
         )}
         {!hideJapanese && <p>{ko(e.japanese)}</p>}
         {e.note && <p>{ko(e.note)}</p>}
-        <AudioButton text={e.korean} audio={e.audio} />
       </div>
     ));
   return (
-    <div className="lesson-layout">
+    <div className={`lesson-layout ${sidebarOpen ? "" : "sidebar-closed"}`}>
       <main
         onClick={(e) => {
           const section = (e.target as HTMLElement).closest("section[id]");
@@ -727,15 +704,45 @@ function LessonPage({
           if (section && progress.positions[l.id] !== section.id) mark(section.id);
         }}
       >
+        <div className="reader-toolbar">
+          <button
+            ref={sidebarToggle}
+            className="sidebar-toggle"
+            type="button"
+            aria-label={sidebarOpen ? "学習ナビゲーションを閉じる" : "学習ナビゲーションを開く"}
+            aria-expanded={sidebarOpen}
+            aria-controls="lesson-tabs"
+            onClick={() => toggleSidebar(!sidebarOpen)}
+          >
+            <svg
+              viewBox="0 0 24 24"
+              aria-hidden="true"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.8"
+            >
+              <rect x="3" y="4" width="18" height="16" rx="2" />
+              <path d="M9 4v16M12 9h6M12 13h6" />
+            </svg>
+          </button>
+        </div>
         <h1>
           {lessonLabel(l.day)} {ko(l.title)}
         </h1>
         <div
           className="lesson-tabs"
+          id="lesson-tabs"
+          hidden={!sidebarOpen}
           role="tablist"
           aria-label="節の内容"
           aria-orientation={verticalTabs ? "vertical" : "horizontal"}
           onKeyDown={(e) => {
+            if (e.key === "Escape") {
+              e.preventDefault();
+              toggleSidebar(false);
+              sidebarToggle.current?.focus();
+              return;
+            }
             const index = tabs.findIndex(([id]) => id === activeTab);
             const next =
               e.key === "ArrowRight" || e.key === "ArrowDown"
@@ -776,6 +783,9 @@ function LessonPage({
           aria-labelledby="tab-text"
           hidden={activeTab !== "text"}
         >
+          <p>
+            韓国語を押すと音声を聞けます。字母だけの場合は名前を読み、音の練習では音節や単語の例を使います。
+          </p>
           <section id="objectives" onClick={() => mark("objectives")}>
             <h2>今日できるようになること</h2>
             <ul>
@@ -788,7 +798,7 @@ function LessonPage({
             <section id={`section-${i}`} key={i} onClick={() => mark(`section-${i}`)}>
               <h2>{ko(s.heading)}</h2>
               {s.paragraphs.map((p, j) => (
-                <p key={j}>{ko(p)}</p>
+                <p key={j}>{ko(p, true)}</p>
               ))}
             </section>
           ))}
@@ -798,38 +808,11 @@ function LessonPage({
             <h2>語彙</h2>
             {l.vocabulary.length ? (
               <>
-                <p>韓国語を押すと端末の合成音声で再生します。音声の内容は未確認です。</p>
-                {vocabularyAudioError && <p role="status">{vocabularyAudioError}</p>}
                 {l.vocabulary.map((v) => (
                   <div className="wordbook-entry" key={v.id}>
                     <div className="wordbook-entry-main">
                       <div>
-                        {/[가-힣]/.test(v.dictionaryForm) ? (
-                          <button
-                            className="word-audio"
-                            lang="ko"
-                            aria-label={`${v.korean}の音声を再生`}
-                            onClick={() => {
-                              setVocabularyAudioError("");
-                              void audio.play(v.dictionaryForm).then(
-                                (ok) => {
-                                  if (!ok)
-                                    setVocabularyAudioError(
-                                      "音声を再生できませんでした。端末の音声設定を確認してください。",
-                                    );
-                                },
-                                () =>
-                                  setVocabularyAudioError(
-                                    "音声を再生できませんでした。端末の音声設定を確認してください。",
-                                  ),
-                              );
-                            }}
-                          >
-                            {v.korean}
-                          </button>
-                        ) : (
-                          <strong lang="ko">{v.korean}</strong>
-                        )}
+                        <SpeakableText text={v.korean} sampleText={v.dictionaryForm} />
                         <span className="wordbook-meaning">{v.meaning}</span>
                         <small>
                           {v.partOfSpeech}
@@ -1015,7 +998,6 @@ function LessonPage({
           </section>
           {l.day === 55 && (
             <p>
-              <a href={link("results")}>学習履歴から弱点と復習先を確認する</a>　
               <a href={link("review")}>今日の復習へ</a>
             </p>
           )}
@@ -1082,7 +1064,7 @@ function LessonPage({
             </p>
             {l.day === 56 && (
               <p>
-                <a href={link("results")}>技能別結果と次の2〜4週間の復習案を見る</a>
+                <a href={link("review")}>復習へ進む</a>
               </p>
             )}
             <p>未実施の確認テスト：{summary.unattempted + summary.self.unattempted}問</p>
@@ -1137,169 +1119,6 @@ function LessonPage({
         </div>
       </main>
     </div>
-  );
-}
-function ResultsPage({ progress }: { progress: Progress }) {
-  const scopes = assessmentScopes(lessons, progress);
-  const [scope, setScope] = useState(
-    () => [...scopes].reverse().find((item) => item.attempted)?.id ?? "all",
-  );
-  const selected = scopes.find((item) => item.id === scope);
-  const evaluated = selected ? lessons.filter((lesson) => lesson.id === selected.id) : lessons;
-  const { result, production, skills } = makeRecommendations(lessons, progress, evaluated);
-  const weak = lessons
-    .filter((l) =>
-      [
-        ...l.vocabulary.filter((x) => x.firstDay === l.day),
-        ...l.grammar.filter((x) => x.firstDay === l.day),
-        ...questions(l),
-      ].some((x) => progress.reviews.some((r) => r.id === x.id && r.due <= today())),
-    )
-    .slice(0, 5);
-  return (
-    <main>
-      <h1>技能別の学習結果</h1>
-      <label>
-        評価範囲
-        <select value={scope} onChange={(event) => setScope(event.target.value)}>
-          <option value="all">全履歴</option>
-          {scopes.map((item) => (
-            <option key={item.id} value={item.id}>
-              {lessonLabel(item.day)}の確認テスト{item.attempted ? "" : "（未実施）"}
-            </option>
-          ))}
-        </select>
-      </label>
-      <p>
-        {selected ? `${lessonLabel(selected.day)}の確認テスト` : "全履歴（各節の出口テスト）"}
-        ：自動採点の実施{result.attempted}/{result.total}問、未実施{result.unattempted}
-        問。未実施は0点として扱いません。
-      </p>
-      <p>自動採点の初回自力回答と問題の自己評価を表示します。公式な資格認定ではありません。</p>
-      <ul>
-        {(
-          [
-            ["reading", "読解"],
-            ["listening", "聴解"],
-            ["typing", "入力"],
-            ["writing", "作文"],
-            ["speaking", "発話"],
-          ] as const
-        ).map(([skill, label]) => {
-          const r = result.bySkill[skill];
-          return (
-            <li key={skill}>
-              {label}：
-              {r.firstAttempted ? `初回正答${r.firstCorrect}/${r.firstAttempted}` : "初回未実施"}
-              、未実施{r.unattempted}問、問題の自己評価{r.self.attempted}/{r.self.total}
-            </li>
-          );
-        })}
-      </ul>
-      <p>
-        節の自己評価：作文チェック{production.writing}/
-        {
-          evaluated.filter(
-            (lesson) => !lesson.production.kind || lesson.production.kind === "writing",
-          ).length
-        }
-        件、入力チェック{production.typing}/
-        {evaluated.filter((lesson) => lesson.production.kind === "typing").length}件、
-        発話チェック（発音練習を含む）{production.speaking}/{evaluated.length}件。
-        自動採点とは別の自己確認です。
-      </p>
-      <h2>復習先</h2>
-      {weak.length ? (
-        <ul>
-          {weak.map((l) => (
-            <li key={l.id}>
-              <a href={link(`lesson/${l.id}`)}>
-                {lessonLabel(l.day)} {ko(l.title)}
-              </a>
-            </li>
-          ))}
-        </ul>
-      ) : (
-        <p>期限到来の弱点はありません。未実施の節も確認しましょう。</p>
-      )}
-      <p>
-        <a href={link("review")}>期限の来た復習へ</a>
-      </p>
-      <h2>次の2〜4週間</h2>
-      <p>
-        1週目は上の期限到来の復習を1日最大20件行い、間違えた節の本文に戻ります。期限到来がなければ、以下の未実施の技能から確認しましょう。
-      </p>
-      {skills.some((item) => item.missed.length > 0) && (
-        <p>
-          初回に間違えた節：
-          {Array.from(
-            new Map(
-              skills.flatMap((item) => item.missed).map((lesson) => [lesson.id, lesson]),
-            ).values(),
-          )
-            .slice(0, 5)
-            .map((lesson) => (
-              <span key={lesson.id}>
-                {" "}
-                <a href={link(`lesson/${lesson.id}`)}>{lessonLabel(lesson.day)}</a>
-              </span>
-            ))}
-        </p>
-      )}
-      <p>
-        2週目は技能ごとに次の練習を選びます。初回回答が5問未満で対象問題が残る場合は、判定を急がず回答を増やします。
-      </p>
-      <ul>
-        {skills.map(({ skill, state, related, recommended }) => (
-          <li key={skill}>
-            {skillLabels[skill]}：
-            {state === "unattempted"
-              ? "未実施をまず確認"
-              : state === "more"
-                ? "回答を増やして確認"
-                : state === "review"
-                  ? "初回正答が8割未満のため復習を優先"
-                  : "8割以上のため別文や別声への転移を練習"}
-            。
-            {skill === "writing" &&
-              production.writing === 0 &&
-              "作文課題の自己確認も試しましょう。"}
-            {skill === "speaking" &&
-              production.speaking === 0 &&
-              "発話課題の自己確認も試しましょう。"}
-            {skill === "reading" && "本文や初見の短文を読んで内容を確かめます。"}
-            {skill === "listening" && "音声を聞いて内容を確かめます。"}
-            {skill === "typing" && "韓国語を入力して確認します。"}
-            {skill === "writing" && "課題を入力して自己確認します。"}
-            {skill === "speaking" && "課題を声に出して自己確認します。"}
-            {recommended.map((lesson) => (
-              <span key={lesson.id}>
-                {" "}
-                <a href={link(`lesson/${lesson.id}`)}>{lessonLabel(lesson.day)}</a>
-              </span>
-            ))}
-            {!related.length && "関連する出口テストは収録されていません。"}
-          </li>
-        ))}
-      </ul>
-      <p>
-        3〜4週目は間隔を空けて再評価し、別文や利用可能な別の声で確かめましょう。作文と発話は課題のチェック項目を使って自己評価します。
-      </p>
-      {lessons.some((lesson) => lesson.day >= 43) && (
-        <p>収録済みの第7章以降も技能練習や再評価に活用しましょう。</p>
-      )}
-      <ul>
-        {lessons
-          .filter((lesson) => lesson.day >= 43)
-          .map((lesson) => (
-            <li key={lesson.id}>
-              <a href={link(`lesson/${lesson.id}`)}>
-                {lessonLabel(lesson.day)} {ko(lesson.title)}
-              </a>
-            </li>
-          ))}
-      </ul>
-    </main>
   );
 }
 function ReviewPage({ progress, update }: { progress: Progress; update: Update }) {
@@ -1423,8 +1242,6 @@ function Reference({ progress, update }: { progress: Progress; update: Update })
   const [hideMeaning, setHideMeaning] = useState(false);
   const [view, setView] = useState<"vocabulary" | "grammar">("vocabulary");
   const [page, setPage] = useState(0);
-  const [audioError, setAudioError] = useState("");
-  const request = useRef(0);
   const pageRange = useRef<HTMLParagraphElement>(null);
   const focusPageRange = useRef(false);
   const audio = useAudio();
@@ -1434,32 +1251,8 @@ function Reference({ progress, update }: { progress: Progress; update: Update })
       pageRange.current?.focus();
     }
   }, [page]);
-  useEffect(
-    () => () => {
-      request.current++;
-      audio.stop();
-    },
-    [audio.stop],
-  );
-  const stopAudio = () => {
-    request.current++;
-    audio.stop();
-    setAudioError("");
-  };
-  const playAudio = (text: string) => {
-    const id = ++request.current;
-    setAudioError("");
-    void audio.play(text).then(
-      (ok) => {
-        if (id === request.current && !ok)
-          setAudioError("音声を再生できませんでした。端末の音声設定を確認してください。");
-      },
-      () => {
-        if (id === request.current)
-          setAudioError("音声を再生できませんでした。端末の音声設定を確認してください。");
-      },
-    );
-  };
+  useEffect(() => () => audio.stop(), [audio.stop]);
+  const stopAudio = () => audio.stop();
   const parts = Array.from(new Set(wordbook.map((word) => word.partOfSpeech))).sort();
   const search = query.trim().toLowerCase();
   const vocab = wordbook.filter(
@@ -1556,26 +1349,14 @@ function Reference({ progress, update }: { progress: Progress; update: Update })
             {vocab.length}語
             {vocab.length > 0 &&
               `（${page * pageSize + 1}〜${Math.min((page + 1) * pageSize, vocab.length)}語を表示）`}
-            。韓国語を押すと端末の合成音声で再生します。音声の内容は未確認です。
+            。
           </p>
-          {audioError && <p role="status">{audioError}</p>}
           {vocab.length === 0 && <p>該当する単語はありません。</p>}
           {vocab.slice(page * pageSize, (page + 1) * pageSize).map((v) => (
             <div className="wordbook-entry" id={v.id} key={v.id}>
               <div className="wordbook-entry-main">
                 <div>
-                  {/[가-힣]/.test(v.dictionaryForm) ? (
-                    <button
-                      className="word-audio"
-                      lang="ko"
-                      aria-label={`${v.korean}の音声を再生`}
-                      onClick={() => playAudio(v.dictionaryForm)}
-                    >
-                      {v.korean}
-                    </button>
-                  ) : (
-                    <strong lang="ko">{v.korean}</strong>
-                  )}
+                  <SpeakableText text={v.korean} sampleText={v.dictionaryForm} />
                   {!hideMeaning && <span className="wordbook-meaning">{v.meaning}</span>}
                   <small>
                     {v.partOfSpeech}
@@ -1587,7 +1368,7 @@ function Reference({ progress, update }: { progress: Progress; update: Update })
               </div>
               {v.example && (
                 <p>
-                  <span lang="ko">{v.example.korean}</span>
+                  <SpeakableText text={v.example.korean} />
                   {!hideMeaning && <>：{v.example.japanese}</>}
                 </p>
               )}
@@ -1627,9 +1408,8 @@ function Reference({ progress, update }: { progress: Progress; update: Update })
         <>
           <p>
             教科書順・{grammar.length}
-            件。韓国語を押すと端末の合成音声で再生します。音声の内容は未確認です。
+            件。
           </p>
-          {audioError && <p role="status">{audioError}</p>}
           {grammar.length === 0 && <p>該当する文法はありません。</p>}
           {grammar.map(({ item: g, lesson, section }) => (
             <div className="grammar-entry" id={g.id} key={g.id}>
@@ -1639,15 +1419,10 @@ function Reference({ progress, update }: { progress: Progress; update: Update })
                 {lesson?.examples[0] && (
                   <p>
                     同じ節の例文：
-                    <button
-                      type="button"
-                      className="word-audio"
-                      lang="ko"
-                      aria-label={`${lesson.examples[0].korean}の音声を再生`}
-                      onClick={() => playAudio(lesson.examples[0].korean)}
-                    >
-                      {lesson.examples[0].korean}
-                    </button>
+                    <SpeakableText
+                      text={lesson.examples[0].korean}
+                      audio={lesson.examples[0].audio}
+                    />
                     ：{lesson.examples[0].japanese}
                   </p>
                 )}

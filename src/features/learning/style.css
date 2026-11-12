@@ -124,20 +124,36 @@ section {
   width: 100%;
   max-width: 1040px;
   display: grid;
-  grid-template-columns: 170px minmax(0, 720px);
+  grid-template-columns: 170px minmax(0, 1fr);
   column-gap: 2rem;
   align-items: start;
 }
 .lesson-layout h1 {
   grid-column: 2;
+  grid-row: 2;
+}
+.reader-toolbar {
+  grid-column: 1 / -1;
+  grid-row: 1;
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  background: #fff;
+  border-bottom: 1px solid #ccdade;
+}
+html:has(.lesson-layout) {
+  scroll-padding-top: 4rem;
+}
+.lesson-layout section {
+  scroll-margin-top: 4rem;
 }
 .lesson-tabs {
   grid-column: 1;
-  grid-row: 2;
+  grid-row: 3;
   display: flex;
   flex-direction: column;
   position: sticky;
-  top: 1rem;
+  top: 3.75rem;
   border-right: 1px solid #ccdade;
 }
 .lesson-tabs button {
@@ -153,7 +169,7 @@ section {
 }
 .lesson-layout [role="tabpanel"] {
   grid-column: 2;
-  grid-row: 2;
+  grid-row: 3;
   min-width: 0;
 }
 .lesson-actions {
@@ -411,4 +427,40 @@ summary:focus-visible {
 }
 .grammar-entry details p {
   margin-top: 0;
+}
+
+.sidebar-toggle {
+  display: block;
+  width: 44px;
+  padding: 0.55rem;
+  border: 0;
+}
+.sidebar-toggle svg {
+  display: block;
+  width: 24px;
+  height: 24px;
+}
+.lesson-tabs[hidden] {
+  display: none;
+}
+.lesson-layout.sidebar-closed main {
+  max-width: 800px;
+  grid-template-columns: minmax(0, 1fr);
+}
+.sidebar-closed h1,
+.sidebar-closed [role="tabpanel"] {
+  grid-column: 1;
+}
+.sidebar-closed h1 {
+  grid-row: 2;
+}
+.sidebar-closed [role="tabpanel"] {
+  grid-row: 3;
+}
+button:not(:disabled):hover,
+.primary:hover {
+  background-color: #e4f2f1;
+}
+.primary:hover {
+  background-color: #10545b;
 }

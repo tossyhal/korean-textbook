@@ -5,7 +5,7 @@
 }
 .letter-sound-list li {
   display: grid;
-  grid-template-columns: minmax(2.5rem, auto) minmax(2rem, auto) 1fr auto;
+  grid-template-columns: minmax(2.5rem, auto) minmax(2rem, auto) 1fr;
   gap: 0.5rem;
   align-items: center;
   border-top: 1px solid #ccdade;
@@ -14,7 +14,4 @@
 .letter-sound-letter,
 .letter-sound-example {
   font-size: 1.15rem;
-}
-.letter-sound-list button {
-  padding-inline: 0.65rem;
 }

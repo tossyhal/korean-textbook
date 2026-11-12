@@ -2,6 +2,7 @@ import { KoreanText } from "../../components/KoreanText";
 import type { Lesson } from "../../domain/content";
 import type { Progress } from "../../domain/progress";
 import { AudioButton } from "../audio";
+import { SpeakableText } from "../audio/SpeakableText";
 import { Recorder } from "../recording";
 
 type Roleplay = NonNullable<Lesson["roleplay"]>;
@@ -84,7 +85,9 @@ export function RoleplayView({
           <summary>回答例を見る</summary>
           {turn.responseExamples.map((example, index) => (
             <div key={index}>
-              <p lang="ko">{example.korean}</p>
+              <p>
+                <SpeakableText text={example.korean} audio={example.audio} />
+              </p>
               <p>
                 <KoreanText text={example.japanese} />
               </p>
@@ -93,7 +96,6 @@ export function RoleplayView({
                   <KoreanText text={example.note} />
                 </p>
               )}
-              <AudioButton text={example.korean} audio={example.audio} />
             </div>
           ))}
         </details>

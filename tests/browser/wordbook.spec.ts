@@ -74,13 +74,12 @@ test("文法に同じ節の例文と意味を表示し、音声を再生でき�
   const entry = page.locator(".grammar-entry").first();
   await entry.locator("summary").click();
   await expect(entry).toContainText(`同じ節の例文：${example.korean}：${example.japanese}`);
-  await expect(page.getByText(/音声の内容は未確認です/)).toBeVisible();
-  await entry.getByRole("button", { name: `${example.korean}の音声を再生` }).click();
+  await entry.getByRole("button", { name: `${example.korean}を聞く` }).click();
   await expect
     .poll(() => page.evaluate(() => (window as unknown as { spoken: string }).spoken))
     .toBe(example.korean);
   await expect(page.getByRole("status")).toHaveText(
-    "音声を再生できませんでした。端末の音声設定を確認してください。",
+    "音声を再生できません。音声設定を確認してください。",
   );
 });
 

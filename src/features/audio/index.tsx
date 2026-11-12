@@ -1,3 +1,4 @@
+export { SpeakableText } from "./SpeakableText";
 import {
   createContext,
   useCallback,
@@ -152,7 +153,6 @@ export function AudioButton({
   const [rate, setRate] = useState(1);
   const [repeat, setRepeat] = useState(1);
   const [error, setError] = useState(false);
-  const [source, setSource] = useState<"file" | "tts" | null>(null);
   const request = useRef(0);
   useEffect(
     () => () => {
@@ -164,12 +164,10 @@ export function AudioButton({
   const play = async (value: string, data?: AudioData, complete = false) => {
     const id = ++request.current;
     setError(false);
-    setSource(null);
     const success = await player.play(value, data, {
       rate,
       repeat,
       allowFallback,
-      onSource: setSource,
     });
     if (id !== request.current) return;
     if (success && complete) onPlaybackComplete?.();
@@ -217,15 +215,6 @@ export function AudioButton({
           </div>
         )}
       </details>
-      <small>
-        {source === "tts"
-          ? "端末の韓国語合成音声を再生しました。音声の内容は未確認です。"
-          : source === "file" && audio
-            ? `再生した音声：${audio.source}（${audio.status === "checked" ? "確認済み" : "未確認"}）。`
-            : audio?.path
-              ? `音声：${audio.source}（${audio.status === "checked" ? "確認済み" : "未確認"}）。${allowFallback ? "利用できない場合は合成音声を使用します。" : "合成音声への切り替えは行いません。"}`
-              : "端末の韓国語合成音声を使用します。音声の内容は未確認です。"}
-      </small>
       {error && <p role="status">音声を再生できませんでした。端末の音声設定を確認してください。</p>}
     </div>
   );
@@ -256,7 +245,7 @@ export function AudioDiagnostics() {
   return (
     <section>
       <p>
-        端末やブラウザーで使える韓国語の合成音声を自動で選びます。声が複数ある場合は聞き比べて選べます。発音の品質は未確認です。
+        端末やブラウザーで使える韓国語の合成音声を自動で選びます。声が複数ある場合は聞き比べて選べます。
       </p>
       {!supported ? (
         <p>このブラウザーは読み上げに対応していません。</p>

@@ -1,5 +1,5 @@
 import { useRef, useState } from "react";
-import { AudioButton, AudioDiagnostics } from "../audio";
+import { AudioButton, AudioDiagnostics, SpeakableText } from "../audio";
 import { Recorder } from "../recording";
 import "./style.css";
 
@@ -21,9 +21,7 @@ export function PronunciationPage() {
   return (
     <main className="reference-page">
       <h1>発音リファレンス</h1>
-      <p>
-        字母の名前と音節の中の音は別です。以下の音声は音節や単語を読み上げます。端末の合成音声は発音の内容が未確認です。
-      </p>
+      <p>字母の名前と音節の中の音は別です。文字を押すと音節や単語を聞けます。</p>
       <details onToggle={(event) => setShowAudioHelp(event.currentTarget.open)}>
         <summary>音声が出ないとき</summary>
         {showAudioHelp && <AudioDiagnostics />}
@@ -36,10 +34,10 @@ export function PronunciationPage() {
         {vowels.map(([letter, syllable, description]) => (
           <section key={letter}>
             <h3 lang="ko">
-              {letter}：{syllable}
+              <SpeakableText text={letter} sampleText={syllable} />：
+              <SpeakableText text={syllable} />
             </h3>
             <p>{description}</p>
-            <AudioButton text={syllable} />
           </section>
         ))}
       </div>
@@ -47,36 +45,45 @@ export function PronunciationPage() {
       <p>
         ㅐ・ㅔは現代の多くの話者で近く、区別には話者差があります。音だけで必ず判定できると考えず、綴りも覚えましょう。ㅘ・ㅝは唇を丸めた状態から次の母音へ移り、ㅟ・ㅢも一音節としてつなぎます。ㅒ・ㅖ・ㅚ・ㅙ・ㅞも語の中で覚えます。
       </p>
-      <p>例：왜・웨、와・워、위・의</p>
-      <AudioButton text="왜 웨 와 워 위 의" />
+      <p>
+        例：
+        <SpeakableText text="왜" />・<SpeakableText text="웨" />、<SpeakableText text="와" />・
+        <SpeakableText text="워" />、<SpeakableText text="위" />・<SpeakableText text="의" />
+      </p>
       <h2>平音・激音・濃音</h2>
       <p>
-        가・카・까で比べます。平音ㄱは力を入れすぎず、激音ㅋは息を強く出し、濃音ㄲは喉や口の緊張を伴い息を強く漏らさず出します。紙を口の前に置いて息を観察しましょう。日本語の清音・濁音と一対一には対応しません。ㄷ・ㅌ・ㄸ、ㅂ・ㅍ・ㅃ、ㅈ・ㅊ・ㅉも同様に比べます。
+        <SpeakableText text="가" />・<SpeakableText text="카" />・<SpeakableText text="까" />
+        で比べます。平音ㄱは力を入れすぎず、激音ㅋは息を強く出し、濃音ㄲは喉や口の緊張を伴い息を強く漏らさず出します。紙を口の前に置いて息を観察しましょう。日本語の清音・濁音と一対一には対応しません。ㄷ・ㅌ・ㄸ、ㅂ・ㅍ・ㅃ、ㅈ・ㅊ・ㅉも同様に比べます。
       </p>
-      <AudioButton text="가 카 까" />
       <h2>パッチムと音の変化</h2>
       <p>
         パッチムは音節の下にある終声です。代表的な終声はㄱ・ㄴ・ㄷ・ㄹ・ㅁ・ㅂ・ㅇの7種です。語末の閉鎖音に余分な母音を足さない練習をします。母音で始まる助詞などに続くときは、連音などの条件に従います。
       </p>
       <ul>
         <li>
-          連音：表記「집이」／発音「지비」。母音で始まる助詞へ終声が移ります。ㅎや口蓋音化などには別の規則があります。
+          連音：表記「
+          <SpeakableText text="집이" />
+          」／発音「지비」。母音で始まる助詞へ終声が移ります。ㅎや口蓋音化などには別の規則があります。
         </li>
-        <li>鼻音化：表記「국물」／発音「궁물」。後の鼻音に影響されます。</li>
-        <li>濃音化：表記「학교」／発音「학꾜」。後の子音が濃くなります。</li>
+        <li>
+          鼻音化：表記「
+          <SpeakableText text="국물" />
+          」／発音「궁물」。後の鼻音に影響されます。
+        </li>
+        <li>
+          濃音化：表記「
+          <SpeakableText text="학교" />
+          」／発音「학꾜」。後の子音が濃くなります。
+        </li>
       </ul>
       <p>音声は表記を読み上げます。発音欄を読み上げると別の変化が起こることがあります。</p>
-      <AudioButton text="집이 국물 학교" />
       <h2>聞く・区別する・まねする</h2>
       <ol>
         <li>가・카・까を順に聞き、息の強さと緊張に注目します。</li>
-        <li>順序を隠して自分で言い分け、違いを意識します。音声が未確認なので合否は付けません。</li>
+        <li>順序を隠して自分で言い分け、違いを意識します。</li>
         <li>同じ順序でまねし、録音と交互に聞きます。</li>
       </ol>
       <Recorder sampleText="가 카 까" />
-      <p>
-        口の説明と個別音声の言語的照合は未完了です。端末ごとの合成音声を母語話者の手本として保証しません。
-      </p>
     </main>
   );
 }
@@ -272,7 +279,7 @@ export function KeyboardPage(props: KeyboardProps) {
         <Practice key={id} id={id} prompt={prompt} answer={answer} hint={hint} {...props} />
       ))}
       <h2>聞いた語を入力</h2>
-      <p>音声は合成音声で内容未確認です。再生できないときは未実施のまま次へ進めます。</p>
+      <p>再生できないときは未実施のまま次へ進めます。</p>
       <AudioButton text="한글" onPlaybackComplete={() => setHeard(true)} />
       {heard && (
         <Practice

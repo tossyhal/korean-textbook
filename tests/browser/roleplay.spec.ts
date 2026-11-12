@@ -3,8 +3,12 @@ import { expect, test } from "@playwright/test";
 test("相手の再生後に返答し、ターン移動で録音を止めて復元する", async ({ page }) => {
   await page.addInitScript(() => {
     let active = false;
+    const spoken: string[] = [];
+    (window as unknown as { spoken: string[] }).spoken = spoken;
+    (window as unknown as { completed: number }).completed = 0;
     Object.defineProperty(window, "SpeechSynthesisUtterance", {
       value: class {
+        constructor(public text: string) {}
         onend: (() => void) | null = null;
       },
     });
@@ -15,7 +19,9 @@ test("相手の再生後に返答し、ターン移動で録音を止めて復�
         removeEventListener() {},
         cancel() {},
         speak(utterance: SpeechSynthesisUtterance) {
+          spoken.push(utterance.text);
           utterance.onend?.(new Event("end") as SpeechSynthesisEvent);
+          (window as unknown as { completed: number }).completed++;
         },
       },
     });
@@ -55,27 +61,32 @@ test("相手の再生後に返答し、ターン移動で録音を止めて復�
     Object.defineProperty(window, "MediaRecorder", { value: MockRecorder });
   });
   await page.goto("tests/browser/fixtures/roleplay.html");
-  await expect(
-    page.getByText("手本は端末の韓国語合成音声です。音声内容と発音の品質は未確認です。"),
-  ).toBeVisible();
   await expect(page.getByText("行きますか")).toBeHidden();
-  await expect(
-    page.getByText("端末の韓国語合成音声を使用します。音声の内容は未確認です。").first(),
-  ).toBeVisible();
   await expect(page.getByText("相手の音声：確認済み")).toHaveCount(0);
   await page.getByRole("button", { name: "音声を再生" }).first().click();
   await expect(page.getByText("やり取り 1/2")).toBeVisible();
-  await expect(
-    page.getByText("端末の韓国語合成音声を再生しました。音声の内容は未確認です。"),
-  ).toBeVisible();
+  await expect
+    .poll(() => page.evaluate(() => (window as unknown as { spoken: string[] }).spoken))
+    .toEqual(["가요?"]);
+  expect(await page.evaluate(() => (window as unknown as { completed: number }).completed)).toBe(1);
   await page.getByLabel("返答の下書き").fill("네");
-  await page.getByRole("button", { name: "録音開始" }).click();
-  await expect(page.getByText("録音中", { exact: true })).toBeVisible();
   await page.getByText("回答例を見る").click();
   await expect(page.getByText("いいえ", { exact: true })).toBeVisible();
+  await expect(page.getByRole("button", { name: "音声を再生" })).toHaveCount(1);
+  await page.getByRole("button", { name: "아니요を聞く" }).click();
+  await expect
+    .poll(() => page.evaluate(() => (window as unknown as { spoken: string[] }).spoken))
+    .toEqual(["가요?", "아니요"]);
+  await page.getByRole("button", { name: "録音開始" }).click();
+  await expect(page.getByText("録音中", { exact: true })).toBeVisible();
   await page.getByRole("button", { name: "次のやり取り" }).click();
   await expect(page.getByText("やり取り 2/2")).toBeVisible();
   expect(await page.evaluate(() => (window as unknown as { stopped: boolean }).stopped)).toBe(true);
+  await page.getByRole("button", { name: "音声を再生" }).first().click();
+  await expect
+    .poll(() => page.evaluate(() => (window as unknown as { spoken: string[] }).spoken))
+    .toEqual(["가요?", "아니요", "언제요?"]);
+  expect(await page.evaluate(() => (window as unknown as { completed: number }).completed)).toBe(3);
   await page.reload();
   await expect(page.getByText("やり取り 2/2")).toBeVisible();
   await page.getByRole("button", { name: "前のやり取り" }).click();

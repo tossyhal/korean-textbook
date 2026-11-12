@@ -177,3 +177,72 @@ test("節のタブを上下キーとHome・Endで操作する", async ({ page })
   await page.keyboard.press("Home");
   await expect(text).toBeFocused();
 });
+
+for (const width of [390, 1280]) {
+  test(`${width}pxで学習ナビゲーションを閉じて再開できる`, async ({ page }) => {
+    await page.setViewportSize({ width, height: 844 });
+    await page.goto(lesson);
+    const close = page.getByRole("button", { name: "学習ナビゲーションを閉じる" });
+    await page.evaluate(() => window.scrollTo(0, 1000));
+    await expect(close).toBeInViewport();
+    const toolbar = page.locator(".reader-toolbar");
+    for (const state of ["open", "closed"]) {
+      if (state === "closed") await close.click();
+      const bounds = await toolbar.evaluate((element) => {
+        const bar = element.getBoundingClientRect();
+        const main = element.parentElement!.getBoundingClientRect();
+        const button = element.querySelector("button")!.getBoundingClientRect();
+        return {
+          top: bar.top,
+          background: getComputedStyle(element).backgroundColor,
+          width: bar.width,
+          mainWidth: main.width,
+          buttonLeft: button.left - bar.left,
+          buttonRight: bar.right - button.right,
+        };
+      });
+      expect(bounds.top).toBe(0);
+      expect(bounds.background).toBe("rgb(255, 255, 255)");
+      expect(bounds.width).toBeCloseTo(bounds.mainWidth - 40, 0);
+      expect(bounds.buttonLeft).toBeGreaterThanOrEqual(0);
+      expect(bounds.buttonRight).toBeGreaterThanOrEqual(0);
+      expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(
+        width,
+      );
+    }
+    await page.locator("#section-1").evaluate((element) => element.scrollIntoView());
+    const headingTop = await page
+      .locator("#section-1 h2")
+      .evaluate((element) => element.getBoundingClientRect().top);
+    const toolbarBottom = await toolbar.evaluate(
+      (element) => element.getBoundingClientRect().bottom,
+    );
+    expect(headingTop).toBeGreaterThanOrEqual(toolbarBottom);
+    await page.evaluate(() => window.scrollTo(0, 1000));
+    await expect(page.getByRole("button", { name: "学習ナビゲーションを開く" })).toBeInViewport();
+    await page.getByRole("button", { name: "学習ナビゲーションを開く" }).click();
+    await page.getByRole("tab", { name: "練習" }).click();
+    const answer = page.locator("#day-01-ex-01").getByLabel("回答");
+    await page.evaluate(() => window.scrollTo(0, 0));
+    await answer.focus();
+    const answerTop = await answer.evaluate((element) => element.getBoundingClientRect().top);
+    expect(answerTop).toBeGreaterThanOrEqual(
+      await toolbar.evaluate((element) => element.getBoundingClientRect().bottom),
+    );
+    await close.click();
+    const open = page.getByRole("button", { name: "学習ナビゲーションを開く" });
+    await expect(open).toHaveAttribute("aria-expanded", "false");
+    await expect(page.getByRole("tablist", { name: "節の内容" })).toBeHidden();
+    await page.reload();
+    await expect(open).toBeVisible();
+    await open.click();
+    const practice = page.getByRole("tab", { name: "練習" });
+    await expect(practice).toHaveAttribute("aria-selected", "true");
+    await practice.focus();
+    await page.keyboard.press("Escape");
+    await expect(open).toBeFocused();
+    expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(
+      width,
+    );
+  });
+}

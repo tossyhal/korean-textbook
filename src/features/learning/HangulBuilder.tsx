@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { AudioButton } from "../audio";
+import { SpeakableText } from "../audio/SpeakableText";
 
 const initials = "ㄱㄲㄴㄷㄸㄹㅁㅂㅃㅅㅆㅇㅈㅉㅊㅋㅌㅍㅎ".split("");
 const vowels = "ㅏㅐㅑㅒㅓㅔㅕㅖㅗㅘㅙㅚㅛㅜㅝㅞㅟㅠㅡㅢㅣ".split("");
@@ -91,7 +91,7 @@ export function HangulBuilder({ day }: { day: number }) {
             →
           </span>
           <output className="hangul-syllable" aria-label={`組み立てた音節 ${syllable}`}>
-            <span lang="ko">{syllable}</span>
+            <SpeakableText text={syllable} />
           </output>
         </div>
         <p>
@@ -106,8 +106,6 @@ export function HangulBuilder({ day }: { day: number }) {
           初声の<span lang="ko">ㅇ</span>は音を出さず、母音から始めます。終声の
           <span lang="ko">ㅇ</span>は鼻に抜ける音です。
         </p>
-        <p>合成音声の発音は未確認です。</p>
-        <AudioButton text={syllable} />
       </div>
     </section>
   );

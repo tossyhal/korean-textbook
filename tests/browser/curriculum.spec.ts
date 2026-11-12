@@ -260,7 +260,6 @@ test("主要画面への移動", async ({ page }) => {
   for (const [name, route] of [
     ["目次", "lessons"],
     ["復習", "review"],
-    ["学習結果", "results"],
     ["単語帳・文法", "reference"],
     ["発音", "pronunciation"],
     ["入力", "keyboard"],
@@ -272,4 +271,13 @@ test("主要画面への移動", async ({ page }) => {
     await expect(page).toHaveURL(new RegExp(`#/${route}$`));
     await expect(page.locator("main h1")).toBeVisible();
   }
+});
+
+test("旧結果URLは復習へ移り、ホームに時間選択を表示しない", async ({ page }) => {
+  await page.goto("#/results");
+  await expect(page.locator("main h1")).toHaveText("復習");
+  await expect(page.getByRole("link", { name: "学習結果" })).toHaveCount(0);
+  await page.goto("#/home");
+  await expect(page.getByText("学習時間の目安")).toHaveCount(0);
+  await expect(page.getByRole("radio", { name: /60分|90分|120分/ })).toHaveCount(0);
 });

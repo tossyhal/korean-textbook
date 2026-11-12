@@ -1,0 +1,26 @@
+.speakable-wrap {
+  display: inline;
+}
+.speakable-text {
+  display: inline;
+  font: inherit;
+  color: #176a72;
+  background: transparent;
+  border: 0;
+  border-bottom: 1px dotted currentColor;
+  border-radius: 0;
+  padding: 0;
+  cursor: pointer;
+}
+.speakable-text:hover {
+  background: #e4f2f1;
+}
+.speakable-text:focus-visible {
+  outline: 2px solid #176a72;
+  outline-offset: 2px;
+}
+.speakable-error {
+  display: block;
+  color: #8b3030;
+  font-size: 0.875rem;
+}
