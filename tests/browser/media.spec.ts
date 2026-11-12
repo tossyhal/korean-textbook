@@ -127,7 +127,7 @@ test("遅れて届くvoiceschanged、再生エラーと停止・遷移", async (
   const audio = page.getByRole("button", { name: "音声を再生" }).first();
   await audio.click();
   await expect(
-    page.getByText("音声を再生できませんでした。音声診断で韓国語の声を確認してください。").first(),
+    page.getByText("音声を再生できませんでした。音声設定で韓国語の声を確認してください。").first(),
   ).toBeVisible();
   const stop = audio.locator("..").getByRole("button", { name: "停止" });
   await stop.click();

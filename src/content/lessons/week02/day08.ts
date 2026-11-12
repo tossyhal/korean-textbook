@@ -16,7 +16,7 @@ export const day08 = base(
       heading: "できないことを伝える",
       paragraphs: [
         "못は能力や事情のために動作が実現できないことを表します。학교에 못 가요は行けないという意味です。안 가요なら行かないという事実で、できないとまでは言いません。",
-        "日本語ではどちらも否定で終わりますが、韓国語では안と못の選択が意味を変えます。相手の事情を断定せず、文脈から判断しましょう。",
+        "日本語ではどちらも否定で終わりますが、韓国語では안と못の選択が意味を変えます。相手の事情を断定せず、文脈から判断しましょう。못 읽어요を一続きに発音するとㄴが加わり鼻音化して[몬닐거요]、区切る場合は[모딜거요]とも発音できます。운동 못 해요の못 해요はㅅの終声とㅎが結び付き[모태요]です。",
       ],
     },
     {
@@ -37,7 +37,7 @@ export const day08 = base(
       heading: "語彙と場面",
       paragraphs: [
         "안（否定）、못（不可能を表す副詞）、않다（否定の補助動詞）を覚えましょう。시간は時間、친구は友達、책は本、영화は映画です。",
-        "보다は見る、읽다は読む、만나다は会う、듣다は聞くです。듣다は『聞く』の現在形が들어요となる不規則な語です。この課では形を語ごと覚えます。",
+        "보다は見る、읽다は読む、만나다は会う、듣다は聞くです。읽다の읽にはㄹ・ㄱの二重パッチムがあります。辞書形읽다[익따]に対し、母音で始まる語尾어요の前では後ろのㄱを次の音節に移し、읽어요[일거요]と発音します。읽어요は綴り、角括弧は発音です。듣다は『聞く』の現在形が들어요となる不規則な語です。この課では形を語ごと覚えます。",
       ],
     },
   ],
@@ -209,6 +209,11 @@ day08.vocabulary = [
 
 day08.sources.push(
   source(
+    "国立国語院：標準発音法の解説",
+    "https://m.korean.go.kr/nkview/nknews/199906/11_8.htm",
+    "設問9：二重パッチムと母音で始まる語尾",
+  ),
+  source(
     "国立国語院学習辞典：못",
     "https://krdict.korean.go.kr/jpn/dicSearch/SearchView?ParaWordNo=17254&nation=jpn",
     "動詞の前で動作の不可能を表す用法",
@@ -232,3 +237,33 @@ for (const q of [...day08.recall, ...day08.exercises, ...day08.exitTest]) {
   if (/지 않|長い否定/u.test(`${q.prompt} ${q.explanation}`)) q.tags = ["grammar-day08-long"];
   if (/하다|運動|勉強/u.test(`${q.prompt} ${q.explanation}`)) q.tags = ["grammar-day08-hada"];
 }
+
+day08.exercises.push(
+  ...questions(8, "ex", [
+    [
+      "읽어요の発音を選ぶ",
+      "일거요",
+      "ㄺの後ろのㄱが母音語尾の前で次の音節へ移ります。",
+      "reading",
+      ["일거요", "이러요"],
+    ],
+  ]).map((q) => ({ ...q, id: "day-08-ex-foundation-1" })),
+);
+
+day08.sources.push(
+  source(
+    "国立国語院：못 읽어요の発音",
+    "https://www.korean.go.kr/front/onlineQna/onlineQnaView.do?mn_id=73&qna_seq=327019",
+    "一続きと区切る場合の発音",
+  ),
+  source(
+    "国立国語院：못 해요の発音",
+    "https://www.korean.go.kr/front/onlineQna/onlineQnaView.do?mn_id=216&pageIndex=1&qna_seq=312021",
+    "ㅎとの激音化",
+  ),
+  source(
+    "国立国語院：韓国語の第一歩",
+    "https://www.korean.go.kr/common/download.do?c_file_name=c4b897e3-3c46-4c8b-bf5d-b28abbe3a789_1.pdf&file_path=etcData&o_file_name=%EC%B2%AB%EA%B1%B8%EC%9D%8C.pdf",
+    "二重パッチムの읽다と읽어요",
+  ),
+);
