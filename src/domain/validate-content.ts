@@ -98,6 +98,11 @@ export function validateContent(input: unknown[], strict = false): string[] {
       if (l.exitTest.length < 5) errors.push(`通常課の出口テストが不足: ${l.id}`);
     }
     if (!l.sources.length) errors.push(`出典がありません: ${l.id}`);
+    const sourceUrls = new Set<string>();
+    for (const source of l.sources) {
+      if (sourceUrls.has(source.url)) errors.push(`出典URL重複: ${l.id} ${source.url}`);
+      sourceUrls.add(source.url);
+    }
   }
   if (strict)
     for (let day = 1; day <= 56; day++)

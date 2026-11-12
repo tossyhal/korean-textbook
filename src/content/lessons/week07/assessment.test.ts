@@ -69,8 +69,8 @@ describe("第7週の評価", () => {
   });
   it("雨の理由を尋ねる設問と課固有の産出を保つ", () => {
     const q = day49.exitTest.find((item) => item.id === "day-49-exit-listen-10")!;
-    expect(q.audio?.text).toBe("오늘은 비가 와서 차를 사요.");
-    expect(q.prompt).toBe("何が理由で買いますか？");
+    expect(q.audio?.text).toBe("오늘은 비가 와서 집에서 쉬어요.");
+    expect(q.prompt).toBe("家で休む理由は？");
     expect(q.answers).toContain("雨だから");
     expect(new Set(week07.slice(3, 6).map((lesson) => lesson.production?.prompt)).size).toBe(3);
     expect(new Set(week07.slice(3, 6).map((lesson) => lesson.recall[0].prompt)).size).toBe(3);

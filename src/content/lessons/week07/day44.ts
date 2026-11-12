@@ -139,3 +139,64 @@ day44.sources.push(
     "母音始まりの語尾・接尾辞の前でㅎが脱落し놓아を[노아]と発音することを確認",
   ),
 );
+
+Object.assign(day44.recall[0], {
+  prompt: "「本を読みます」を韓国語で？",
+  type: "input",
+  skill: "typing",
+  answers: ["책을 읽어요"],
+  options: undefined,
+  explanation: "읽어요は읽다の丁寧形です。",
+});
+Object.assign(day44.recall[1], {
+  prompt: "「ありません」を韓国語で？",
+  type: "input",
+  skill: "typing",
+  answers: ["없어요"],
+  options: undefined,
+  explanation: "없어요は없다の丁寧形です。",
+});
+day44.sections[1].paragraphs.push(
+  "좋아요は[조아요]のようにㅎが母音の前で現れず、좋고は[조코]のようにㅎとㄱが合わさって激音になります。같이（一緒に）は[가치]と口蓋音化し、연락（連絡）は[열락]のようにㄴがㄹに近づきます。綴りは変えずに音と対応させます。",
+);
+day44.sections[3].paragraphs.push(
+  "할 수 있어요の수は[쑤]のように濃く発音されます。읽어요[일거요]、읽고[일꼬]、없어요[업써요]も既習の複数子音を持つ語として比べます。音声は正書法のまま再生し、角括弧の発音表示を読み上げに混ぜません。",
+);
+day44.examples.push(
+  example("좋아요", "よいです"),
+  example("좋고", "よくて"),
+  example("같이", "一緒に"),
+  example("연락", "連絡"),
+  example("할 수 있어요", "できます"),
+  example("읽어요", "読みます"),
+  example("읽고", "読んで"),
+  example("없어요", "ありません"),
+);
+day44.exercises.push({
+  id: "day-44-ex-changes-self",
+  type: "self",
+  prompt:
+    "좋아요・좋고・같이・연락を一語ずつ聞き、綴りと本文の発音表示を照合して復唱します。録音を聞き返し、音のつながりを比べます。",
+  answers: [],
+  explanation: "端末音声は未確認です。細かな発音の正誤は自動採点せず、辞書の音声も参照します。",
+  tags: [day44.grammar[1].id],
+  skill: "speaking",
+  assessmentKind: "practice",
+  rubric: [
+    "綴りと発音表示を対応できたか",
+    "復唱を録音して聞き返したか",
+    "不確かな音を辞書で確認したか",
+  ],
+});
+day44.sources.push(
+  source(
+    "国立国語院 韓国語のローマ字表記法",
+    "https://www.korean.go.kr/kornorms/m/m_regltn.do?regltn_code=0004",
+    "같이[가치]、좋고[조코]の例を確認",
+  ),
+  source(
+    "国立国語院 韓国語基礎辞典 연락",
+    "https://krdict.korean.go.kr/jpn/dicSearch/SearchView?ParaWordNo=14013",
+    "연락の発音と活用例を確認",
+  ),
+);

@@ -13,7 +13,7 @@ export const day39 = lesson(
     {
       heading: "二つを比べる",
       paragraphs: [
-        "A보다 B가 더 좋아요は「AよりBのほうが好きです」。보다は比較の基準Aに付き、더は「より」です。커피보다 차가 더 좋아요なら好きなのはお茶です。",
+        "A보다 B가 더 좋아요は「AよりBのほうが好きです」。보다は比較の基準Aに付き「〜より」、더は程度を表す「もっと」です。커피보다 차가 더 좋아요なら好きなのはお茶です。",
         "日本語と同様に基準を先に言えますが、どちらが評価されるかは보다の位置を確認します。더を省いても比較は成立します。",
       ],
     },
@@ -93,7 +93,7 @@ export const day39 = lesson(
       ["静かだから", "大きいから", "高いから"],
       3,
     ],
-    ["「より」の韓国語", "더", "더は程度を比較します。", "typing", undefined, 1],
+    ["「もっと」の韓国語", "더", "더は程度を比較します。", "typing", undefined, 1],
     ["「一番」の韓国語", "제일", "제일は一番です。", "typing", undefined, 2],
     [
       "사과に좋아하다の目的語助詞を付ける",
@@ -244,3 +244,5 @@ day39.vocabulary.push(
 
 import { vocabulary as supplementalVocabulary } from "../week02/shared";
 day39.vocabulary.push(...supplementalVocabulary(39, [["sagwa-fruit", "사과", "りんご", "名詞"]]));
+
+day39.objectives = ["좋다と좋아하다を使い分ける", "二つの好みを比べ理由を述べる"];

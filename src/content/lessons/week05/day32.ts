@@ -56,7 +56,7 @@ export const day32 = makeLesson(
   ],
   [
     [
-      "은행 옆의 약국은 어디에ある？",
+      "「銀行の隣の薬局」はどこにありますか？",
       "銀行の隣",
       "옆は隣です。",
       "reading",
@@ -224,7 +224,6 @@ day32.vocabulary.push(
     ["gil", "길", "道", "名詞"],
     ["ap", "앞", "前", "名詞"],
     ["dwi", "뒤", "後ろ", "名詞"],
-    ["yeop", "옆", "隣", "名詞"],
     ["dari-bridge", "다리", "橋", "名詞"],
     ["mokjeokji", "목적지", "目的地", "名詞"],
   ]),
@@ -302,3 +301,24 @@ day32.recall[1].tags = ["grammar-location"];
 
 import { vocabulary as supplementalVocabulary } from "../week02/shared";
 day32.vocabulary.push(...supplementalVocabulary(32, [["geurigo", "그리고", "そして", "接続副詞"]]));
+
+import { day31 } from "./day31";
+day32.vocabulary.push(...day31.vocabulary.filter((v) => v.korean === "옆"));
+
+day32.objectives = ["位置と方向を尋ねる", "目印を使って道順を伝える"];
+Object.assign(day32.recall[0], {
+  prompt: "「乗り場」は韓国語で？",
+  type: "input",
+  skill: "typing",
+  answers: ["승강장"],
+  options: undefined,
+  explanation: "승강장は乗り場です。",
+});
+Object.assign(day32.recall[1], {
+  prompt: "「駅で乗ります」は？",
+  type: "input",
+  skill: "typing",
+  answers: ["역에서 타요"],
+  options: undefined,
+  explanation: "動作の場所には에서を使います。",
+});

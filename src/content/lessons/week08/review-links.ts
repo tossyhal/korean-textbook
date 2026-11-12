@@ -86,7 +86,12 @@ const explicit: Record<string, string[]> = {
   "day-55-ex-7": ["grammar-condition"],
   "day-55-ex-8": ["grammar-connect-aseo"],
   "day-55-ex-12": ["grammar-connect-go"],
-  "day-56-exit-input-3": ["grammar-location-review"],
+  "day-56-exit-input-3": ["grammar-location-review", "grammar-obligation"],
+  "day-56-exit-input-4": ["grammar-condition"],
+  "day-56-exit-input-5": ["grammar-progressive"],
+  "day-56-exit-input-6": ["grammar-permission"],
+  "day-56-exit-input-7": ["grammar-day-10"],
+  "day-56-exit-input-8": ["grammar-want"],
 };
 export function linkReview(lesson: Lesson) {
   for (const question of [...lesson.recall, ...lesson.exercises, ...lesson.exitTest]) {

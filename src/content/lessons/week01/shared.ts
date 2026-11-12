@@ -1,7 +1,7 @@
 import type { Lesson, Question } from "../../../domain/content";
 
 export const audio = (text: string) => ({
-  text,
+  text: text.replace(/(?:^|\s)[가나다]:\s*/gu, " ").trim(),
   source: "端末の韓国語音声による合成音声",
   license: "端末・音声提供者の利用条件に従う",
   voice: "端末で選択した韓国語音声",

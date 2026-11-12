@@ -7,6 +7,7 @@ export const day33 = makeLesson(
     {
       heading: "部屋の問題を伝える",
       paragraphs: [
+        "체크인（チェックイン）を頼むときは체크인하고 싶어요（チェックインしたいです）と言えます。예약했어요は予約しました、이름으로 예약했어요はその名前で予約しましたという意味です。名前を伝えて確認を頼みます。",
         "宿泊先では部屋番号と問題を先に伝えます。방에 문제가 있어요（部屋に問題があります）の後に에어컨이 안 돼요（エアコンが動きません）と続けると要件が伝わります。",
         "안 돼요はここでは機器が機能しないという意味です。日本語の「だめ」だけでは何が困るか分からないため、対象を主語にします。",
       ],
@@ -14,7 +15,7 @@ export const day33 = makeLesson(
     {
       heading: "備品を頼む",
       paragraphs: [
-        "수건はタオル、비누は石けん、휴지는トイレットペーパーです。수건이 없어요（タオルがありません）に수건을 주세요（タオルをください）を続けます。",
+        "수건はタオル、비누は石けん、휴지はトイレットペーパーです。수건이 없어요（タオルがありません）に수건을 주세요（タオルをください）を続けます。",
         "한 장は薄い物を数える表現で수건 한 장と言えます。더は追加を表し、수건 한 장 더 주세요はもう一枚くださいという依頼です。",
       ],
     },
@@ -120,7 +121,7 @@ export const day33 = makeLesson(
       ["お湯が出ない", "部屋が寒い", "鍵がない"],
     ],
     [
-      "「문이 안 열려요.」困っていること",
+      "「방 문이 안 열려요. 열쇠를 확인해 주세요.」困っていること",
       "ドアが開かない",
       "열려요は開くという意味です。",
       "reading",
@@ -189,6 +190,7 @@ addListening(
   "전등は照明です。",
 );
 day33.vocabulary = vocabulary(33, [
+  ["chekeuin", "체크인", "チェックイン", "名詞"],
   ["sugeon", "수건", "タオル", "名詞"],
   ["binu", "비누", "石けん", "名詞"],
   ["hyuji", "휴지", "トイレットペーパー", "名詞"],
@@ -304,3 +306,52 @@ day33.exitTest.splice(4, 1, ...exit33);
 
 day33.recall[0].tags = ["grammar-request"];
 day33.recall[1].tags = ["grammar-location"];
+
+day33.examples.push(
+  example("체크인하고 싶어요. 예약했어요.", "チェックインしたいです。予約しました。"),
+);
+day33.exercises.push({
+  id: "day-33-ex-checkin",
+  type: "choice",
+  prompt: "「예약했어요. 체크인하고 싶어요.」伝えたいことは？",
+  answers: ["予約してチェックインしたい"],
+  options: ["予約してチェックインしたい", "部屋の鍵を交換したい", "タオルが足りない"],
+  explanation: "예약했어요は予約しました、체크인하고 싶어요はチェックインしたいです。",
+  tags: [day33.grammar[0].id],
+  skill: "reading",
+  assessmentKind: "practice",
+});
+
+import { day23 } from "../week04/day23";
+day33.vocabulary.push(...day23.vocabulary.filter((v) => v.korean === "예약하다"));
+
+day33.roleplay!.turns.push({
+  partner: example("예약하셨어요?", "ご予約されましたか。"),
+  goal: "予約した名前を伝えてチェックインを頼む",
+  responseExamples: [
+    example("예약했어요. 체크인하고 싶어요.", "予約しました。チェックインしたいです。"),
+    example(
+      "이 이름으로 예약했어요. 체크인해 주세요.",
+      "この名前で予約しました。チェックインをお願いします。",
+    ),
+  ],
+  rubric: ["予約の有無とチェックインの希望を伝えたか"],
+});
+
+day33.objectives = ["予約を伝えてチェックインする", "部屋の問題や必要な備品を伝える"];
+Object.assign(day33.recall[0], {
+  prompt: "「入口」は韓国語で？",
+  type: "input",
+  skill: "typing",
+  answers: ["입구"],
+  options: undefined,
+  explanation: "입구は入口です。",
+});
+Object.assign(day33.recall[1], {
+  prompt: "「隣」は韓国語で？",
+  type: "input",
+  skill: "typing",
+  answers: ["옆"],
+  options: undefined,
+  explanation: "옆は隣です。",
+});

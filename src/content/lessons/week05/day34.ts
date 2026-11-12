@@ -214,6 +214,7 @@ day34.vocabulary = vocabulary(34, [
   ["miruda", "미루다", "延期する", "動詞"],
 ]);
 day34.sections[1].paragraphs.push(
+  "「내일 모임에 참석해요.」（明日の集まりに出席します）では모임に참석하다を組み合わせます。何に出席するかを探し、모임を수업に替えて「授業に出席します」と言いましょう。수업에 참석해요.となります。",
   "극장（映画館）の入口や광장（広場）の분수（噴水）の前を만남（会うこと）の場所にできます。모임（集まり）の前に날짜（日付）と요일（曜日）を確認し、초대（招待）には참석 여부（出席するかどうか）を返事します。",
 );
 day34.sections[2].paragraphs.push(
@@ -351,3 +352,33 @@ day34.vocabulary.push(
     ["eoryeopda", "어렵다", "難しい", "形容詞"],
   ]),
 );
+
+day34.exercises.push({
+  id: "day-34-ex-context",
+  type: "choice",
+  prompt: "「내일 모임에 참석해요.」何に出席しますか？",
+  answers: ["集まり"],
+  options: ["集まり", "授業", "会社"],
+  explanation: "모임は集まり、참석해요は出席します。",
+  tags: ["grammar-meeting-arrangement"],
+  skill: "reading",
+  assessmentKind: "practice",
+});
+
+day34.objectives = ["待ち合わせの時と場所を決める", "遅れや予定変更を丁寧に伝える"];
+Object.assign(day34.recall[0], {
+  prompt: "「隣」は韓国語で？",
+  type: "input",
+  skill: "typing",
+  answers: ["옆"],
+  options: undefined,
+  explanation: "옆は隣です。",
+});
+Object.assign(day34.recall[1], {
+  prompt: "「三時」は韓国語で？",
+  type: "input",
+  skill: "typing",
+  answers: ["세 시"],
+  options: undefined,
+  explanation: "時には固有数詞の세を使います。",
+});

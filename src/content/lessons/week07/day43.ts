@@ -164,6 +164,52 @@ day43.sources.push(
   source(
     "国立国語院 韓国語教師向け講義資料",
     "https://www.korean.go.kr/common/download.do?c_file_name=11fdc7c3-af42-4d08-b772-e4157fe4f0d3_0.pdf&file_path=reportData&o_file_name=%EA%B5%AD%EC%99%B8+%ED%95%9C%EA%B5%AD%EC%96%B4+%EA%B5%90%EC%82%AC%EB%A5%BC+%EC%9C%84%ED%95%9C+%ED%95%9C%EA%B5%AD%EC%96%B4+%EA%B0%95%EC%9D%98+%EC%9E%90%EB%A3%8C%EC%A7%91-%EB%9F%AC%EC%8B%9C%EC%95%84+%EC%82%AC%ED%95%A0%EB%A6%B0+%EC%A7%80%EC%97%AD.pdf",
-    "平音・激音・濃音と息の観察を確認",
+    "平音・激音・濃音と息の観察、平音が有声音の間で有声化する説明を確認",
   ),
 );
+
+Object.assign(day43.recall[0], {
+  prompt: "母音ㅏをㅇと組み合わせた音節は？",
+  type: "input",
+  skill: "typing",
+  answers: ["아"],
+  options: undefined,
+  explanation: "ㅇは母音から始まる音節の位置を支えます。",
+});
+Object.assign(day43.recall[1], {
+  prompt: "母音ㅗをㅇと組み合わせた音節は？",
+  type: "input",
+  skill: "typing",
+  answers: ["오"],
+  options: undefined,
+  explanation: "ㅗは横棒の母音です。",
+});
+day43.sections[2].paragraphs.push(
+  "가게（店）の初めのㄱと二つ目のㄱ、부부（夫婦）の二つのㅂを聞き比べます。平音のㄱ・ㄷ・ㅂ・ㅈは母音など有声音に挟まれると有声音になり、語頭とは響きが変わります。日本語の清音・濁音の区別にそのまま置き換えず、同じ語の位置で比べます。",
+);
+day43.examples.push(
+  example("가게", "店"),
+  example("부부", "夫婦"),
+  example("불", "火"),
+  example("풀", "草"),
+  example("뿔", "角"),
+  example("달", "月"),
+  example("탈", "仮面"),
+  example("딸", "娘"),
+);
+day43.exercises.push({
+  id: "day-43-ex-contrast-self",
+  type: "self",
+  prompt:
+    "上の불・풀・뿔と달・탈・딸を一語ずつ聞き、同じ順で言って録音し、息の強さと音の違いを聞き比べます。聞き分けられない場合は推測で確定せず、確認済みの辞書音声も参照します。",
+  answers: [],
+  explanation: "細かな音の対立は未確認の端末音声で自動採点しません。",
+  tags: [day43.grammar[2].id],
+  skill: "speaking",
+  assessmentKind: "practice",
+  rubric: [
+    "各語を聞き、息の違いに注意したか",
+    "録音を聞き返して手本と比べたか",
+    "迷う音を辞書音声で確かめたか",
+  ],
+});

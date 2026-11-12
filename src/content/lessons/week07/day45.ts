@@ -147,3 +147,64 @@ day45.exercises.push(dictation);
   (n, i) => (day45.exercises[i].tags = [day45.grammar[n].id]),
 );
 [1, 1, 1, 1, 1, 0].forEach((n, i) => (day45.exitTest[i].tags = [day45.grammar[n].id]));
+
+for (const [group, index, text, prompt, answer, options, explanation] of [
+  [
+    "ex",
+    4,
+    "버스는 여덟 시 삼십 분에 출발해요.",
+    "出発時刻は？",
+    "8時30分",
+    ["8時30分", "8時3分", "9時30分"],
+    "여덟 시は8時、삼십 분は30分です。",
+  ],
+  [
+    "ex",
+    5,
+    "책은 육천 원이에요.",
+    "本の値段は？",
+    "6000ウォン",
+    ["6000ウォン", "600ウォン", "60000ウォン"],
+    "육천 원は6000ウォンです。",
+  ],
+  [
+    "exit",
+    3,
+    "회의는 십이 월 삼 일이에요.",
+    "会議の日付は？",
+    "12月3日",
+    ["12月3日", "12月30日", "11月3日"],
+    "십이 월は12月、삼 일は3日です。",
+  ],
+  [
+    "exit",
+    4,
+    "표는 구천 원이에요.",
+    "切符の値段は？",
+    "9000ウォン",
+    ["9000ウォン", "900ウォン", "90000ウォン"],
+    "구천 원は9000ウォンです。",
+  ],
+] as const) {
+  const q = listening(45, group, index, text, prompt, answer, explanation);
+  q.options = [...options];
+  q.tags = ["grammar-number-unit-listen"];
+  (group === "ex" ? day45.exercises : day45.exitTest).push(q);
+}
+
+Object.assign(day45.recall[0], {
+  prompt: "「いつ」を尋ねる語は？",
+  type: "input",
+  skill: "typing",
+  answers: ["언제"],
+  options: undefined,
+  explanation: "언제は時を尋ねます。",
+});
+Object.assign(day45.recall[1], {
+  prompt: "「何人」は韓国語で？",
+  type: "input",
+  skill: "typing",
+  answers: ["몇 명"],
+  options: undefined,
+  explanation: "명は人数の単位です。",
+});

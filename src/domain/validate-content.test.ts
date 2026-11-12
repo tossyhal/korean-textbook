@@ -142,3 +142,16 @@ it("教材の音声対象に日本語の説明を含めない", () => {
       expect(target, `Day ${lesson.day}: ${target}`).not.toMatch(/[ぁ-ゟ゠-ヿ一-龯]/u);
   }
 });
+
+it("同一節内の出典URL重複を検出し、別節での再利用は許す", () => {
+  const original = lessons.find((lesson) => lesson.day === 43)!;
+  const duplicate = { ...original, sources: [...original.sources, { ...original.sources[0] }] };
+  expect(validateContent([duplicate])).toContain(
+    `出典URL重複: ${original.id} ${original.sources[0].url}`,
+  );
+  const other = lessons.find((lesson) => lesson.day === 44)!;
+  const shared = { ...other, sources: [original.sources[0]] };
+  expect(
+    validateContent([original, shared]).filter((error) => error.startsWith("出典URL重複")),
+  ).toEqual([]);
+});
