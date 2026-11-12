@@ -1,16 +1,11 @@
 import { expect, test } from "@playwright/test";
 
-test("診断は初回から開き、回答後の再開と技能結果を表示する", async ({ page }) => {
+test("旧診断URLは目次へ案内する", async ({ page }) => {
   await page.goto("#/diagnostic");
-  await expect(page.getByRole("heading", { name: "先取り診断" })).toBeVisible();
-  const question = page.locator("#diagnostic-1");
-  await question.getByLabel("ㅓ", { exact: true }).check();
-  await question.getByRole("button", { name: "答え合わせ" }).click();
-  await expect(question.getByRole("status")).toContainText("初回");
-  await page.reload();
-  await expect(question.getByLabel("ㅓ", { exact: true })).toBeChecked();
-  await page.goto("#/results");
-  await expect(page.getByText(/聴解：初回未実施/)).toBeVisible();
+  await expect(page.getByRole("heading", { name: "目次" })).toBeVisible();
+  await expect(
+    page.getByRole("navigation", { name: "主なメニュー" }).getByText("先取り診断"),
+  ).toHaveCount(0);
 });
 
 test("復習の閲覧状態と1日20件の上限を再読み込み後も保持する", async ({ page }) => {

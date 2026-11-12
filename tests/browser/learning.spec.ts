@@ -7,6 +7,7 @@ const progress = (page: import("@playwright/test").Page) =>
 
 test("回答の保存、再挑戦と答え閲覧後の区別", async ({ page }) => {
   await page.goto(lesson);
+  await page.getByRole("tab", { name: "練習" }).click();
   const q = page.locator("#day-01-ex-01");
   await q.getByLabel("回答").fill("ㅓ");
   await q.getByRole("button", { name: "答え合わせ" }).click();
@@ -32,6 +33,7 @@ test("回答の保存、再挑戦と答え閲覧後の区別", async ({ page }) 
 
 test("IME変換中は採点せず、確定後の入力・修正・削除を保持する", async ({ page }) => {
   await page.goto(lesson);
+  await page.getByRole("tab", { name: "練習" }).click();
   const q = page.locator("#day-01-ex-01");
   const input = q.getByLabel("回答");
   await input.fill("ㅏ");
@@ -51,6 +53,7 @@ test("IME変換中は採点せず、確定後の入力・修正・削除を保�
 
 test("作文と自己評価を保存する", async ({ page }) => {
   await page.goto(lesson);
+  await page.getByRole("tab", { name: "作文・発話" }).click();
   await page.getByLabel("自分の文章").fill("안녕하세요");
   await page.getByText("模範例と自己確認").click();
   const rubric = page.locator("#production details input").first();
@@ -65,6 +68,7 @@ test("作文と自己評価を保存する", async ({ page }) => {
 
 test("JSON書き出し、取消、適用と破損拒否", async ({ page }) => {
   await page.goto(lesson);
+  await page.getByRole("tab", { name: "作文・発話" }).click();
   await page.getByLabel("自分の文章").fill("저장");
   await page.goto("#/settings");
   const downloadPromise = page.waitForEvent("download");
@@ -73,6 +77,7 @@ test("JSON書き出し、取消、適用と破損拒否", async ({ page }) => {
   const path = await download.path();
   expect(path).toBeTruthy();
   await page.goto(lesson);
+  await page.getByRole("tab", { name: "作文・発話" }).click();
   await page.getByLabel("自分の文章").fill("変更");
   await page.goto("#/settings");
   const before = await progress(page);
@@ -108,10 +113,11 @@ for (const width of [390, 1280])
 test("先取り後に復習を日付変更して再開する", async ({ page }) => {
   await page.clock.install({ time: new Date("2026-11-12T12:00:00") });
   await page.goto(lesson);
+  await page.getByRole("tab", { name: "練習" }).click();
   await page.locator("#day-01-ex-01 input").fill("ㅓ");
   await page.locator("#day-01-ex-01").getByRole("button", { name: "答え合わせ" }).click();
   await page.goto("#/lesson/day-02");
-  await expect(page.getByRole("heading", { name: /第2課/ })).toBeVisible();
+  await expect(page.getByRole("heading", { name: /第1章第2節/ })).toBeVisible();
   await page.goto("#/review");
   await expect(
     page.getByRole("button", { name: "答えを見る前に思い出せた" }).first(),
@@ -128,6 +134,7 @@ test("先取り後に復習を日付変更して再開する", async ({ page }) 
 
 test("出口テストの初回誤答は後の正答で上書きされない", async ({ page }) => {
   await page.goto(lesson);
+  await page.getByRole("tab", { name: "確認テスト" }).click();
   const exit = page.locator("#exit");
   const question = exit.locator(".question").first();
   await question.getByLabel("回答").fill("가");

@@ -2,9 +2,9 @@ import { expect, test } from "@playwright/test";
 import { readFile } from "node:fs/promises";
 
 test("手動登録を保存・バックアップし、解除しても回答履歴を残す", async ({ page }) => {
-  await page.goto("#/diagnostic");
-  const question = page.locator("#diagnostic-1");
-  await question.getByLabel("ㅓ", { exact: true }).check();
+  await page.goto("#/lesson/day-01?exercises");
+  const question = page.locator("#day-01-ex-01");
+  await question.getByLabel("回答").fill("ㅏ");
   await question.getByRole("button", { name: "答え合わせ" }).click();
   await expect(question.getByText("正解", { exact: true })).toBeVisible();
   await question.getByRole("button", { name: "復習に追加" }).click();
@@ -28,7 +28,7 @@ test("手動登録を保存・バックアップし、解除しても回答履�
   const download = await downloadPromise;
   const data = JSON.parse(await readFile((await download.path())!, "utf8"));
   expect(data.reviews.filter((item: { id: string }) => item.id === wordId)).toHaveLength(1);
-  expect(data.reviews.some((item: { id: string }) => item.id === "diagnostic-1")).toBe(true);
+  expect(data.reviews.some((item: { id: string }) => item.id === "day-01-ex-01")).toBe(true);
   await page.getByLabel("バックアップを選ぶ").setInputFiles({
     name: "backup.json",
     mimeType: "application/json",
@@ -44,6 +44,6 @@ test("手動登録を保存・バックアップし、解除しても回答履�
   );
   expect(saved.reviews.some((item: { id: string }) => item.id === wordId)).toBe(false);
   expect(
-    saved.attempts.some((item: { questionId: string }) => item.questionId === "diagnostic-1"),
+    saved.attempts.some((item: { questionId: string }) => item.questionId === "day-01-ex-01"),
   ).toBe(true);
 });

@@ -20,10 +20,12 @@ import { AudioButton, AudioDiagnostics, AudioProvider, useAudio } from "./featur
 import { RoleplayView } from "./features/roleplay";
 import { ListeningTransfer } from "./features/listening-transfer";
 import { diagnosticQuestions } from "./features/assessment/bank";
+import { displayOptions } from "./features/assessment/options";
 import { assessmentScopes, makeRecommendations, skillLabels } from "./features/assessment/results";
 import { Recorder } from "./features/recording";
 import { addManualReview, removeManualReview } from "./features/review/manual";
 import { HangulBuilder } from "./features/learning/HangulBuilder";
+import { LetterSoundGuide } from "./features/learning/LetterSoundGuide";
 import { KeyboardPage, PronunciationPage } from "./features/reference";
 import "./features/learning/style.css";
 
@@ -34,7 +36,43 @@ const today = () => {
 const questions = (l: Lesson) => [...l.recall, ...l.exercises, ...l.exitTest];
 const ids = contentIds(lessons);
 const link = (path: string) => `#/${path}`;
-const ko = (text: string) => <KoreanText text={text} />;
+const ko = (text: string) => (
+  <KoreanText
+    text={text
+      .replace(/第(\d+)課/g, (_, day: string) => lessonLabel(Number(day)))
+      .replace(/第([1-8])週/g, "第$1章")}
+  />
+);
+const lessonLabel = (day: number) =>
+  `第${Math.floor((day - 1) / 7) + 1}章第${((day - 1) % 7) + 1}節`;
+const chapterTitles = [
+  "文字と基本表現",
+  "時制・疑問・依頼",
+  "説明を広げる",
+  "日常の構文",
+  "旅行や外出",
+  "自分のことを伝える",
+  "音と処理速度",
+  "統合して確認する",
+];
+type LessonTab = "text" | "practice" | "production" | "exit" | "sources";
+const tabs: [LessonTab, string][] = [
+  ["text", "本文"],
+  ["practice", "練習"],
+  ["production", "作文・発話"],
+  ["exit", "確認テスト"],
+  ["sources", "出典・メモ"],
+];
+const tabForPosition = (id?: string): LessonTab =>
+  id === "exercises" || id === "roleplay" || id === "voice-transfer" || id === "recall"
+    ? "practice"
+    : id === "production"
+      ? "production"
+      : id === "exit"
+        ? "exit"
+        : id === "sources"
+          ? "sources"
+          : "text";
 
 type Update = (fn: (p: Progress) => Progress) => void;
 function AppContent() {
@@ -85,7 +123,6 @@ function AppContent() {
         <nav aria-label="主なメニュー">
           <a href={link("lessons")}>目次</a>
           <a href={link("review")}>復習</a>
-          <a href={link("diagnostic")}>先取り診断</a>
           <a href={link("results")}>学習結果</a>
           <a href={link("reference")}>語彙・文法</a>
           <a href={link("pronunciation")}>発音</a>
@@ -111,7 +148,7 @@ function AppContent() {
       ) : route === "review" ? (
         <ReviewPage progress={progress} update={update} />
       ) : route === "diagnostic" ? (
-        <DiagnosticPage progress={progress} update={update} />
+        <Contents progress={progress} />
       ) : route === "results" ? (
         <ResultsPage progress={progress} />
       ) : route === "reference" ? (
@@ -150,11 +187,11 @@ function Home({ progress, update }: { progress: Progress; update: Update }) {
   return (
     <main>
       <h1>今日の学習</h1>
-      <p>自分のペースで進めましょう。課はいつでも開けます。</p>
+      <p>自分のペースで進めましょう。節はいつでも開けます。</p>
       {current ? (
         <p>
           <a className="primary" href={link(`lesson/${current.id}`)}>
-            続きから学ぶ：第{current.day}課 {ko(current.title)}
+            続きから学ぶ：{lessonLabel(current.day)} {ko(current.title)}
           </a>
         </p>
       ) : (
@@ -165,12 +202,9 @@ function Home({ progress, update }: { progress: Progress; update: Update }) {
       </p>
       {dueReviews(progress.reviews, today()).length > 20 && (
         <p>
-          復習が20件を超えています。今日は新出を控え、復習を20件まで優先しましょう。課はいつでも開けます。
+          復習が20件を超えています。今日は新出を控え、復習を20件まで優先しましょう。節はいつでも開けます。
         </p>
       )}
-      <p>
-        <a href={link("diagnostic")}>先取り診断を受ける</a>
-      </p>
       <p>
         <a href={link("results")}>技能別の学習結果を見る</a>
       </p>
@@ -198,7 +232,7 @@ function Home({ progress, update }: { progress: Progress; update: Update }) {
         </ul>
       )}
       <p>
-        <a href={link("lessons")}>すべての課を見る</a>
+        <a href={link("lessons")}>すべての節を見る</a>
       </p>
     </main>
   );
@@ -207,34 +241,57 @@ function Contents({ progress }: { progress: Progress }) {
   return (
     <main>
       <h1>目次</h1>
-      <p>すべての課を自由に開けます。前提の課に戻って復習することもできます。</p>
       {Array.from({ length: 8 }, (_, i) => (
         <section key={i}>
-          <h2>第{i + 1}週</h2>
-          <ol start={i * 7 + 1}>
+          <h2>
+            第{i + 1}章 {chapterTitles[i]}
+          </h2>
+          <ol className="contents-list">
             {Array.from({ length: 7 }, (_, j) => {
               const day = i * 7 + j + 1;
               const l = lessons.find((x) => x.day === day);
               return (
                 <li key={day}>
                   {l ? (
-                    <>
-                      <a href={link(`lesson/${l.id}`)}>{ko(l.title)}</a> —{" "}
-                      {progress.completedLessons.includes(l.id)
-                        ? "完了"
-                        : progress.positions[l.id]
-                          ? "学習中"
-                          : "未着手"}
-                      {l.prerequisites.length > 0 && (
-                        <small>
-                          （前提：
-                          {l.prerequisites
-                            .map((id) => lessons.find((x) => x.id === id)?.day ?? id)
-                            .join("、")}
-                          課）
-                        </small>
-                      )}
-                    </>
+                    <a href={link(`lesson/${l.id}`)}>
+                      <span>
+                        第{j + 1}節 {ko(l.title)}
+                      </span>
+                      <span className="lesson-status">
+                        <svg aria-hidden="true" viewBox="0 0 20 20" width="18" height="18">
+                          <circle
+                            cx="10"
+                            cy="10"
+                            r="8"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="1.5"
+                          />
+                          {progress.completedLessons.includes(l.id) ? (
+                            <path
+                              d="m5.5 10 3 3 6-6"
+                              fill="none"
+                              stroke="currentColor"
+                              strokeWidth="1.7"
+                            />
+                          ) : progress.positions[l.id] ? (
+                            <path
+                              d="M10 4v6l4 2"
+                              fill="none"
+                              stroke="currentColor"
+                              strokeWidth="1.5"
+                            />
+                          ) : (
+                            <circle cx="10" cy="10" r="1.5" fill="currentColor" />
+                          )}
+                        </svg>
+                        {progress.completedLessons.includes(l.id)
+                          ? "完了"
+                          : progress.positions[l.id]
+                            ? "学習中"
+                            : "未着手"}
+                      </span>
+                    </a>
                   ) : day === 55 ? (
                     "準備中（弱点を確認して最終復習）"
                   ) : day === 56 ? (
@@ -392,7 +449,7 @@ function QuestionView({
           <p>音声の内容は未確認です。再生できない場合は未実施のままにできます。</p>
           {playError && (
             <p role="status">
-              再生できませんでした。<a href={link("settings")}>音声診断</a>を確認してください。
+              再生できませんでした。<a href={link("settings")}>音声設定</a>を確認してください。
             </p>
           )}
         </div>
@@ -400,17 +457,18 @@ function QuestionView({
       {q.type === "choice" || (q.type === "listening" && q.options) ? (
         <fieldset>
           <legend>回答を選ぶ</legend>
-          {q.options?.map((o) => (
-            <label className="option" key={o}>
-              <input
-                type="radio"
-                name={q.id}
-                checked={answer === o}
-                onChange={() => setAnswer(o)}
-              />
-              {ko(o)}
-            </label>
-          ))}
+          {q.options &&
+            displayOptions(q.id, q.options).map((o) => (
+              <label className="option" key={o}>
+                <input
+                  type="radio"
+                  name={q.id}
+                  checked={answer === o}
+                  onChange={() => setAnswer(o)}
+                />
+                {ko(o)}
+              </label>
+            ))}
         </fieldset>
       ) : q.type === "self" ? (
         <>
@@ -504,7 +562,7 @@ function QuestionView({
                   const sectionId = "name" in item ? (item.sectionId ?? "section-0") : "vocabulary";
                   return (
                     <a key={id} href={link(`lesson/${source.id}?${sectionId}`)}>
-                      {ko(name)}の本文（第{source.day}課）{" "}
+                      {ko(name)}の本文（{lessonLabel(source.day)}）{" "}
                     </a>
                   );
                 })}
@@ -534,10 +592,33 @@ function LessonPage({
     checks[l.production.rubric.length + 1];
   const [hideKorean, setHideKorean] = useState(false);
   const [hideJapanese, setHideJapanese] = useState(false);
-  const initialPosition = useRef(target ?? progress.positions[l.id]);
+  const initialPosition = useRef<string | undefined>(target ?? progress.positions[l.id]);
+  const [activeTab, setActiveTab] = useState<LessonTab>(() =>
+    tabForPosition(initialPosition.current),
+  );
+  const audio = useAudio();
+  const selectTab = (tab: LessonTab, position?: string) => {
+    audio.stop();
+    setActiveTab(tab);
+    mark(
+      position ??
+        (
+          {
+            text: "objectives",
+            practice: "recall",
+            production: "production",
+            exit: "exit",
+            sources: "sources",
+          } as const
+        )[tab],
+    );
+  };
   useEffect(() => {
     update((p) => (p.lastLessonId === l.id ? p : { ...p, lastLessonId: l.id }));
-    if (initialPosition.current) document.getElementById(initialPosition.current)?.scrollIntoView();
+    if (initialPosition.current) {
+      document.getElementById(initialPosition.current)?.scrollIntoView();
+      initialPosition.current = undefined;
+    }
     const sections = Array.from(document.querySelectorAll("main section[id]"));
     const observer = new IntersectionObserver(
       () => {
@@ -572,22 +653,7 @@ function LessonPage({
     );
     sections.forEach((section) => observer.observe(section));
     return () => observer.disconnect();
-  }, [l.id]);
-  const sections = [
-    ["objectives", "今日できるようになること"],
-    ["recall", "想起練習"],
-    ...l.sections.map((s, i) => [`section-${i}`, s.heading]),
-    ...(l.day <= 3 ? [["hangul-builder", "文字を組み立てる"]] : []),
-    ["vocabulary", "語彙"],
-    ["examples", "例文"],
-    ["dialogue", "会話・読解"],
-    ["exercises", "練習"],
-    ...(l.roleplay ? [["roleplay", "ロールプレイ"]] : []),
-    ...(l.voiceTransfer ? [["voice-transfer", "別の合成音声で聞く"]] : []),
-    ["production", "作文・発話"],
-    ["exit", "出口テスト"],
-    ["sources", "出典"],
-  ];
+  }, [l.id, activeTab]);
   const mark = (id: string) =>
     update((p) => ({ ...p, lastLessonId: l.id, positions: { ...p.positions, [l.id]: id } }));
   const summary = summarize(l.exitTest, progress.attempts);
@@ -621,26 +687,6 @@ function LessonPage({
     ));
   return (
     <div className="lesson-layout">
-      <aside>
-        <details open={!window.matchMedia("(max-width: 700px)").matches}>
-          <summary>この課の目次</summary>
-          <nav aria-label="課内目次">
-            {sections.map(([id, title]) => (
-              <a
-                key={id}
-                href={`#/${`lesson/${l.id}`}?${id}`}
-                onClick={(e) => {
-                  e.preventDefault();
-                  mark(id);
-                  document.getElementById(id)?.scrollIntoView();
-                }}
-              >
-                {ko(title)}
-              </a>
-            ))}
-          </nav>
-        </details>
-      </aside>
       <main
         onClick={(e) => {
           const section = (e.target as HTMLElement).closest("section[id]");
@@ -652,329 +698,358 @@ function LessonPage({
         }}
       >
         <h1>
-          第{l.day}課 {ko(l.title)}
+          {lessonLabel(l.day)} {ko(l.title)}
         </h1>
-        {progress.positions[l.id] && (
-          <p>
+        <div
+          className="lesson-tabs"
+          role="tablist"
+          aria-label="節の内容"
+          onKeyDown={(e) => {
+            const index = tabs.findIndex(([id]) => id === activeTab);
+            const next =
+              e.key === "ArrowRight"
+                ? (index + 1) % tabs.length
+                : e.key === "ArrowLeft"
+                  ? (index + tabs.length - 1) % tabs.length
+                  : e.key === "Home"
+                    ? 0
+                    : e.key === "End"
+                      ? tabs.length - 1
+                      : -1;
+            if (next >= 0) {
+              e.preventDefault();
+              selectTab(tabs[next][0]);
+              document.getElementById(`tab-${tabs[next][0]}`)?.focus();
+            }
+          }}
+        >
+          {tabs.map(([id, label]) => (
             <button
+              key={id}
               type="button"
-              onClick={() => document.getElementById(progress.positions[l.id])?.scrollIntoView()}
+              role="tab"
+              id={`tab-${id}`}
+              aria-controls={`panel-${id}`}
+              aria-selected={activeTab === id}
+              tabIndex={activeTab === id ? 0 : -1}
+              onClick={() => selectTab(id)}
             >
-              前回の位置へ
+              {label}
             </button>
-          </p>
-        )}
-        <section id="objectives" onClick={() => mark("objectives")}>
-          <h2>今日できるようになること</h2>
-          <ul>
-            {l.objectives.map((x) => (
-              <li key={x}>{ko(x)}</li>
-            ))}
-          </ul>
-          {l.prerequisites.length > 0 && (
-            <p>
-              前提：
-              {l.prerequisites.map((id) => (
-                <a key={id} href={link(`lesson/${id}`)}>
-                  {ko(lessons.find((x) => x.id === id)?.title ?? id)}{" "}
-                </a>
-              ))}
-            </p>
-          )}
-        </section>
-        <section id="recall">
-          <h2>想起練習</h2>
-          {l.recall.length ? (
-            l.recall.map((q) => (
-              <QuestionView key={q.id} q={q} progress={progress} update={update} />
-            ))
-          ) : (
-            <p>前提となる想起問題はありません。</p>
-          )}
-        </section>
-        {l.sections.map((s, i) => (
-          <section id={`section-${i}`} key={i} onClick={() => mark(`section-${i}`)}>
-            <h2>{ko(s.heading)}</h2>
-            {s.paragraphs.map((p, j) => (
-              <p key={j}>{ko(p)}</p>
-            ))}
-          </section>
-        ))}
-        {l.day <= 3 && <HangulBuilder key={l.day} day={l.day} />}
-        <section id="vocabulary">
-          <h2>語彙</h2>
-          {l.vocabulary.length ? (
+          ))}
+        </div>
+        <div
+          role="tabpanel"
+          tabIndex={0}
+          id="panel-text"
+          aria-labelledby="tab-text"
+          hidden={activeTab !== "text"}
+        >
+          <section id="objectives" onClick={() => mark("objectives")}>
+            <h2>今日できるようになること</h2>
             <ul>
-              {l.vocabulary.map((v) => (
-                <li key={v.id}>
-                  <span lang="ko">{v.korean}</span>：{v.meaning}（{v.partOfSpeech}、辞書形
-                  <span lang="ko">{v.dictionaryForm}</span>、第{v.firstDay}課）
-                  <ReviewControl id={v.id} progress={progress} update={update} />
-                </li>
+              {l.objectives.map((x) => (
+                <li key={x}>{ko(x)}</li>
               ))}
             </ul>
-          ) : (
-            <p>語彙の登録はありません。</p>
-          )}
-        </section>
-        <fieldset>
-          <legend>例文と会話の表示</legend>
-          <label className="inline">
-            <input
-              type="checkbox"
-              checked={hideKorean}
-              onChange={(e) => setHideKorean(e.target.checked)}
-            />
-            原文を隠す
-          </label>
-          <label className="inline">
-            <input
-              type="checkbox"
-              checked={hideJapanese}
-              onChange={(e) => setHideJapanese(e.target.checked)}
-            />
-            訳を隠す
-          </label>
-        </fieldset>
-        <section id="examples">
-          <h2>例文</h2>
-          {examples(l.examples)}
-        </section>
-        <section id="dialogue">
-          <h2>会話・読解</h2>
-          {examples(l.dialogue)}
-        </section>
-        <section id="exercises">
-          <h2>練習</h2>
-          {l.exercises.map((q) => (
-            <QuestionView key={q.id} q={q} progress={progress} update={update} />
+          </section>
+          {l.sections.map((s, i) => (
+            <section id={`section-${i}`} key={i} onClick={() => mark(`section-${i}`)}>
+              <h2>{ko(s.heading)}</h2>
+              {s.paragraphs.map((p, j) => (
+                <p key={j}>{ko(p)}</p>
+              ))}
+            </section>
           ))}
-        </section>
-        {l.roleplay && (
-          <RoleplayView lessonId={l.id} roleplay={l.roleplay} progress={progress} update={update} />
-        )}
-        {l.voiceTransfer && (
-          <ListeningTransfer
-            transfer={l.voiceTransfer}
-            saved={progress.voiceTransferRuns[l.id]}
-            onSelfCheck={(run) =>
-              update((p) => ({ ...p, voiceTransferRuns: { ...p.voiceTransferRuns, [l.id]: run } }))
-            }
-          />
-        )}
-        <section id="production">
-          <h2>作文・発話</h2>
-          <p>{ko(l.production.prompt)}</p>
-          <label>
-            自分の文章
-            <textarea
-              value={progress.drafts[l.id] ?? ""}
-              onChange={(e) =>
-                update((p) => ({ ...p, drafts: { ...p.drafts, [l.id]: e.target.value } }))
+          {l.day <= 3 && activeTab === "text" && <LetterSoundGuide key="guide" day={l.day} />}
+          {l.day <= 3 && <HangulBuilder key="builder" day={l.day} />}
+          <section id="vocabulary">
+            <h2>語彙</h2>
+            {l.vocabulary.length ? (
+              <ul>
+                {l.vocabulary.map((v) => (
+                  <li key={v.id}>
+                    <span lang="ko">{v.korean}</span>：{v.meaning}（{v.partOfSpeech}、辞書形
+                    <span lang="ko">{v.dictionaryForm}</span>、{lessonLabel(v.firstDay)}）
+                    <ReviewControl id={v.id} progress={progress} update={update} />
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p>語彙の登録はありません。</p>
+            )}
+          </section>
+          <fieldset>
+            <legend>例文と会話の表示</legend>
+            <label className="inline">
+              <input
+                type="checkbox"
+                checked={hideKorean}
+                onChange={(e) => setHideKorean(e.target.checked)}
+              />
+              原文を隠す
+            </label>
+            <label className="inline">
+              <input
+                type="checkbox"
+                checked={hideJapanese}
+                onChange={(e) => setHideJapanese(e.target.checked)}
+              />
+              訳を隠す
+            </label>
+          </fieldset>
+          <section id="examples">
+            <h2>例文</h2>
+            {examples(l.examples)}
+          </section>
+          <section id="dialogue">
+            <h2>会話・読解</h2>
+            {examples(l.dialogue)}
+          </section>
+        </div>
+        <div
+          role="tabpanel"
+          tabIndex={0}
+          id="panel-practice"
+          aria-labelledby="tab-practice"
+          hidden={activeTab !== "practice"}
+        >
+          <section id="recall">
+            <h2>前の内容を復習</h2>
+            {l.recall.length ? (
+              l.recall.map((q) => (
+                <QuestionView key={q.id} q={q} progress={progress} update={update} />
+              ))
+            ) : (
+              <p>復習問題はありません。</p>
+            )}
+          </section>
+          <section id="exercises">
+            <h2>練習</h2>
+            {l.exercises.map((q) => (
+              <QuestionView key={q.id} q={q} progress={progress} update={update} />
+            ))}
+          </section>
+          {activeTab === "practice" && l.roleplay && (
+            <RoleplayView
+              lessonId={l.id}
+              roleplay={l.roleplay}
+              progress={progress}
+              update={update}
+            />
+          )}
+          {l.voiceTransfer && (
+            <ListeningTransfer
+              transfer={l.voiceTransfer}
+              saved={progress.voiceTransferRuns[l.id]}
+              onSelfCheck={(run) =>
+                update((p) => ({
+                  ...p,
+                  voiceTransferRuns: { ...p.voiceTransferRuns, [l.id]: run },
+                }))
               }
             />
-          </label>
-          <details>
-            <summary>模範例と自己確認</summary>
-            <p>{ko(l.production.model)}</p>
-            {l.production.rubric.map((x, i) => (
-              <label key={x}>
+          )}
+        </div>
+        <div
+          role="tabpanel"
+          tabIndex={0}
+          id="panel-production"
+          aria-labelledby="tab-production"
+          hidden={activeTab !== "production"}
+        >
+          <section id="production">
+            <h2>作文・発話</h2>
+            <p>{ko(l.production.prompt)}</p>
+            <label>
+              自分の文章
+              <textarea
+                value={progress.drafts[l.id] ?? ""}
+                onChange={(e) =>
+                  update((p) => ({ ...p, drafts: { ...p.drafts, [l.id]: e.target.value } }))
+                }
+              />
+            </label>
+            <details>
+              <summary>模範例と自己確認</summary>
+              <p>{ko(l.production.model)}</p>
+              {l.production.rubric.map((x, i) => (
+                <label key={x}>
+                  <input
+                    type="checkbox"
+                    checked={checks[i] ?? false}
+                    onChange={(e) => {
+                      const checked = e.target.checked;
+                      update((p) => ({
+                        ...p,
+                        productionChecks: {
+                          ...p.productionChecks,
+                          [l.id]: Array.from({ length: l.production.rubric.length + 2 }, (_, j) =>
+                            j === i ? checked : (p.productionChecks[l.id]?.[j] ?? false),
+                          ),
+                        },
+                      }));
+                    }}
+                  />
+                  {ko(x)}
+                </label>
+              ))}
+            </details>
+            {activeTab === "production" && (
+              <Recorder sampleText={productionSpeakingModel(l.production)} />
+            )}
+            {["作文を自己評価した", "発話を自己評価した"].map((label, offset) => (
+              <label key={label}>
                 <input
                   type="checkbox"
-                  checked={checks[i] ?? false}
+                  checked={checks[l.production.rubric.length + offset] ?? false}
                   onChange={(e) => {
                     const checked = e.target.checked;
                     update((p) => ({
                       ...p,
                       productionChecks: {
                         ...p.productionChecks,
-                        [l.id]: Array.from({ length: l.production.rubric.length + 2 }, (_, j) =>
-                          j === i ? checked : (p.productionChecks[l.id]?.[j] ?? false),
+                        [l.id]: Array.from({ length: l.production.rubric.length + 2 }, (_, i) =>
+                          i === l.production.rubric.length + offset
+                            ? checked
+                            : (p.productionChecks[l.id]?.[i] ?? false),
                         ),
                       },
                     }));
                   }}
                 />
-                {ko(x)}
+                {label}
               </label>
             ))}
-          </details>
-          <Recorder sampleText={productionSpeakingModel(l.production)} />
-          {["作文を自己評価した", "発話を自己評価した"].map((label, offset) => (
-            <label key={label}>
-              <input
-                type="checkbox"
-                checked={checks[l.production.rubric.length + offset] ?? false}
-                onChange={(e) => {
-                  const checked = e.target.checked;
-                  update((p) => ({
-                    ...p,
-                    productionChecks: {
-                      ...p.productionChecks,
-                      [l.id]: Array.from({ length: l.production.rubric.length + 2 }, (_, i) =>
-                        i === l.production.rubric.length + offset
-                          ? checked
-                          : (p.productionChecks[l.id]?.[i] ?? false),
-                      ),
-                    },
-                  }));
-                }}
-              />
-              {label}
-            </label>
-          ))}
-        </section>
-        {l.day === 55 && (
-          <p>
-            <a href={link("results")}>学習履歴から弱点と復習先を確認する</a>　
-            <a href={link("review")}>今日の復習へ</a>
-          </p>
-        )}
-        <section id="exit">
-          <h2>出口テスト</h2>
-          <p>
-            練習とは別の問題です。8割は学習の目安で、公式認定ではありません。結果に関係なく次の課に進めます。
-          </p>
-          {l.exitTest.map((q) => (
-            <QuestionView key={q.id} q={q} progress={progress} update={update} />
-          ))}
-          <p>
-            初回の自力正答：{summary.firstCorrect}/{summary.firstAttempted}問。実施
-            {summary.attempted}/{summary.total}問、未実施{summary.unattempted}問、答え閲覧後に回答
-            {summary.afterAnswer}問。
-          </p>
-          <ul>
-            {(
-              [
-                ["reading", "読解"],
-                ["listening", "聴解"],
-                ["typing", "入力"],
-                ["writing", "作文"],
-                ["speaking", "発話"],
-              ] as const
-            ).map(([skill, label]) => {
-              const result = summary.bySkill[skill];
-              return (
-                <li key={skill}>
-                  {label}：初回正答{result.firstCorrect}/{result.firstAttempted}、実施
-                  {result.attempted}/{result.total}、自己評価{result.self.attempted}/
-                  {result.self.total}
-                  {(skill === "writing" || skill === "speaking") && (
-                    <>
-                      、作文・発話の自己評価{productionSummary[skill].checked}/
-                      {productionSummary[skill].total}
-                    </>
-                  )}
-                </li>
-              );
-            })}
-          </ul>
-          <p>
-            作文・発話の自己確認：{productionSummary.rubric.checked}/
-            {productionSummary.rubric.total}
-            項目。作文・発話は自己評価です。課の完了は成績認定ではありません。
-          </p>
-          {l.day === 56 && (
+          </section>
+          {l.day === 55 && (
             <p>
-              <a href={link("results")}>技能別結果と次の2〜4週間の復習案を見る</a>
+              <a href={link("results")}>学習履歴から弱点と復習先を確認する</a>　
+              <a href={link("review")}>今日の復習へ</a>
             </p>
           )}
-          <button
-            type="button"
-            disabled={
-              !summary.complete ||
-              !productionDone ||
-              !selfChecked ||
-              (!!l.voiceTransfer && !progress.voiceTransferRuns[l.id])
-            }
-            onClick={complete}
-          >
-            この課を完了する
-          </button>
-          {(!summary.complete || !productionDone || !selfChecked) && (
-            <p>出口テストをすべて実施し、作文と発話を自己評価してから完了できます。</p>
-          )}
-          {l.voiceTransfer && !progress.voiceTransferRuns[l.id] && (
-            <p>別の合成音声での練習を自己確認してから完了できます。</p>
-          )}
-          {progress.completedLessons.includes(l.id) && <p>完了済みです。</p>}
-        </section>
-        <section id="sources">
-          <h2>出典と確認状況</h2>
-          <p>
-            言語内容：{l.languageStatus === "checked" ? "確認済み" : "未確認"}／音声：
-            {l.audioStatus === "checked" ? "確認済み" : "未確認"}
-          </p>
-          <ul>
-            {l.sources.map((s) => (
-              <li key={s.url}>
-                <a href={s.url}>{s.name}</a>（{s.checkedAt}、
-                {s.status === "checked" ? "確認済み" : "未確認"}）：{s.checked}
-              </li>
+        </div>
+        <div
+          role="tabpanel"
+          tabIndex={0}
+          id="panel-exit"
+          aria-labelledby="tab-exit"
+          hidden={activeTab !== "exit"}
+        >
+          <section id="exit">
+            <h2>確認テスト</h2>
+            <p>
+              練習とは別の問題です。8割は学習の目安で、公式認定ではありません。結果に関係なく次の節に進めます。
+            </p>
+            {l.exitTest.map((q) => (
+              <QuestionView key={q.id} q={q} progress={progress} update={update} />
             ))}
-          </ul>
-          <label>
-            メモ
-            <textarea
-              value={progress.notes[l.id] ?? ""}
-              onChange={(e) =>
-                update((p) => ({ ...p, notes: { ...p.notes, [l.id]: e.target.value } }))
+            <p>
+              初回の自力正答：{summary.firstCorrect}/{summary.firstAttempted}問。実施
+              {summary.attempted}/{summary.total}問、未実施{summary.unattempted}問、答え閲覧後に回答
+              {summary.afterAnswer}問。
+            </p>
+            <ul>
+              {(
+                [
+                  ["reading", "読解"],
+                  ["listening", "聴解"],
+                  ["typing", "入力"],
+                  ["writing", "作文"],
+                  ["speaking", "発話"],
+                ] as const
+              ).map(([skill, label]) => {
+                const result = summary.bySkill[skill];
+                return (
+                  <li key={skill}>
+                    {label}：初回正答{result.firstCorrect}/{result.firstAttempted}、実施
+                    {result.attempted}/{result.total}、自己評価{result.self.attempted}/
+                    {result.self.total}
+                    {(skill === "writing" || skill === "speaking") && (
+                      <>
+                        、作文・発話の自己評価{productionSummary[skill].checked}/
+                        {productionSummary[skill].total}
+                      </>
+                    )}
+                  </li>
+                );
+              })}
+            </ul>
+            <p>
+              作文・発話の自己確認：{productionSummary.rubric.checked}/
+              {productionSummary.rubric.total}
+              項目。作文・発話は自己評価です。節の完了は成績認定ではありません。
+            </p>
+            {l.day === 56 && (
+              <p>
+                <a href={link("results")}>技能別結果と次の2〜4週間の復習案を見る</a>
+              </p>
+            )}
+            <button
+              type="button"
+              disabled={
+                !summary.complete ||
+                !productionDone ||
+                !selfChecked ||
+                (!!l.voiceTransfer && !progress.voiceTransferRuns[l.id])
               }
-            />
-          </label>
-        </section>
+              onClick={complete}
+            >
+              この節を完了する
+            </button>
+            {(!summary.complete || !productionDone || !selfChecked) && (
+              <p>出口テストをすべて実施し、作文と発話を自己評価してから完了できます。</p>
+            )}
+            {l.voiceTransfer && !progress.voiceTransferRuns[l.id] && (
+              <p>別の合成音声での練習を自己確認してから完了できます。</p>
+            )}
+            {progress.completedLessons.includes(l.id) && <p>完了済みです。</p>}
+          </section>
+        </div>
+        <div
+          role="tabpanel"
+          tabIndex={0}
+          id="panel-sources"
+          aria-labelledby="tab-sources"
+          hidden={activeTab !== "sources"}
+        >
+          <section id="sources">
+            <h2>出典と確認状況</h2>
+            <p>
+              言語内容：{l.languageStatus === "checked" ? "確認済み" : "未確認"}／音声：
+              {l.audioStatus === "checked" ? "確認済み" : "未確認"}
+            </p>
+            <ul>
+              {l.sources.map((s) => (
+                <li key={s.url}>
+                  <a href={s.url}>{s.name}</a>（{s.checkedAt}、
+                  {s.status === "checked" ? "確認済み" : "未確認"}）：{s.checked}
+                </li>
+              ))}
+            </ul>
+            <label>
+              メモ
+              <textarea
+                value={progress.notes[l.id] ?? ""}
+                onChange={(e) =>
+                  update((p) => ({ ...p, notes: { ...p.notes, [l.id]: e.target.value } }))
+                }
+              />
+            </label>
+          </section>
+        </div>
         {lessons.find((x) => x.day === l.day + 1) && (
           <p>
             <a
               className="primary"
               href={link(`lesson/${lessons.find((x) => x.day === l.day + 1)?.id}`)}
             >
-              次の課へ
+              次の節へ
             </a>
           </p>
         )}
       </main>
     </div>
-  );
-}
-function DiagnosticPage({ progress, update }: { progress: Progress; update: Update }) {
-  const summary = summarize(diagnosticQuestions, progress.attempts);
-  const groups = [
-    diagnosticQuestions.slice(0, 5),
-    diagnosticQuestions.slice(5, 10),
-    diagnosticQuestions.slice(10),
-  ];
-  const passed = groups.map((group) => {
-    const result = summarize(group, progress.attempts);
-    return result.firstAttempted === group.length && result.firstCorrect / group.length >= 0.8;
-  });
-  const recommendation =
-    !passed[0] || !passed[1] ? "第1〜3課から" : !passed[2] ? "第4〜6課から" : "第7課の週テストから";
-  return (
-    <main>
-      <h1>先取り診断</h1>
-      <p>
-        文字・入力・基本文の診断用の問題です。韓国語入力を設定してから取り組んでください。物理2ボル式のキー列は配列の例で、スマートフォンでも示された字母を組み合わせて回答できます。各区分の初回自力正答8割を独自の目安にします。公式認定ではなく、どの課も自由に開けます。聴解は未実施です。
-      </p>
-      <p>
-        初回自力正答 {summary.firstCorrect}/{summary.firstAttempted}、未実施 {summary.unattempted}
-        問。
-      </p>
-      <p>
-        {summary.attempted === diagnosticQuestions.length
-          ? `おすすめ：${recommendation}始めましょう。`
-          : "すべて初回回答すると先取り先を提案します。答えを先に見た問題は自力正答に含めません。"}
-      </p>
-      {groups.map((group, i) => (
-        <section key={i}>
-          <h2>{["文字", "入力", "基本文"][i]}</h2>
-          {group.map((q) => (
-            <QuestionView key={q.id} q={q} progress={progress} update={update} />
-          ))}
-        </section>
-      ))}
-      <p>問題は独自作成で言語的照合は未実施です。音声は使用していません。</p>
-    </main>
   );
 }
 function ResultsPage({ progress }: { progress: Progress }) {
@@ -1003,13 +1078,13 @@ function ResultsPage({ progress }: { progress: Progress }) {
           <option value="all">全履歴</option>
           {scopes.map((item) => (
             <option key={item.id} value={item.id}>
-              第{item.day}課の確認テスト{item.attempted ? "" : "（未実施）"}
+              {lessonLabel(item.day)}の確認テスト{item.attempted ? "" : "（未実施）"}
             </option>
           ))}
         </select>
       </label>
       <p>
-        {selected ? `第${selected.day}課の確認テスト` : "全履歴（各課の出口テスト）"}
+        {selected ? `${lessonLabel(selected.day)}の確認テスト` : "全履歴（各節の出口テスト）"}
         ：自動採点の実施{result.attempted}/{result.total}問、未実施{result.unattempted}
         問。未実施は0点として扱いません。
       </p>
@@ -1035,7 +1110,7 @@ function ResultsPage({ progress }: { progress: Progress }) {
         })}
       </ul>
       <p>
-        課の自己評価：作文チェック{production.writing}/{evaluated.length}件、発話チェック
+        節の自己評価：作文チェック{production.writing}/{evaluated.length}件、発話チェック
         {production.speaking}/{evaluated.length}件。 自動採点とは別の自己確認です。
       </p>
       <h2>復習先</h2>
@@ -1044,24 +1119,24 @@ function ResultsPage({ progress }: { progress: Progress }) {
           {weak.map((l) => (
             <li key={l.id}>
               <a href={link(`lesson/${l.id}`)}>
-                第{l.day}課 {ko(l.title)}
+                {lessonLabel(l.day)} {ko(l.title)}
               </a>
             </li>
           ))}
         </ul>
       ) : (
-        <p>期限到来の弱点はありません。未実施の課も確認しましょう。</p>
+        <p>期限到来の弱点はありません。未実施の節も確認しましょう。</p>
       )}
       <p>
         <a href={link("review")}>期限の来た復習へ</a>
       </p>
       <h2>次の2〜4週間</h2>
       <p>
-        1週目は上の期限到来の復習を1日最大20件行い、間違えた課の本文に戻ります。期限到来がなければ、以下の未実施の技能から確認しましょう。
+        1週目は上の期限到来の復習を1日最大20件行い、間違えた節の本文に戻ります。期限到来がなければ、以下の未実施の技能から確認しましょう。
       </p>
       {skills.some((item) => item.missed.length > 0) && (
         <p>
-          初回に間違えた課：
+          初回に間違えた節：
           {Array.from(
             new Map(
               skills.flatMap((item) => item.missed).map((lesson) => [lesson.id, lesson]),
@@ -1071,7 +1146,7 @@ function ResultsPage({ progress }: { progress: Progress }) {
             .map((lesson) => (
               <span key={lesson.id}>
                 {" "}
-                <a href={link(`lesson/${lesson.id}`)}>第{lesson.day}課</a>
+                <a href={link(`lesson/${lesson.id}`)}>{lessonLabel(lesson.day)}</a>
               </span>
             ))}
         </p>
@@ -1105,7 +1180,7 @@ function ResultsPage({ progress }: { progress: Progress }) {
             {recommended.map((lesson) => (
               <span key={lesson.id}>
                 {" "}
-                <a href={link(`lesson/${lesson.id}`)}>第{lesson.day}課</a>
+                <a href={link(`lesson/${lesson.id}`)}>{lessonLabel(lesson.day)}</a>
               </span>
             ))}
             {!related.length && "関連する出口テストは収録されていません。"}
@@ -1116,7 +1191,7 @@ function ResultsPage({ progress }: { progress: Progress }) {
         3〜4週目は間隔を空けて再評価し、別文や利用可能な別の声で確かめましょう。作文と発話は課題のチェック項目を使って自己評価します。
       </p>
       {lessons.some((lesson) => lesson.day >= 43) && (
-        <p>収録済みの第43課以降も技能練習や再評価に活用しましょう。</p>
+        <p>収録済みの第7章以降も技能練習や再評価に活用しましょう。</p>
       )}
       <ul>
         {lessons
@@ -1124,7 +1199,7 @@ function ResultsPage({ progress }: { progress: Progress }) {
           .map((lesson) => (
             <li key={lesson.id}>
               <a href={link(`lesson/${lesson.id}`)}>
-                第{lesson.day}課 {ko(lesson.title)}
+                {lessonLabel(lesson.day)} {ko(lesson.title)}
               </a>
             </li>
           ))}
@@ -1204,7 +1279,7 @@ function ReviewPage({ progress, update }: { progress: Progress; update: Update }
                         `lesson/${source.id}?${g?.sectionId ?? diagnosticGrammar?.sectionId ?? (v ? "vocabulary" : "exercises")}`,
                       )}
                     >
-                      第{source.day}課の本文へ
+                      {lessonLabel(source.day)}の本文へ
                     </a>
                   </p>
                 )}
@@ -1266,7 +1341,7 @@ function Reference({ progress, update }: { progress: Progress; update: Update })
       {vocab.map((v) => (
         <p id={v.id} key={v.id}>
           <strong lang="ko">{v.korean}</strong>：{v.meaning}（{v.partOfSpeech}、辞書形{" "}
-          <span lang="ko">{v.dictionaryForm}</span>、第{v.firstDay}課）
+          <span lang="ko">{v.dictionaryForm}</span>、{lessonLabel(v.firstDay)}）
           <ReviewControl id={v.id} progress={progress} update={update} />
         </p>
       ))}
@@ -1279,7 +1354,7 @@ function Reference({ progress, update }: { progress: Progress; update: Update })
               `lesson/${lessons.find((l) => l.day === g.firstDay)?.id}?${g.sectionId ?? "section-0"}`,
             )}
           >
-            第{g.firstDay}課の本文
+            {lessonLabel(g.firstDay)}の本文
           </a>
           ）
           <ReviewControl id={g.id} progress={progress} update={update} />
@@ -1351,7 +1426,7 @@ function Settings({
           <div className="notice">
             <h3>読み込み内容の確認</h3>
             <p>
-              完了した課：{preview.completedLessons.length}件、回答：{preview.attempts.length}
+              完了した節：{preview.completedLessons.length}件、回答：{preview.attempts.length}
               件、復習：{preview.reviews.length}件。適用すると現在の進捗を置き換えます。
             </p>
             <button

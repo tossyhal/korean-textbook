@@ -52,7 +52,7 @@ async function mockRecording(
 for (const mode of ["webm", "mp4"] as const)
   test(`録音許可、${mode}形式、トラック停止`, async ({ page }) => {
     await mockRecording(page, mode);
-    await page.goto("#/lesson/day-01");
+    await page.goto("#/lesson/day-01?production");
     await expect(
       page.getByText("手本は端末の韓国語合成音声です。音声内容と発音の品質は未確認です。"),
     ).toBeVisible();
@@ -76,7 +76,7 @@ test("発音ガイドの録音にも手本の音源と確認状態を表示す�
 for (const mode of ["denied", "unsupported"] as const)
   test(`録音${mode}の案内`, async ({ page }) => {
     await mockRecording(page, mode);
-    await page.goto("#/lesson/day-01");
+    await page.goto("#/lesson/day-01?production");
     await page.getByRole("button", { name: "録音開始" }).click();
     await expect(page.getByRole("alert")).toContainText(
       mode === "denied" ? "許可されませんでした" : "対応していません",
@@ -85,7 +85,7 @@ for (const mode of ["denied", "unsupported"] as const)
 
 test("遅延した録音許可後、離脱済みならトラック停止", async ({ page }) => {
   await mockRecording(page, "delayed");
-  await page.goto("#/lesson/day-01");
+  await page.goto("#/lesson/day-01?production");
   await page.getByRole("button", { name: "録音開始" }).click();
   await expect(page.getByText("マイクの許可を待っています。")).toBeVisible();
   await page.goto("#/settings");
@@ -134,4 +134,15 @@ test("遅れて届くvoiceschanged、再生エラーと停止・遷移", async (
   await stop.click();
   await page.goto("#/settings");
   expect(await page.evaluate(() => (window as any).synthMock.cancels)).toBeGreaterThan(1);
+});
+
+test("タブを切り替えると録音中のマイクを停止する", async ({ page }) => {
+  await mockRecording(page, "webm");
+  await page.goto("#/lesson/day-01?production");
+  await page.getByRole("button", { name: "録音開始" }).click();
+  await expect(page.getByText("録音中", { exact: true })).toBeVisible();
+  await page.getByRole("tab", { name: "本文" }).click();
+  await expect
+    .poll(() => page.evaluate(() => (window as any).recordingMock.stops))
+    .toBeGreaterThan(0);
 });

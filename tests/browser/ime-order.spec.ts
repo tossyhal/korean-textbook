@@ -1,7 +1,7 @@
 import { expect, test } from "@playwright/test";
 
 test("変換確定後のinputを保存し、再読み込み後に採点できる", async ({ page }) => {
-  await page.goto("#/lesson/day-01");
+  await page.goto("#/lesson/day-01?exercises");
   const question = page.locator("#day-01-ex-01");
   const input = question.getByLabel("回答");
   await input.focus();

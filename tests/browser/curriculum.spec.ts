@@ -2,6 +2,14 @@ import { expect, test } from "@playwright/test";
 import { lessons } from "../../src/content";
 
 const key = "korean-textbook-progress-v1";
+const display = (text: string) =>
+  text
+    .replace(
+      /第(\d+)課/g,
+      (_, day: string) =>
+        `第${Math.floor((Number(day) - 1) / 7) + 1}章第${((Number(day) - 1) % 7) + 1}節`,
+    )
+    .replace(/第([1-8])週/g, "第$1章");
 
 type ActivityQuestion = (typeof lessons)[number]["exercises"][number];
 
@@ -45,6 +53,7 @@ test("固定解のない課の自己評価と未確認音声を保存する", as
     });
   });
   await page.goto(`#/lesson/${lessons[0].id}`);
+  await page.getByRole("tab", { name: "練習" }).click();
   const self = page.locator("#fixture-self");
   await self.getByLabel("自分の回答").fill("自由な回答");
   await expect(self).toContainText("自動採点はしません");
@@ -95,10 +104,12 @@ for (const lesson of lessons) {
       if (message.type() === "error") errors.push(message.text());
     });
     await page.goto(`#/lesson/${lesson.id}`);
-    await expect(page.locator("main h1")).toHaveText(`第${lesson.day}課 ${lesson.title}`);
+    await expect(page.locator("main h1")).toHaveText(
+      `第${Math.floor((lesson.day - 1) / 7) + 1}章第${((lesson.day - 1) % 7) + 1}節 ${display(lesson.title)}`,
+    );
     for (const [index, section] of lesson.sections.entries()) {
-      await expect(page.locator(`#section-${index}`)).toContainText(section.heading);
-      await expect(page.locator(`#section-${index}`)).toContainText(section.paragraphs[0]);
+      await expect(page.locator(`#section-${index}`)).toContainText(display(section.heading));
+      await expect(page.locator(`#section-${index}`)).toContainText(display(section.paragraphs[0]));
     }
     for (const [id, items] of [
       ["examples", lesson.examples],
@@ -113,29 +124,30 @@ for (const lesson of lessons) {
       ["exercises", lesson.exercises],
       ["exit", lesson.exitTest],
     ] as const) {
+      await page.getByRole("tab", { name: id === "exercises" ? "練習" : "確認テスト" }).click();
       for (const question of questions)
         await expect(page.locator(`#${id} #${question.id}`)).toBeVisible();
     }
+    await page.getByRole("tab", { name: "出典・メモ" }).click();
     for (const source of lesson.sources) {
       await expect(
         page.locator("#sources").getByRole("link", { name: source.name, exact: true }),
       ).toHaveAttribute("href", source.url);
     }
-    for (const prerequisite of lesson.prerequisites) {
-      await expect(
-        page.locator("#objectives").locator(`a[href="#/lesson/${prerequisite}"]`),
-      ).toBeVisible();
-    }
+    await page.getByRole("tab", { name: "本文" }).click();
     const next = lessons.find((item) => item.day === lesson.day + 1);
     if (next)
-      await expect(page.getByRole("link", { name: "次の課へ" })).toHaveAttribute(
+      await expect(page.getByRole("link", { name: "次の節へ" })).toHaveAttribute(
         "href",
         `#/lesson/${next.id}`,
       );
-    else await expect(page.getByRole("link", { name: "次の課へ" })).toHaveCount(0);
+    else await expect(page.getByRole("link", { name: "次の節へ" })).toHaveCount(0);
 
     const q = chooseActivity([...lesson.exercises, ...lesson.exitTest]);
     if (q) {
+      await page
+        .getByRole("tab", { name: lesson.exercises.includes(q) ? "練習" : "確認テスト" })
+        .click();
       const view = page.locator(`#${q.id}`);
       if (q.type === "choice" || (q.type === "listening" && q.options))
         await view
@@ -184,9 +196,12 @@ for (const lesson of lessons) {
         );
       }
     }
+    await page.getByRole("tab", { name: "出典・メモ" }).click();
     await page.locator("#sources textarea").fill("確認メモ");
+    await page.getByRole("tab", { name: "作文・発話" }).click();
     await page.getByLabel("自分の文章").fill("안녕하세요");
     await page.getByLabel("作文を自己評価した").check();
+    await page.getByRole("tab", { name: "練習" }).click();
     if (lesson.roleplay) {
       await expect(page.locator("#roleplay")).toContainText(lesson.roleplay.scenario);
       await expect(page.locator("#roleplay")).toContainText("AIによる自動評価はありません");
@@ -196,6 +211,9 @@ for (const lesson of lessons) {
       await expect(page.locator("#voice-transfer")).toContainText("音声の内容と発音は未確認");
     }
     for (const item of [...lesson.recall, ...lesson.exercises, ...lesson.exitTest]) {
+      await page
+        .getByRole("tab", { name: lesson.exitTest.includes(item) ? "確認テスト" : "練習" })
+        .click();
       if (item.requiresVerifiedAudio && item.audio?.status !== "checked") {
         await expect(page.locator(`#${item.id}`)).toContainText("この問題は未実施です");
         await expect(
@@ -212,10 +230,16 @@ for (const lesson of lessons) {
       key,
     );
     await page.reload();
+    await page.getByRole("tab", { name: "作文・発話" }).click();
     await expect(page.getByLabel("作文を自己評価した")).toBeChecked();
+    await page.getByRole("tab", { name: "出典・メモ" }).click();
     await expect(page.locator("#sources textarea")).toHaveValue("確認メモ");
+    await page.getByRole("tab", { name: "作文・発話" }).click();
     await expect(page.getByLabel("自分の文章")).toHaveValue("안녕하세요");
-    if (lesson.roleplay) await expect(page.getByLabel("返答の下書き")).toHaveValue("네");
+    if (lesson.roleplay) {
+      await page.getByRole("tab", { name: "練習" }).click();
+      await expect(page.getByLabel("返答の下書き")).toHaveValue("네");
+    }
     const restored = await page.evaluate(
       (storageKey) => JSON.parse(localStorage.getItem(storageKey)!),
       key,
@@ -244,7 +268,6 @@ test("主要画面への移動", async ({ page }) => {
   for (const [name, route] of [
     ["目次", "lessons"],
     ["復習", "review"],
-    ["先取り診断", "diagnostic"],
     ["学習結果", "results"],
     ["語彙・文法", "reference"],
     ["発音", "pronunciation"],

@@ -241,7 +241,7 @@ it("最後の課と完了状態から再開先を選び、旧データも維持�
   ).toThrow();
 });
 
-it("文字の組み立て位置を第1〜3課でバックアップ往復し、存在しない位置を拒否する", () => {
+it("文字の学習位置を第1〜3課でバックアップ往復し、存在しない位置を拒否する", () => {
   const ids = contentIds(lessons);
   for (const day of [1, 2, 3]) {
     const lesson = lessons.find((item) => item.day === day)!;
@@ -250,16 +250,18 @@ it("文字の組み立て位置を第1〜3課でバックアップ往復し、�
       lastLessonId: lesson.id,
       positions: { [lesson.id]: "hangul-builder" },
     };
-    expect(parseBackup(exportBackup(progress), ids)).toEqual(progress);
+    for (const position of ["hangul-builder", "letter-sound-guide"]) {
+      const atPosition = { ...progress, positions: { [lesson.id]: position } };
+      expect(parseBackup(exportBackup(atPosition), ids)).toEqual(atPosition);
+    }
     expect(() =>
       parseBackup(exportBackup({ ...progress, positions: { [lesson.id]: "unknown" } }), ids),
     ).toThrow();
   }
   const day4 = lessons.find((item) => item.day === 4)!;
-  expect(() =>
-    parseBackup(
-      exportBackup({ ...newProgress(), positions: { [day4.id]: "hangul-builder" } }),
-      ids,
-    ),
-  ).toThrow();
+  for (const position of ["hangul-builder", "letter-sound-guide"]) {
+    expect(() =>
+      parseBackup(exportBackup({ ...newProgress(), positions: { [day4.id]: position } }), ids),
+    ).toThrow();
+  }
 });
