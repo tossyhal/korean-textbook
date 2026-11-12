@@ -73,7 +73,7 @@ test("旧形式の進捗を復元して復習の上限と間隔を維持する",
     localStorage.setItem(key, JSON.stringify(saved));
   });
   await page.reload();
-  await page.goto("#/review");
+  await page.getByRole("link", { name: "復習", exact: true }).click();
   await expect(page.getByText(/今日あと1件まで/)).toBeVisible();
   await page.getByRole("button", { name: "答えを見る前に思い出せた" }).click();
   await expect(
