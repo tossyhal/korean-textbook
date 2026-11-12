@@ -201,7 +201,14 @@ for (const lesson of lessons) {
       await page.getByLabel("返答の下書き").fill("네");
     }
     if (lesson.voiceTransfer) {
-      await expect(page.locator("#voice-transfer")).toContainText("音声の内容と発音は未確認");
+      const voiceTransfer = page.locator("#voice-transfer");
+      await expect(voiceTransfer).toContainText("同じ文を2種類の合成音声で聞き比べます");
+      await expect(voiceTransfer).not.toContainText("音声の内容と発音は未確認");
+      await expect(voiceTransfer.getByLabel("手本の声")).toBeVisible();
+      await expect(voiceTransfer.getByLabel("別の合成音声")).toBeVisible();
+      await expect(voiceTransfer.getByRole("button", { name: "手本を聞く" })).toBeVisible();
+      await expect(voiceTransfer.getByRole("button", { name: "別の声で同じ文を聞く" })).toBeVisible();
+      await expect(voiceTransfer.getByRole("button", { name: "別の声で別の文を聞く" })).toBeVisible();
     }
     for (const item of [...lesson.recall, ...lesson.exercises, ...lesson.exitTest]) {
       await page
