@@ -2,8 +2,11 @@ name: CI
 
 on:
   push:
+    branches-ignore:
+      - main
   pull_request:
   workflow_dispatch:
+  workflow_call:
 
 permissions:
   contents: read
@@ -41,4 +44,5 @@ jobs:
       - run: npm install --global pnpm@12.11.2
       - run: pnpm install --frozen-lockfile
       - run: pnpm exec playwright install --with-deps chromium
-      - run: pnpm run test:browser
+      - run: pnpm run test:browser --workers=4
+      - run: pnpm run test:preview --workers=4
