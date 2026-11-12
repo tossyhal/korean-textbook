@@ -11,14 +11,27 @@ it("未実施、回答不足、8割の境界を区別する", () => {
 });
 it("作文と発話のチェックを別々に集計し、自動得点へ混ぜない", () => {
   const progress = newProgress();
-  const lesson = lessons[0];
+  const lesson = lessons[3];
   progress.productionChecks[lesson.id] = Array(lesson.production.rubric.length)
     .fill(true)
     .concat([true, false]);
   const result = makeRecommendations(lessons, progress);
-  expect(result.production).toEqual({ writing: 1, speaking: 0 });
+  expect(result.production).toEqual({ writing: 1, typing: 0, speaking: 0 });
   expect(result.result.firstAttempted).toBe(0);
   expect(result.skills.every((skill) => skill.state === "unattempted")).toBe(true);
+});
+
+it("文字入力の旧チェックを作文に含めず発話は集計する", () => {
+  const progress = newProgress();
+  const lesson = lessons[0];
+  progress.productionChecks[lesson.id] = Array(lesson.production.rubric.length)
+    .fill(true)
+    .concat([true, true]);
+  expect(makeRecommendations(lessons, progress, [lesson]).production).toEqual({
+    writing: 0,
+    typing: 1,
+    speaking: 1,
+  });
 });
 
 it("聴解の第4〜6課を初回回答後、未初回回答の課を優先する", () => {
@@ -132,7 +145,7 @@ it("自己確認と未実施を選択範囲ごとに独立して数える", () =
     .fill(false)
     .concat([true, false]);
   const result = makeRecommendations(lessons, progress, [later]);
-  expect(result.production).toEqual({ writing: 0, speaking: 0 });
+  expect(result.production).toEqual({ writing: 0, typing: 0, speaking: 0 });
   expect(result.result.firstAttempted).toBe(0);
   expect(result.result.unattempted).toBe(result.result.total);
 });

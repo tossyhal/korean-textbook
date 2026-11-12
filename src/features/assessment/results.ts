@@ -46,13 +46,15 @@ export function makeRecommendations(
     evaluated.flatMap((lesson) => lesson.exitTest),
     progress.attempts,
   );
-  const production = { writing: 0, speaking: 0 };
+  const production = { writing: 0, typing: 0, speaking: 0 };
   for (const lesson of evaluated) {
     const checks = summarizeProduction(
       progress.productionChecks[lesson.id] ?? [],
       lesson.production.rubric.length,
+      lesson.production.kind,
     );
     production.writing += checks.writing.checked;
+    production.typing += checks.typing.checked;
     production.speaking += checks.speaking.checked;
   }
   const skills = (Object.keys(skillLabels) as Skill[]).map((skill) => {

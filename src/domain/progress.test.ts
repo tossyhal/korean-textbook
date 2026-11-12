@@ -1,4 +1,4 @@
-import { summarizeProduction } from "./progress";
+import { productionComplete, summarizeProduction } from "./progress";
 import { describe, expect, it } from "vitest";
 import {
   dueReviews,
@@ -143,10 +143,17 @@ it("存在しない日付、参照、位置を拒否し、旧データの閲覧�
     { ...base, notes: { q: "x" } },
     { ...base, positions: { "day-01": "section-1" } },
     { ...base, answerViewedQuestionIds: ["missing"] },
+    { ...base, partiallyFinishedLessons: ["missing"] },
   ])
     expect(() => parseBackup(JSON.stringify(invalid), ids)).toThrow();
   const old = JSON.parse(JSON.stringify(base));
   delete old.answerViewedQuestionIds;
+  delete old.partiallyFinishedLessons;
+  expect(parseBackup(JSON.stringify(old), ids).partiallyFinishedLessons).toEqual([]);
+  expect(
+    parseBackup(exportBackup({ ...base, partiallyFinishedLessons: ["day-01"] }), ids)
+      .partiallyFinishedLessons,
+  ).toEqual(["day-01"]);
   expect(parseBackup(JSON.stringify(old), ids).answerViewedQuestionIds).toEqual([]);
 });
 
@@ -200,8 +207,24 @@ it("作文・発話の評価とルーブリック件数を別々に集計する"
   expect(summarizeProduction([true, true, true, true, false], 3)).toEqual({
     rubric: { checked: 3, total: 3 },
     writing: { checked: 1, total: 1 },
+    typing: { checked: 0, total: 0 },
     speaking: { checked: 0, total: 1 },
   });
+});
+
+it("文字入力や発音を作文に数えず、保存済みのチェック位置を保つ", () => {
+  const production = { kind: "typing" as const, prompt: "入力", model: "가", rubric: ["確認"] };
+  const checks = [true, true, true];
+  expect(summarizeProduction(checks, 1, production.kind)).toEqual({
+    rubric: { checked: 1, total: 1 },
+    writing: { checked: 0, total: 0 },
+    typing: { checked: 1, total: 1 },
+    speaking: { checked: 1, total: 1 },
+  });
+  expect(productionComplete(production, checks, "가")).toBe(true);
+  expect(productionComplete(production, checks, " ")).toBe(false);
+  expect(productionComplete({ ...production, kind: "speaking" }, [true, false, true])).toBe(true);
+  expect(productionComplete({ ...production, kind: "speaking" }, [true, true, false])).toBe(false);
 });
 
 it("最後の課と完了状態から再開先を選び、旧データも維持する", () => {

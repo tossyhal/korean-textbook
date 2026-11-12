@@ -1,5 +1,5 @@
 import { z } from "zod";
-import type { Question } from "./content";
+import type { Lesson, Question } from "./content";
 
 export const attemptSchema = z.object({
   questionId: z.string().min(1),
@@ -23,6 +23,7 @@ export const reviewSchema = z.object({
 export const progressSchema = z.object({
   version: z.literal(1),
   completedLessons: z.array(z.string()),
+  partiallyFinishedLessons: z.array(z.string()).default([]),
   lastLessonId: z.string().min(1).nullable().default(null),
   positions: z.record(z.string(), z.string()),
   drafts: z.record(z.string(), z.string()),
@@ -67,6 +68,7 @@ export type Review = z.infer<typeof reviewSchema>;
 export const newProgress = (): Progress => ({
   version: 1,
   completedLessons: [],
+  partiallyFinishedLessons: [],
   lastLessonId: null,
   positions: {},
   drafts: {},
@@ -186,10 +188,34 @@ export function dueReviews(reviews: Review[], today: string): Review[] {
   return reviews.filter((r) => r.due <= today);
 }
 
-export function summarizeProduction(checks: boolean[], rubricLength: number) {
+export function summarizeProduction(
+  checks: boolean[],
+  rubricLength: number,
+  kind: Lesson["production"]["kind"] = "writing",
+) {
   return {
     rubric: { checked: checks.slice(0, rubricLength).filter(Boolean).length, total: rubricLength },
-    writing: { checked: checks[rubricLength] ? 1 : 0, total: 1 },
+    writing: {
+      checked: kind === "writing" && checks[rubricLength] ? 1 : 0,
+      total: kind === "writing" ? 1 : 0,
+    },
+    typing: {
+      checked: kind === "typing" && checks[rubricLength] ? 1 : 0,
+      total: kind === "typing" ? 1 : 0,
+    },
     speaking: { checked: checks[rubricLength + 1] ? 1 : 0, total: 1 },
   };
+}
+
+export function productionComplete(
+  production: Lesson["production"],
+  checks: boolean[],
+  draft = "",
+) {
+  const { kind = "writing", rubric } = production;
+  return (
+    rubric.every((_, i) => checks[i]) &&
+    (kind === "speaking" || (Boolean(draft.trim()) && Boolean(checks[rubric.length]))) &&
+    Boolean(checks[rubric.length + 1])
+  );
 }

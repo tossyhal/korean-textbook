@@ -81,6 +81,7 @@ export const lessonSchema = z.object({
   dialogue: z.array(exampleSchema).min(1),
   exercises: z.array(questionSchema),
   production: z.object({
+    kind: z.enum(["writing", "typing", "speaking"]).optional(),
     prompt: text,
     model: text,
     speakingModel: text.optional(),
