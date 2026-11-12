@@ -8,7 +8,7 @@ import {
   useState,
 } from "react";
 import type { ReactNode } from "react";
-import { AudioEngine, koreanVoices, sentences } from "./engine";
+import { AudioEngine, koreanVoices, preferredVoice, sentences } from "./engine";
 import type { AudioData, PlayOptions } from "./engine";
 export type { AudioData, PlayOptions } from "./engine";
 
@@ -49,7 +49,7 @@ export function AudioProvider({ children }: { children: ReactNode }) {
         uri !== undefined
           ? voicesRef.current.find((v) => v.voiceURI === uri)
           : (voicesRef.current.find((v) => v.voiceURI === selectedRef.current) ??
-            voicesRef.current[0]),
+            preferredVoice(voicesRef.current)),
       ),
     [synth],
   );
@@ -224,36 +224,71 @@ export function AudioButton({
               : "端末の韓国語合成音声を使用します。音声の内容は未確認です。"}
       </small>
       {error && (
-        <p role="status">音声を再生できませんでした。音声診断で韓国語の声を確認してください。</p>
+        <p role="status">音声を再生できませんでした。音声設定で韓国語の声を確認してください。</p>
       )}
     </div>
   );
 }
 export function AudioDiagnostics() {
   const { voices, selected, select, refresh, play, stop, supported } = useAudio();
+  const [error, setError] = useState(false);
+  const request = useRef(0);
+  const active = voices.find((voice) => voice.voiceURI === selected) ?? preferredVoice(voices);
+  const preview = async (uri: string) => {
+    const id = ++request.current;
+    setError(false);
+    const success = await play("안녕하세요. 만나서 반갑습니다.", undefined, { voiceURI: uri });
+    if (id === request.current && !success) setError(true);
+  };
   return (
     <section>
-      <h2>音声診断</h2>
-      <p>端末の合成音声を使用します。発音の品質は未確認です。</p>
+      <h2>音声設定</h2>
+      <p>
+        端末やブラウザーで使える韓国語の合成音声です。同じ文を聞き比べて選べます。発音の品質は未確認です。
+      </p>
       {!supported ? (
         <p>このブラウザーは読み上げに対応していません。</p>
       ) : (
         <>
-          <label>
-            韓国語の声{" "}
-            <select
-              value={
-                voices.some((v) => v.voiceURI === selected) ? selected : (voices[0]?.voiceURI ?? "")
-              }
-              onChange={(e) => select(e.target.value)}
-            >
-              {voices.map((v) => (
-                <option key={v.voiceURI} value={v.voiceURI}>
-                  {v.name} ({v.lang})
-                </option>
-              ))}
-            </select>
-          </label>
+          {selected && !voices.some((voice) => voice.voiceURI === selected) && (
+            <p>保存した声は現在利用できません。利用可能な声を一時的に使用します。</p>
+          )}
+          {active && (
+            <p>
+              現在の声：{active.name}（{active.localService ? "端末" : "ネットワーク"}）
+            </p>
+          )}
+          {voices.length > 0 && (
+            <>
+              <label>
+                韓国語の声{" "}
+                <select value={active?.voiceURI ?? ""} onChange={(e) => select(e.target.value)}>
+                  {voices.map((voice) => (
+                    <option key={voice.voiceURI} value={voice.voiceURI}>
+                      {voice.name} ({voice.lang}・{voice.localService ? "端末" : "ネットワーク"})
+                    </option>
+                  ))}
+                </select>
+              </label>
+              <p>
+                試聴文：<span lang="ko">안녕하세요. 만나서 반갑습니다.</span>
+              </p>
+              <ul>
+                {voices.map((voice) => (
+                  <li key={voice.voiceURI}>
+                    {voice.name}（{voice.localService ? "端末" : "ネットワーク"}）{" "}
+                    <button
+                      type="button"
+                      aria-label={`${voice.name}の声を試聴`}
+                      onClick={() => void preview(voice.voiceURI)}
+                    >
+                      この声を試聴
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </>
+          )}
           {voices.length === 0 && (
             <p>
               韓国語の声を取得中、または利用できません。iPhoneでは設定の「アクセシビリティ」→「リーダーと読み上げ」（旧版では「読み上げコンテンツ」）→「声」、Windowsでは言語の設定で韓国語の読み上げ音声を確認してください。ブラウザーを再起動し、再検出して試聴します。音量と出力先も確認してください。端末に声を追加してもブラウザーで使えるとは限りません。手順は実機未確認です。
@@ -262,12 +297,17 @@ export function AudioDiagnostics() {
           <button type="button" onClick={refresh}>
             再検出
           </button>
-          <button type="button" onClick={() => void play("안녕하세요.")}>
-            試聴
-          </button>
-          <button type="button" onClick={stop}>
+          <button
+            type="button"
+            onClick={() => {
+              request.current++;
+              stop();
+              setError(false);
+            }}
+          >
             停止
           </button>
+          {error && <p role="status">試聴できませんでした。声や音量、出力先を確認してください。</p>}
         </>
       )}
     </section>

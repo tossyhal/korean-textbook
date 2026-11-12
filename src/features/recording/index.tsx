@@ -79,7 +79,7 @@ export function Recorder({ sampleText, audio }: { sampleText: string; audio?: Au
     const id = sequence.current;
     if (!(await playback) || id !== sequence.current || !selfAudio.current) {
       if (id === sequence.current)
-        setError("手本を再生できませんでした。音声診断を確認してください。");
+        setError("手本を再生できませんでした。音声設定を確認してください。");
       return;
     }
     try {

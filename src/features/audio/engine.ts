@@ -13,6 +13,9 @@ export const isJamoOnly = (text: string) =>
   /^[\s\u1100-\u11ff\u3130-\u318f\ua960-\ua97f\ud7b0-\ud7ff]+$/u.test(text);
 export const koreanVoices = (voices: SpeechSynthesisVoice[]) =>
   voices.filter((voice) => /^ko(?:-|$)/i.test(voice.lang));
+export const preferredVoice = (voices: SpeechSynthesisVoice[]) =>
+  voices.find((voice) => /natural|enhanced|premium|neural|自然|拡張/i.test(voice.name)) ??
+  voices[0];
 export const sentences = (text: string) =>
   text
     .match(/[^.!?。！？]+[.!?。！？]*\s*/gu)

@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { AudioEngine, isJamoOnly, koreanVoices, sentences } from "./engine";
+import { AudioEngine, isJamoOnly, koreanVoices, preferredVoice, sentences } from "./engine";
 
 afterEach(() => vi.unstubAllGlobals());
 describe("音声", () => {
@@ -7,6 +7,12 @@ describe("音声", () => {
     expect(koreanVoices([])).toEqual([]);
     const voices = [{ lang: "en-US" }, { lang: "ko-KR" }, { lang: "ko" }] as SpeechSynthesisVoice[];
     expect(koreanVoices(voices)).toEqual(voices.slice(1));
+  });
+  it("明示的な品質名を持つ声を優先し、なければ先頭を使う", () => {
+    const voices = [{ name: "Standard" }, { name: "Natural" }] as SpeechSynthesisVoice[];
+    expect(preferredVoice([])).toBeUndefined();
+    expect(preferredVoice(voices)).toBe(voices[1]);
+    expect(preferredVoice(voices.slice(0, 1))).toBe(voices[0]);
   });
   it("韓国語音声がない場合と単独字母は読み上げない", async () => {
     const synth = { cancel: vi.fn(), speak: vi.fn() } as unknown as SpeechSynthesis;
