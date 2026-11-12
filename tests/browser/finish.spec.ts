@@ -5,7 +5,7 @@ import { newProgress } from "../../src/domain/progress";
 const key = "korean-textbook-progress-v1";
 
 for (const day of [43, 44, 47]) {
-  test(`第${day}節は利用できない活動を未実施のまま終了できる`, async ({ page }) => {
+  test(`第${day}節は利用できない活動を未実施のまま完了できる`, async ({ page }) => {
     const lesson = lessons.find((item) => item.day === day)!;
     const progress = newProgress();
     progress.drafts[lesson.id] = "練習";
@@ -31,20 +31,33 @@ for (const day of [43, 44, 47]) {
     await page.goto(`#/lesson/${lesson.id}?exit`);
     if (day === 47)
       await expect(
-        page.getByText("別の合成音声での練習は未実施です。", { exact: true }),
+        page.getByText("別の合成音声での練習は任意で、未実施です。", { exact: true }),
       ).toBeVisible();
-    else await expect(page.locator("#exit")).toContainText(/未実施の確認テスト：[1-9]/);
-    await page.getByRole("button", { name: "未実施を残して学習を終えて次へ" }).click();
+    else {
+      const unavailable = lesson.exitTest.filter(
+        (q) => q.requiresVerifiedAudio && q.audio?.status !== "checked",
+      );
+      expect(unavailable.length).toBeGreaterThan(0);
+      await expect(page.locator("#exit")).toContainText(
+        new RegExp(`未実施の確認テスト：${unavailable.length}問`),
+      );
+      await expect(page.locator("#exit")).toContainText("初回の自力正答：0/");
+      for (const q of unavailable) {
+        await expect(page.locator(`#${q.id}`)).toContainText(
+          "重要な音声が未確認のため、この問題は未実施です。",
+        );
+        expect(progress.attempts.some((a) => a.questionId === q.id)).toBe(false);
+      }
+    }
+    await page.getByRole("button", { name: "完了して次へ" }).click();
     const saved = await page.evaluate((key) => JSON.parse(localStorage.getItem(key)!), key);
-    expect(saved.partiallyFinishedLessons).toContain(lesson.id);
-    expect(saved.completedLessons).not.toContain(lesson.id);
+    expect(saved.partiallyFinishedLessons).not.toContain(lesson.id);
+    expect(saved.completedLessons).toContain(lesson.id);
     expect(saved.attempts).toEqual(progress.attempts);
     expect(saved.voiceTransferRuns).toEqual({});
     await page.goto("#/lessons");
     await page.reload();
-    await expect(page.getByRole("link", { name: new RegExp(lesson.title) })).toContainText(
-      "未実施を残して終了",
-    );
+    await expect(page.getByRole("link", { name: new RegExp(lesson.title) })).toContainText("完了");
   });
 }
 

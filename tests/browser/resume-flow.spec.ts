@@ -115,3 +115,23 @@ test("本文から確認テストまで順に進み、未実施を完了扱い�
   expect(saved.completedLessons).not.toContain("day-01");
   expect(saved.partiallyFinishedLessons).toContain("day-01");
 });
+
+test("長い本文の途中でナビゲーションを開き直しても同じ位置を保つ", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("#/lesson/day-10?section-0");
+  await page.getByRole("button", { name: "学習ナビゲーションを閉じる" }).click();
+  await page.evaluate(() =>
+    window.scrollTo(0, Math.min(1200, document.documentElement.scrollHeight - innerHeight)),
+  );
+  await expect(page.getByRole("button", { name: "学習ナビゲーションを開く" })).toBeInViewport();
+  const before = await page.evaluate(() => window.scrollY);
+  expect(before).toBeGreaterThan(200);
+  const bounds = (await page
+    .getByRole("button", { name: "学習ナビゲーションを開く" })
+    .boundingBox())!;
+  await page.mouse.click(bounds.x + bounds.width / 2, bounds.y + bounds.height / 2);
+  await page.evaluate(
+    () => new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve))),
+  );
+  expect(Math.abs((await page.evaluate(() => window.scrollY)) - before)).toBeLessThan(100);
+});

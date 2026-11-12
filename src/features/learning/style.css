@@ -68,7 +68,23 @@ label.inline {
   margin-right: 1.5rem;
 }
 .option {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0 0.5rem;
   padding: 0.25rem 0;
+}
+.option label {
+  min-width: 0;
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+.option .speakable-wrap {
+  display: contents;
+}
+.option .speakable-error {
+  flex-basis: 100%;
+  overflow-wrap: anywhere;
 }
 input[type="radio"],
 input[type="checkbox"] {

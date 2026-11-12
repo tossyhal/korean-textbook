@@ -1,8 +1,9 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import { KoreanText } from "./components/KoreanText";
 import { productionSpeakingModel } from "./domain/content";
 import { lessons } from "./content";
 import { wordbook } from "./content/wordbook";
+import { getGrammarReference } from "./content/grammar-reference";
 import type { Lesson, Question } from "./domain/content";
 import { contentIds } from "./domain/validate-content";
 import {
@@ -331,6 +332,9 @@ function QuestionView({
   progress: Progress;
   update: Update;
 }) {
+  const promptId = useId();
+  const answerLabelId = useId();
+  const request = useRef(0);
   const [composing, setComposing] = useState(false);
   const [played, setPlayed] = useState(false);
   const [playError, setPlayError] = useState(false);
@@ -338,6 +342,16 @@ function QuestionView({
   const [repeat, setRepeat] = useState(1);
   const [shown, setShown] = useState(false);
   const audio = useAudio();
+  useEffect(() => {
+    const unregister = audio.registerExternalStop(() => {
+      request.current++;
+      setPlayError(false);
+    });
+    return () => {
+      request.current++;
+      unregister();
+    };
+  }, [audio.registerExternalStop]);
   const unavailable = Boolean(q.requiresVerifiedAudio && q.audio?.status !== "checked");
   const answer = progress.drafts[q.id] ?? "";
   const attempts = progress.attempts.filter((a) => a.questionId === q.id);
@@ -388,7 +402,7 @@ function QuestionView({
   };
   return (
     <div className="question" id={q.id}>
-      <p>
+      <p id={promptId}>
         <strong>{ko(q.prompt)}</strong>
       </p>
       {unavailable && <p>重要な音声が未確認のため、この問題は未実施です。</p>}
@@ -399,15 +413,22 @@ function QuestionView({
             onClick={() =>
               void (async () => {
                 setPlayError(false);
-                const ok = q.audio
-                  ? await audio.play(q.audio.text, q.audio, {
+                const playback = q.audio
+                  ? audio.play(q.audio.text, q.audio, {
                       allowFallback: !q.requiresVerifiedAudio,
                       rate,
                       repeat,
                     })
-                  : false;
-                setPlayed(ok);
-                setPlayError(!ok);
+                  : Promise.resolve(false);
+                const id = ++request.current;
+                try {
+                  const ok = await playback;
+                  if (id !== request.current) return;
+                  if (ok) setPlayed(true);
+                  else setPlayError(true);
+                } catch {
+                  if (id === request.current) setPlayError(true);
+                }
               })()
             }
           >
@@ -437,19 +458,22 @@ function QuestionView({
         </div>
       )}
       {q.type === "choice" || (q.type === "listening" && q.options) ? (
-        <fieldset>
-          <legend>回答を選ぶ</legend>
+        <fieldset aria-labelledby={`${promptId} ${answerLabelId}`}>
+          <legend id={answerLabelId}>回答を選ぶ</legend>
           {q.options &&
             displayOptions(q.id, q.options).map((o) => (
-              <label className="option" key={o}>
-                <input
-                  type="radio"
-                  name={q.id}
-                  checked={answer === o}
-                  onChange={() => setAnswer(o)}
-                />
-                {ko(o)}
-              </label>
+              <div className="option" key={o}>
+                <label>
+                  <input
+                    type="radio"
+                    name={q.id}
+                    checked={answer === o}
+                    onChange={() => setAnswer(o)}
+                  />
+                  {ko(o)}
+                </label>
+                {/[가-힣ㄱ-ㅎㅏ-ㅣ]/u.test(o) && <SpeakableText text={o} iconOnly />}
+              </div>
             ))}
         </fieldset>
       ) : q.type === "self" ? (
@@ -461,8 +485,9 @@ function QuestionView({
             ))}
           </ul>
           <label>
-            自分の回答
+            <span id={answerLabelId}>自分の回答</span>
             <textarea
+              aria-labelledby={`${promptId} ${answerLabelId}`}
               value={answer}
               onChange={(e) => setAnswer(e.target.value)}
               onCompositionStart={() => setComposing(true)}
@@ -472,8 +497,9 @@ function QuestionView({
         </>
       ) : (
         <label>
-          回答
+          <span id={answerLabelId}>回答</span>
           <input
+            aria-labelledby={`${promptId} ${answerLabelId}`}
             value={answer}
             onChange={(e) => setAnswer(e.target.value)}
             onCompositionStart={() => setComposing(true)}
@@ -519,17 +545,17 @@ function QuestionView({
                   ? q.answers.map((answer, i) => (
                       <span key={answer}>
                         {i > 0 && "、"}
-                        {ko(answer)}
+                        {ko(answer, true)}
                       </span>
                     ))
                   : "自由回答"}
               </p>
-              <p>{ko(q.explanation)}</p>
+              <p>{ko(q.explanation, true)}</p>
               <ReviewControl id={q.id} progress={progress} update={update} />
               {q.type === "listening" && q.audio && (
                 <details>
                   <summary>音声の原文を確認</summary>
-                  <p lang="ko">{q.audio.text}</p>
+                  <p>{ko(q.audio.text, true)}</p>
                   <p>原文を閉じて再び聞き、書き取りや復唱を試しましょう。</p>
                 </details>
               )}
@@ -1068,13 +1094,16 @@ function LessonPage({
               </p>
             )}
             <p>未実施の確認テスト：{summary.unattempted + summary.self.unattempted}問</p>
+            {summary.unavailable > 0 && (
+              <p>未確認の必須音声がある{summary.unavailable}問は完了条件に含めません。</p>
+            )}
             <p>
               未確認の実践項目：{productionSummary.rubric.total - productionSummary.rubric.checked}
               項目
               {!productionDone && "。作文・入力や発話の自己評価も確認してください。"}
             </p>
             {l.voiceTransfer && !progress.voiceTransferRuns[l.id] && (
-              <p>別の合成音声での練習は未実施です。</p>
+              <p>別の合成音声での練習は任意で、未実施です。</p>
             )}
             {progress.completedLessons.includes(l.id) && <p>完了済みです。</p>}
             {progress.partiallyFinishedLessons.includes(l.id) && (
@@ -1086,11 +1115,7 @@ function LessonPage({
             <button
               className="primary"
               onClick={() => {
-                if (
-                  summary.complete &&
-                  productionDone &&
-                  (!l.voiceTransfer || progress.voiceTransferRuns[l.id])
-                ) {
+                if (summary.complete && productionDone) {
                   complete();
                 } else {
                   update((p) => ({
@@ -1105,9 +1130,7 @@ function LessonPage({
                 window.location.hash = link(next ? `lesson/${next.id}` : "lessons");
               }}
             >
-              {summary.complete &&
-              productionDone &&
-              (!l.voiceTransfer || progress.voiceTransferRuns[l.id])
+              {summary.complete && productionDone
                 ? l.day === 56
                   ? "完了して目次へ"
                   : "完了して次へ"
@@ -1155,10 +1178,18 @@ function ReviewPage({ progress, update }: { progress: Progress; update: Update }
             (diagnosticGrammar && l.day === diagnosticGrammar.firstDay) ||
             questions(l).some((x) => x.id === r.id),
         );
-        const related = g && source && questions(source).find((x) => x.tags.includes(r.id));
+        const reference = g ? getGrammarReference(lessons, g.id) : undefined;
         return (
           <div className="question" key={r.id}>
-            <p>{ko(v?.korean ?? (g ? (related?.prompt ?? g.name) : (q?.prompt ?? r.id)))}</p>
+            <p>
+              {ko(
+                v?.korean ??
+                  (g
+                    ? `${g.name}：${reference?.prompt ?? "本文を確認してください"}`
+                    : (q?.prompt ?? r.id)),
+                true,
+              )}
+            </p>
             {q?.type === "listening" && q.audio && (
               <AudioButton text={q.audio.text} audio={q.audio} />
             )}
@@ -1179,13 +1210,26 @@ function ReviewPage({ progress, update }: { progress: Progress; update: Update }
                   {ko(
                     v?.meaning ??
                       (g
-                        ? `${g.name}：${related?.explanation ?? "本文を確認してください"}`
+                        ? reference
+                          ? `答え：${reference.answer}。${reference.explanation}`
+                          : "本文を確認してください。"
                         : q
                           ? `答え：${q.answers.join("、") || "自由回答"}。${q.explanation}`
                           : ""),
+                    true,
                   )}
                 </p>
-                {q?.type === "listening" && q.audio && <p lang="ko">{q.audio.text}</p>}
+                {q?.type === "listening" && q.audio && <p>{ko(q.audio.text, true)}</p>}
+                {reference?.example && (
+                  <p>
+                    例文：
+                    <SpeakableText
+                      text={reference.example.korean}
+                      audio={reference.example.audio}
+                    />
+                    ：{reference.example.japanese}
+                  </p>
+                )}
                 {source && (
                   <p>
                     <a
@@ -1411,30 +1455,33 @@ function Reference({ progress, update }: { progress: Progress; update: Update })
             件。
           </p>
           {grammar.length === 0 && <p>該当する文法はありません。</p>}
-          {grammar.map(({ item: g, lesson, section }) => (
-            <div className="grammar-entry" id={g.id} key={g.id}>
-              <details>
-                <summary>{ko(g.name)}</summary>
-                {section ? <p>{ko(section.paragraphs[0])}</p> : <p>説明は本文で確認できます。</p>}
-                {lesson?.examples[0] && (
-                  <p>
-                    同じ節の例文：
-                    <SpeakableText
-                      text={lesson.examples[0].korean}
-                      audio={lesson.examples[0].audio}
-                    />
-                    ：{lesson.examples[0].japanese}
-                  </p>
-                )}
-                {lesson && (
-                  <a href={link(`lesson/${lesson.id}?${g.sectionId ?? "section-0"}`)}>
-                    {lessonLabel(g.firstDay)}の本文を読む
-                  </a>
-                )}
-              </details>
-              <ReviewControl id={g.id} progress={progress} update={update} />
-            </div>
-          ))}
+          {grammar.map(({ item: g, lesson, section }) => {
+            const reference = getGrammarReference(lessons, g.id);
+            return (
+              <div className="grammar-entry" id={g.id} key={g.id}>
+                <details>
+                  <summary>{ko(g.name)}</summary>
+                  {section ? <p>{ko(section.paragraphs[0])}</p> : <p>説明は本文で確認できます。</p>}
+                  {reference?.example && (
+                    <p>
+                      同じ節の例文：
+                      <SpeakableText
+                        text={reference.example.korean}
+                        audio={reference.example.audio}
+                      />
+                      ：{reference.example.japanese}
+                    </p>
+                  )}
+                  {lesson && (
+                    <a href={link(`lesson/${lesson.id}?${g.sectionId ?? "section-0"}`)}>
+                      {lessonLabel(g.firstDay)}の本文を読む
+                    </a>
+                  )}
+                </details>
+                <ReviewControl id={g.id} progress={progress} update={update} />
+              </div>
+            );
+          })}
         </>
       )}
     </main>

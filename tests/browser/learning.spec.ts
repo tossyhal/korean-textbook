@@ -246,3 +246,20 @@ for (const width of [390, 1280]) {
     );
   });
 }
+
+test("回答欄と選択肢のグループ名にそれぞれの設問を含む", async ({ page }) => {
+  await page.goto("#/lesson/day-01?exercises");
+  const first = page.locator("#day-01-ex-01");
+  const second = page.locator("#day-01-ex-02");
+  const firstPrompt = await first.locator("strong").first().innerText();
+  const secondPrompt = await second.locator("strong").first().innerText();
+  await expect(first.getByRole("textbox")).toHaveAccessibleName(`${firstPrompt} 回答`);
+  await expect(second.getByRole("textbox")).toHaveAccessibleName(`${secondPrompt} 回答`);
+  expect(firstPrompt).not.toBe(secondPrompt);
+  await page.getByRole("tab", { name: "確認テスト" }).click();
+  const choice = page.locator("#day-01-exit-03");
+  await expect(choice.getByRole("group")).toHaveAccessibleName(
+    "初声に音がない音節を選ぶ 回答を選ぶ",
+  );
+  await expect(choice.getByRole("radio", { name: "우" })).toBeVisible();
+});

@@ -51,3 +51,42 @@ test("手動登録を保存・バックアップし、解除しても回答履�
     saved.attempts.some((item: { questionId: string }) => item.questionId === "day-01-ex-01"),
   ).toBe(true);
 });
+
+test("旧形式の進捗を復元して復習の上限と間隔を維持する", async ({ page }) => {
+  await page.clock.install({ time: new Date("2026-11-12T12:00:00") });
+  await page.goto("#/lesson/day-01?exercises");
+  const q = page.locator("#day-01-ex-01");
+  await q.getByRole("button", { name: "答えを見る" }).click();
+  await q.getByRole("button", { name: "復習に追加" }).click();
+  await page.evaluate(() => {
+    const key = "korean-textbook-progress-v1";
+    const saved = JSON.parse(localStorage.getItem(key)!);
+    delete saved.voiceTransferRuns;
+    delete saved.partiallyFinishedLessons;
+    delete saved.lastLessonId;
+    saved.reviews[0].due = "2026-11-12";
+    saved.reviewHistory = Array.from({ length: 19 }, (_, i) => ({
+      day: "2026-11-12",
+      id: `old-${i}`,
+      outcome: "recalled",
+    }));
+    localStorage.setItem(key, JSON.stringify(saved));
+  });
+  await page.reload();
+  await page.goto("#/review");
+  await expect(page.getByText(/今日あと1件まで/)).toBeVisible();
+  await page.getByRole("button", { name: "答えを見る前に思い出せた" }).click();
+  await expect(
+    page.getByText("今日の上限に達しました。残りは明日以降に取り組めます。"),
+  ).toBeVisible();
+  const saved = await page.evaluate(() =>
+    JSON.parse(localStorage.getItem("korean-textbook-progress-v1")!),
+  );
+  const review = saved.reviews.find((item: { id: string }) => item.id === "day-01-ex-01");
+  expect(review.interval).toBeGreaterThan(0);
+  expect(review.due > "2026-11-12").toBe(true);
+  await page.reload();
+  await expect(
+    page.getByText("今日の上限に達しました。残りは明日以降に取り組めます。"),
+  ).toBeVisible();
+});

@@ -154,21 +154,26 @@ export function AudioButton({
   const [repeat, setRepeat] = useState(1);
   const [error, setError] = useState(false);
   const request = useRef(0);
-  useEffect(
-    () => () => {
+  useEffect(() => {
+    const unregister = player.registerExternalStop(() => {
       request.current++;
-      player.stop();
-    },
-    [player.stop],
-  );
-  const play = async (value: string, data?: AudioData, complete = false) => {
-    const id = ++request.current;
-    setError(false);
-    const success = await player.play(value, data, {
-      rate,
-      repeat,
-      allowFallback,
+      setError(false);
     });
+    return () => {
+      request.current++;
+      unregister();
+    };
+  }, [player.registerExternalStop]);
+  const play = async (value: string, data?: AudioData, complete = false) => {
+    setError(false);
+    const pending = player.play(value, data, { rate, repeat, allowFallback });
+    const id = ++request.current;
+    let success = false;
+    try {
+      success = await pending;
+    } catch {
+      // Interrupted requests are discarded below.
+    }
     if (id !== request.current) return;
     if (success && complete) onPlaybackComplete?.();
     if (!success) setError(true);

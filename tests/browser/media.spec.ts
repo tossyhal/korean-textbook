@@ -398,3 +398,250 @@ test("本文の読み上げは行送りを広げずクリックとEnterで再生
   await expect.poll(() => page.evaluate(() => (window as any).spoken)).toEqual([spoken, spoken]);
   await expect(token).toHaveAttribute("lang", "ko");
 });
+
+async function mockControlledSpeech(page: Page) {
+  await page.addInitScript(() => {
+    const synth = new EventTarget() as any;
+    synth.items = [];
+    synth.getVoices = () => [{ name: "Mock Korean", lang: "ko-KR", voiceURI: "mock" }];
+    synth.speak = (utterance: SpeechSynthesisUtterance) => synth.items.push(utterance);
+    synth.cancel = () => {};
+    Object.defineProperty(window, "speechSynthesis", { value: synth });
+    Object.defineProperty(window, "SpeechSynthesisUtterance", {
+      value: class {
+        constructor(public text: string) {}
+      },
+    });
+    (window as any).controlledSpeech = synth;
+  });
+}
+
+test("聴解の停止と再生の競合は失敗扱いせず、完了済みの回答資格を保つ", async ({ page }) => {
+  await mockControlledSpeech(page);
+  await page.goto("#/lesson/day-04?exercises");
+  const q = page.locator("#day-04-ex-listen-1");
+  const play = q.getByRole("button", { name: "問題の音声を再生" });
+  const check = q.getByRole("button", { name: "答え合わせ" });
+  const error = q.getByText("再生できませんでした。端末の音声設定を確認してください。");
+  await q.getByRole("radio", { name: "医師" }).check();
+  await expect(check).toBeDisabled();
+  await play.click();
+  await q.getByRole("button", { name: "停止", exact: true }).click();
+  await page.evaluate(() => (window as any).controlledSpeech.items[0].onerror?.());
+  await expect(error).toHaveCount(0);
+  await expect(check).toBeDisabled();
+  await play.click();
+  await page.evaluate(() => (window as any).controlledSpeech.items[1].onend?.());
+  await expect(check).toBeEnabled();
+  await play.click();
+  await q.getByRole("button", { name: "停止", exact: true }).click();
+  await page.evaluate(() => (window as any).controlledSpeech.items[2].onerror?.());
+  await expect(error).toHaveCount(0);
+  await expect(check).toBeEnabled();
+  await play.click();
+  await play.click();
+  await page.evaluate(() => (window as any).controlledSpeech.items[3].onerror?.());
+  await expect(error).toHaveCount(0);
+  await expect(check).toBeEnabled();
+  await page.evaluate(() => (window as any).controlledSpeech.items[4].onerror?.());
+  await expect(error).toBeVisible();
+  await expect(check).toBeEnabled();
+  await play.click();
+  await expect(error).toHaveCount(0);
+  await page.getByRole("tab", { name: "本文" }).click();
+  await page.evaluate(() => (window as any).controlledSpeech.items[5].onerror?.());
+  await page.getByRole("tab", { name: "練習" }).click();
+  await expect(error).toHaveCount(0);
+});
+
+test("別の文字の再生は聴解を中断し、以前の文字のエラーを消す", async ({ page }) => {
+  await mockControlledSpeech(page);
+  await page.goto("#/lesson/day-04?exercises");
+  const q = page.locator("#day-04-ex-listen-1");
+  await q.getByRole("button", { name: "問題の音声を再生" }).click();
+  await page.getByRole("tab", { name: "本文" }).click();
+  const word = page.locator(".speakable-text").first();
+  await word.click();
+  await page.evaluate(() => (window as any).controlledSpeech.items[0].onerror?.());
+  await page.evaluate(() => (window as any).controlledSpeech.items[1].onerror?.());
+  const message = page.getByText("音声を再生できません。音声設定を確認してください。");
+  await expect(message).toBeVisible();
+  await page.locator(".speakable-text").nth(1).click();
+  await expect(message).toHaveCount(0);
+  await page.getByRole("tab", { name: "練習" }).click();
+  await expect(q.getByText("再生できませんでした。端末の音声設定を確認してください。")).toHaveCount(
+    0,
+  );
+});
+
+test("選択肢の音声は選択や回答履歴を変えず、答えと解説も発音できる", async ({ page }) => {
+  await mockControlledSpeech(page);
+  await page.goto("#/lesson/day-01?exit");
+  const q = page.locator("#day-01-exit-03");
+  const group = q.getByRole("group", { name: /初声に音がない音節を選ぶ.*回答を選ぶ/ });
+  await expect(group).toBeVisible();
+  const before = await page.evaluate(() =>
+    JSON.parse(localStorage.getItem("korean-textbook-progress-v1")!),
+  );
+  await q.getByRole("button", { name: "우を聞く" }).click();
+  await expect
+    .poll(() => page.evaluate(() => (window as any).controlledSpeech.items.map((u: any) => u.text)))
+    .toContain("우");
+  await expect(group.getByRole("radio", { name: "우" })).not.toBeChecked();
+  const after = await page.evaluate(() =>
+    JSON.parse(localStorage.getItem("korean-textbook-progress-v1")!),
+  );
+  expect(after.drafts).toEqual(before.drafts);
+  expect(after.attempts).toEqual(before.attempts);
+  expect(after.answerViewedQuestionIds).toEqual(before.answerViewedQuestionIds);
+  await group.getByRole("radio", { name: "우" }).check();
+  await expect(group.getByRole("radio", { name: "우" })).toBeChecked();
+  await q.getByRole("button", { name: "答えを見る" }).click();
+  const revealed = await page.evaluate(() =>
+    JSON.parse(localStorage.getItem("korean-textbook-progress-v1")!),
+  );
+  const spoken = q.getByRole("status").locator("p").nth(1).locator(".speakable-text").first();
+  await expect(spoken).toHaveText("ㅇ");
+  await spoken.click();
+  await expect
+    .poll(() => page.evaluate(() => (window as any).controlledSpeech.items.at(-1).text))
+    .toBe("이응");
+  const afterSpeech = await page.evaluate(() =>
+    JSON.parse(localStorage.getItem("korean-textbook-progress-v1")!),
+  );
+  expect(afterSpeech.drafts).toEqual(revealed.drafts);
+  expect(afterSpeech.attempts).toEqual(revealed.attempts);
+});
+
+test("字母の選択肢は名前を再生し、選択とは独立する", async ({ page }) => {
+  await mockControlledSpeech(page);
+  await page.goto("#/lesson/day-01?exercises");
+  const q = page.locator("#day-01-ex-08");
+  const radio = q.getByRole("radio", { name: "ㅜ" });
+  await expect
+    .poll(() => page.evaluate(() => localStorage.getItem("korean-textbook-progress-v1")))
+    .not.toBeNull();
+  const before = await page.evaluate(() =>
+    JSON.parse(localStorage.getItem("korean-textbook-progress-v1")!),
+  );
+  await q.getByRole("button", { name: "ㅜの名前우を聞く" }).click();
+  await expect
+    .poll(() => page.evaluate(() => (window as any).controlledSpeech.items.at(-1).text))
+    .toBe("우");
+  await expect(radio).not.toBeChecked();
+  const after = await page.evaluate(() =>
+    JSON.parse(localStorage.getItem("korean-textbook-progress-v1")!),
+  );
+  expect(after.drafts).toEqual(before.drafts);
+  expect(after.attempts).toEqual(before.attempts);
+  expect(after.answerViewedQuestionIds).toEqual(before.answerViewedQuestionIds);
+  await radio.check();
+  await expect(radio).toBeChecked();
+  await expect(q.locator("label button")).toHaveCount(0);
+});
+
+test("選択肢の音声生成が拒否されても案内して再試行できる", async ({ page }) => {
+  await page.addInitScript(() => {
+    let first = true;
+    (window as any).spoken = [];
+    (window as any).rejections = [];
+    window.addEventListener("unhandledrejection", (event) =>
+      (window as any).rejections.push(String(event.reason)),
+    );
+    Object.defineProperty(window, "SpeechSynthesisUtterance", {
+      value: class {
+        constructor(public text: string) {
+          if (first) {
+            first = false;
+            throw new Error("constructor failed");
+          }
+        }
+      },
+    });
+    Object.defineProperty(window, "speechSynthesis", {
+      value: {
+        getVoices: () => [{ lang: "ko-KR", voiceURI: "ko", name: "test" }],
+        addEventListener() {},
+        removeEventListener() {},
+        cancel() {},
+        speak: (u: SpeechSynthesisUtterance) => {
+          (window as any).spoken.push(u.text);
+          queueMicrotask(() => u.onend?.({} as SpeechSynthesisEvent));
+        },
+      },
+    });
+  });
+  const errors: string[] = [];
+  page.on("pageerror", (error) => errors.push(error.message));
+  await page.goto("#/lesson/day-01?exercises");
+  const q = page.locator("#day-01-ex-08");
+  const button = q.getByRole("button", { name: "ㅜの名前우を聞く" });
+  await button.click();
+  await expect(q.getByText("音声を再生できません。音声設定を確認してください。")).toBeVisible();
+  await button.click();
+  await expect.poll(() => page.evaluate(() => (window as any).spoken)).toEqual(["우"]);
+  await expect(q.getByText("音声を再生できません。音声設定を確認してください。")).toHaveCount(0);
+  await expect(q.getByRole("radio", { name: "ㅜ" })).not.toBeChecked();
+  expect(errors).toEqual([]);
+  expect(await page.evaluate(() => (window as any).rejections)).toEqual([]);
+});
+
+test("角括弧付き字母の選択肢も字母名を再生する", async ({ page }) => {
+  await mockControlledSpeech(page);
+  await page.goto("#/lesson/day-44?exit");
+  const q = page.locator(".question").filter({ hasText: "表記꽃の終声はどの音で終わる？" });
+  await q.getByRole("button", { name: "[ㄷ]の名前디귿を聞く" }).click();
+  await expect
+    .poll(() => page.evaluate(() => (window as any).controlledSpeech.items.at(-1).text))
+    .toBe("디귿");
+  await expect(q.getByRole("radio", { name: "[ㄷ]" })).not.toBeChecked();
+});
+
+test("同じ画面の別の再生で聴解が中断されても回答資格を保つ", async ({ page }) => {
+  await mockControlledSpeech(page);
+  await page.goto("#/lesson/day-04?exercises");
+  const q = page.locator("#day-04-ex-listen-1");
+  const play = q.getByRole("button", { name: "問題の音声を再生" });
+  await q.getByRole("radio", { name: "医師" }).check();
+  await play.click();
+  await page.evaluate(() => (window as any).controlledSpeech.items[0].onend?.());
+  const check = q.getByRole("button", { name: "答え合わせ" });
+  await expect(check).toBeEnabled();
+  await play.click();
+  await page.getByRole("button", { name: "아니에요を聞く" }).first().click();
+  await page.evaluate(() => (window as any).controlledSpeech.items[1].onerror?.());
+  await expect(q.getByText("再生できませんでした。端末の音声設定を確認してください。")).toHaveCount(
+    0,
+  );
+  await expect(check).toBeEnabled();
+});
+
+test("聴解の原文は答えを見るまで隠され、公開後は発音できる", async ({ page }) => {
+  await mockControlledSpeech(page);
+  await page.goto("#/lesson/day-04?exercises");
+  const q = page.locator("#day-04-ex-listen-1");
+  await expect(q.getByText("저는 의사예요.")).toHaveCount(0);
+  await q.getByRole("button", { name: "答えを見る" }).click();
+  await q.getByText("音声の原文を確認").click();
+  const original = q.getByRole("button", { name: "의사예요を聞く" });
+  await original.click();
+  await expect
+    .poll(() => page.evaluate(() => (window as any).controlledSpeech.items.at(-1).text))
+    .toBe("의사예요");
+});
+
+test("復習に登録した語彙の韓国語を実際に発音できる", async ({ page }) => {
+  await mockControlledSpeech(page);
+  await page.goto("#/reference");
+  const word = page.locator(".wordbook-entry").first();
+  const value = await word.locator("[lang=ko]").first().innerText();
+  await word.getByRole("button", { name: "復習に追加" }).click();
+  await page.goto("#/review");
+  const review = page.locator(".question").filter({ hasText: value });
+  const spoken = review.locator(".speakable-text").first();
+  const text = await spoken.innerText();
+  await spoken.click();
+  await expect
+    .poll(() => page.evaluate(() => (window as any).controlledSpeech.items.at(-1).text))
+    .toBe(text);
+});

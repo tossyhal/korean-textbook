@@ -50,19 +50,22 @@ export function SpeakableText({
   onPlaybackComplete,
   sampleText,
   inline = false,
+  iconOnly = false,
 }: {
   text: string;
   audio?: AudioData;
   onPlaybackComplete?: () => void;
   sampleText?: string;
   inline?: boolean;
+  iconOnly?: boolean;
 }) {
   const player = useAudio();
   const [playing, setPlaying] = useState(false);
   const [error, setError] = useState(false);
   const request = useRef(0);
   const active = useRef(false);
-  const name = letterName(text);
+  const letter = text.match(/^\[([ㄱ-ㅎㅏ-ㅣ])\]$/u)?.[1] ?? text;
+  const name = letterName(letter);
   const example = sampleText ?? name ?? text;
   useEffect(
     () =>
@@ -70,6 +73,7 @@ export function SpeakableText({
         request.current++;
         active.current = false;
         setPlaying(false);
+        setError(false);
       }),
     [player.registerExternalStop],
   );
@@ -120,13 +124,34 @@ export function SpeakableText({
     <span className="speakable-wrap">
       <button
         type="button"
-        className={inline ? "speakable-text speakable-text-inline" : "speakable-text"}
+        className={
+          iconOnly
+            ? "speakable-icon"
+            : inline
+              ? "speakable-text speakable-text-inline"
+              : "speakable-text"
+        }
         lang="ko"
         aria-label={playing ? `${label}（再生中、停止）` : label}
         title={label}
         onClick={() => void play()}
       >
-        {text}
+        {iconOnly ? (
+          <svg
+            aria-hidden="true"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <path d="M11 5 6 9H3v6h3l5 4V5Z" />
+            <path d="M15 9a4 4 0 0 1 0 6M18 6a8 8 0 0 1 0 12" />
+          </svg>
+        ) : (
+          text
+        )}
       </button>
       {error && (
         <span role="status" className="speakable-error">
