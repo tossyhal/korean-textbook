@@ -42,9 +42,10 @@ describe("第4週の修正回帰", () => {
     expect(gradeAnswer(q, "큰 방")).toBe("correct");
     expect(q.explanation).toContain("語幹크にㄴを付けて큰");
     expect(q.explanation).not.toMatch(/(?:으|ㅡ|ㄹ)が落ち/);
-    expect(week03[5].sections.flatMap((section) => section.paragraphs).join(" ")).toMatch(
-      /크다は커요.*語幹末のㅡが落ち/,
-    );
+    const conjugationParagraph = week03[5].sections
+      .flatMap((section) => section.paragraphs)
+      .find((paragraph) => paragraph.includes("크다") && paragraph.includes("커요"));
+    expect(conjugationParagraph).toMatch(/語幹末のㅡ(?:が落ち|を落と)/);
   });
   it("移動の意味と敬意の対象を区別する", () => {
     const movement = week04[3].exitTest[1];
