@@ -1,16 +1,18 @@
 # 学習動線・単語帳の改訂検証
 
+> 過去の計画・検証時点の記録です。現在の仕様や確認状態は[文書案内](../README.md)を参照してください。
+
 2026-11-12。基点は`ce0df21`、作業ブランチは`feature/guided-learning-wordbook`。コード・教材の最終状態は`0606c4b`。過去の[検証記録](VERIFICATION-refinement.md)と区別する。実装はタスクごとに新規GPT-6.1-Terra mediumへ委譲し、レビューは新規GPT-6.1-Sol mediumで実施、親が差分確認・最終検証・コミットを担当した。
 
 ## 編集・言語レビュー
 
-- [Solの実践課題・単語帳レビュー](reviews/activity-wordbook-sol.md)：初版56節の実践課題、834項目の訳・品詞・辞書形と例文18件、付与した頻度順位を点検。지각「遅刻」と베다「枕などを当てる」への別語義の順位を除外し、回帰テストを追加した。
-- [SolのUI・統合レビュー](reviews/guided-flow-sol.md)：工程の移動、旧保存データ、バックアップ、教材外語彙の復習、音声失敗、狭幅表示。ページ移動後に先頭語が画面外に残る問題を修正した。上下キー・ARIA方向・短い単語の操作幅も改善した。[限定受入](reviews/guided-fix-acceptance.md)で再確認した。
-- [Opus5.5 mediumの独立レビュー](reviews/guided-opus.md)：修正前の固定コピーを対象に新規セッションで正常終了（59ターン、権限拒否0、実モデル`claude-opus-5-5`）。実践56節とアプリ主要ソースを実読したが、語彙は一部のみで、全834項目の実読ではない。実際の確認範囲はレビュー末尾に記録した。全56節を母語話者として照合したものではない。
-- Opus指摘を受けた頻出基本語の追加・同形異義語の語義照合・録音条件の改訂は[新規Solの教材受入](reviews/opus-content-acceptance.md)で確認。現在は849項目（教材内531、教材外318）、順位付き736・未照合113、独自例文18件。
-- 完了と部分終了、再挑戦、音声案内は[新規Solの受入](reviews/honest-flow-acceptance.md)で確認。文法の例文音声は[限定受入](reviews/grammar-audio-acceptance.md)を実施。指摘の採否と代替対応は[対応記録](reviews/guided-resolution.md)を参照。
+- [Solの実践課題・単語帳レビュー](../reviews/activity-wordbook-sol.md)：初版56節の実践課題、834項目の訳・品詞・辞書形と例文18件、付与した頻度順位を点検。지각「遅刻」と베다「枕などを当てる」への別語義の順位を除外し、回帰テストを追加した。
+- [SolのUI・統合レビュー](../reviews/guided-flow-sol.md)：工程の移動、旧保存データ、バックアップ、教材外語彙の復習、音声失敗、狭幅表示。ページ移動後に先頭語が画面外に残る問題を修正した。上下キー・ARIA方向・短い単語の操作幅も改善した。[限定受入](../reviews/guided-fix-acceptance.md)で再確認した。
+- [Opus5.5 mediumの独立レビュー](../reviews/guided-opus.md)：修正前の固定コピーを対象に新規セッションで正常終了（59ターン、権限拒否0、実モデル`claude-opus-5-5`）。実践56節とアプリ主要ソースを実読したが、語彙は一部のみで、全834項目の実読ではない。実際の確認範囲はレビュー末尾に記録した。全56節を母語話者として照合したものではない。
+- Opus指摘を受けた頻出基本語の追加・同形異義語の語義照合・録音条件の改訂は[新規Solの教材受入](../reviews/opus-content-acceptance.md)で確認。現在は849項目（教材内531、教材外318）、順位付き736・未照合113、独自例文18件。
+- 完了と部分終了、再挑戦、音声案内は[新規Solの受入](../reviews/honest-flow-acceptance.md)で確認。文法の例文音声は[限定受入](../reviews/grammar-audio-acceptance.md)を実施。指摘の採否と代替対応は[対応記録](../reviews/guided-resolution.md)を参照。
 
-[最終整合レビュー](reviews/guided-delivery-review.md)で件数・文書・リンクとブラウザー結果を照合し、限定範囲の追加P1/P2はなかった。
+[最終整合レビュー](../reviews/guided-delivery-review.md)で件数・文書・リンクとブラウザー結果を照合し、限定範囲の追加P1/P2はなかった。
 
 モデルの編集レビューは母語話者による全文照合の代わりではない。全56節の`languageStatus`と`audioStatus`は`unverified`のまま。実音声の聴取、実録音、実IME、iPhone・Windows実機は未確認。
 

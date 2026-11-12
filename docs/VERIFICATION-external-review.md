@@ -1,6 +1,6 @@
 # 外部レビュー指摘の改訂検証
 
-2026-11-12。基点は`5a062c9`、アプリ・教材の対象コミットは`7b3ae02`、テストの遷移修正を含む検証対象は`a0e99b4`、作業ブランチは`fix/independent-review-findings`。実装はタスクごとに新規GPT-6.1-Terra medium、受入レビューは新規GPT-6.1-Sol mediumへ委譲し、親が差分・統合検証・コミットを担当した。今回新たなOpusレビューは実施していない。過去の[説明改訂の検証](VERIFICATION-readable.md)とは区別する。
+2026-11-12。基点は`5a062c9`、アプリ・教材の対象コミットは`7b3ae02`、テストの遷移修正を含む検証対象は`a0e99b4`、作業ブランチは`fix/independent-review-findings`。実装はタスクごとに新規GPT-6.1-Terra medium、受入レビューは新規GPT-6.1-Sol mediumへ委譲し、親が差分・統合検証・コミットを担当した。今回新たなOpusレビューは実施していない。過去の[説明改訂の検証](archive/VERIFICATION-readable.md)とは区別する。
 
 ## 教材と言語の確認
 

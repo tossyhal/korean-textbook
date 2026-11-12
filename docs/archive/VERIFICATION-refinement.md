@@ -1,13 +1,15 @@
 # 章・節と初心者教材の改訂検証
 
+> 過去の計画・検証時点の記録です。現在の仕様や確認状態は[文書案内](../README.md)を参照してください。
+
 2026-11-12。アプリと教材のコードを`b50ebe5`の状態に固定して検査した。教材レポートの表示変更も同時に検査対象とした。旧版の検証記録とは分け、実行した結果だけを記載する。
 
 ## 内容と画面の確認
 
 - 全8章・各7節。目次の前提説明と先取り診断を撤去し、未着手・学習中・完了を図形と文字で表示する。内部day番号と既存の保存形式は維持した。
 - 左目次を本文・練習・作文発話・確認テスト・出典メモのタブへ変更。旧位置ID・弱点へのリンクから対応するタブへ移動し、切替時は音声や録音を停止する。
-- [Solの独立レビュー](reviews/beginner-sol.md)と[Opus5.5の独立レビュー](reviews/beginner-opus.md)を実施。両者は旧版の全56節を実読し、互いの結果を見ずに指摘した。OpusはClaude Codeの新規セッションで`claude-opus-5-5`・effort=`medium`を指定し、モデル一致・正常終了を確認した。Opusの外部資料照合は未実施で、疑義や既存説明の見落としを含む。指摘をそのまま正解とせず、資料と教材実体に照合して採否を記録した。
-- 修正後は別のSolセッションで[前半の残件](reviews/beginner-front-final-gate.md)、[後半・採点と初見性の残件](reviews/assessment-final-acceptance.md)、[字母音声の注記](reviews/letter-sound-acceptance.md)、[発音・入力参照](reviews/reference-accuracy.md)を限定再確認した。これは全文の母語話者校閲ではない。
+- [Solの独立レビュー](../reviews/beginner-sol.md)と[Opus5.5の独立レビュー](../reviews/beginner-opus.md)を実施。両者は旧版の全56節を実読し、互いの結果を見ずに指摘した。OpusはClaude Codeの新規セッションで`claude-opus-5-5`・effort=`medium`を指定し、モデル一致・正常終了を確認した。Opusの外部資料照合は未実施で、疑義や既存説明の見落としを含む。指摘をそのまま正解とせず、資料と教材実体に照合して採否を記録した。
+- 修正後は別のSolセッションで[前半の残件](../reviews/beginner-front-final-gate.md)、[後半・採点と初見性の残件](../reviews/assessment-final-acceptance.md)、[字母音声の注記](../reviews/letter-sound-acceptance.md)、[発音・入力参照](../reviews/reference-accuracy.md)を限定再確認した。これは全文の母語話者校閲ではない。
 - 個別音声見本、二重パッチムと基本機能語の導入、誤訳・模範・解説、操作知識を除いた聴解問題、最終評価の生活場面・数字・許容解を修正。固定解の選択肢は問題IDから安定して並べ替え、先頭を選ぶだけで満点となる偏りを解消した。
 
 ## 自動検証

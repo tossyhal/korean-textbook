@@ -4,6 +4,10 @@
 
 初回の[develop CI](https://github.com/tossyhal/korean-textbook/actions/runs/43259681244)と[手動Deploy Pages](https://github.com/tossyhal/korean-textbook/actions/runs/43259906422)はブラウザーテスト用サーバーの起動待ちタイムアウトで失敗し、後者のbuildとdeployはスキップされた。サーバー起動コマンドの修正後、上記のmain配信が成功した。同じ修正を含む[develop CI](https://github.com/tossyhal/korean-textbook/actions/runs/43260613026)ではChromium123件が成功した一方、本番プレビューの第5課でタイムアウトし、62件成功・1件失敗・1件スキップだった。失敗したブラウザーjobを再実行したattempt 2は成功した。初回のタイムアウトは解消済みと断定せず、同じコミットの再実行成功と区別して記録する。
 
+## 初期公開の最終対象
+
+2026年11月13日の[Deploy Pages](https://github.com/tossyhal/korean-textbook/actions/runs/43263101458)はコミット`eb0ecbceb6cf6d5e0379869c3f00d0e221910ccd`を配信し、CIの単体テスト191件、Chromiumブラウザーテスト123件、本番プレビュー63件が成功した。本番プレビューのfixture 1件はスキップされた。同じコミットの[develop CI](https://github.com/tossyhal/korean-textbook/actions/runs/43263117996)も成功した。これらはその時点の実行結果であり、後の文書変更に対する再検証を示さない。
+
 ## 公開URLの動作確認
 
 独立したheadless Chromiumセッションで次を確認した。1280×800と390×844はブラウザーの表示領域であり、実機の確認ではない。

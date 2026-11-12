@@ -1,8 +1,10 @@
 # ブラウザ回帰検証
 
-> 改訂前の記録です。現行版は[改訂版の検証記録](VERIFICATION-refinement.md)を参照してください。
+> 過去の計画・検証時点の記録です。現在の仕様や確認状態は[文書案内](README.md)を参照してください。
 
-全56課の最終固定版はChromium88件、Desktop WebKit88件、本番ビルド62件が成功（開発専用1件除外）。実行条件と未確認範囲は[最終検証](VERIFICATION-final.md)を参照。
+> 改訂前の記録です。現行版は[改訂版の検証記録](archive/VERIFICATION-refinement.md)を参照してください。
+
+全56課の最終固定版はChromium88件、Desktop WebKit88件、本番ビルド62件が成功（開発専用1件除外）。実行条件と未確認範囲は[最終検証](archive/VERIFICATION-final.md)を参照。
 
 ## 第1週時点の記録
 

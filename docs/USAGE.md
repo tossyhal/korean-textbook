@@ -1,6 +1,10 @@
 # 利用と検証の手引き
 
-## 起動
+## 教材を開く
+
+[公開中の教材](https://tossyhal.github.io/korean-textbook/)をブラウザーで開きます。進捗はそのブラウザーに保存されます。
+
+## ローカルで起動
 
 リポジトリのルートで初回に`mise install --locked`、`pnpm install --frozen-lockfile`を実行します。`mise run dev`で起動し、表示されたURLの`/korean-textbook/`を開きます。終了はCtrl+Cです。通常は`mise run dev`だけで再起動できます。
 
@@ -43,7 +47,7 @@ mise run content:report
 mise run build
 ```
 
-`format`はファイルを書き換えます。`content:check`は全56節を要求する厳格検査で、教材が不足する制作途中は失敗します。収録済みの範囲だけを確認するには`pnpm run content:check -- --partial`を使います。完成判定の代わりにはなりません。`content:report`は[制作状況](CONTENT_REPORT.md)を再生成します。
+`format`はファイルを書き換えます。`content:check`は全56節を要求する厳格検査で、教材が不足する制作途中は失敗します。収録済みの範囲だけを確認するには`pnpm run content:check --partial`を使います。完成判定の代わりにはなりません。`content:report`は[制作状況](CONTENT_REPORT.md)を再生成します。
 
 Chromiumのブラウザーテストはブラウザーと必要なホストライブラリを用意して実行します。
 

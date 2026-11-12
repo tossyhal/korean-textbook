@@ -6,4 +6,4 @@ GitHub Pagesの公開元にGitHub Actionsを選択する。`main`へのpushま�
 
 Viteのbaseは`/korean-textbook/`で、リポジトリ名に対応する。リポジトリ名やカスタムドメインを変更する場合はbaseを見直す。HTTPSのURLで開き、マイク許可、録音、合成音声、入力、保存を実機で確認する。PagesのHTTPS設定は[GitHubの説明](https://docs.github.com/en/pages/getting-started-with-github-pages/securing-your-github-pages-site-with-https)を参照。ローカルHTTPSおよびiPhone・Windowsの実機確認は未実施。
 
-CIとPages workflowはNode.js 24.22.1、pnpm 12.11.2を指定している。miseの固定バージョンを更新するときは両workflowも合わせて更新する。過去の検査結果は[最終検証記録](VERIFICATION-final.md)と[改訂後の検証記録](VERIFICATION-external-review.md)を参照し、今回の配信結果とは区別する。
+CIとPages workflowはNode.js 24.22.1、pnpm 12.11.2を指定している。miseの固定バージョンを更新するときは両workflowも合わせて更新する。過去の検査結果は[最終検証記録](archive/VERIFICATION-final.md)と[改訂後の検証記録](VERIFICATION-external-review.md)を参照し、今回の配信結果とは区別する。
