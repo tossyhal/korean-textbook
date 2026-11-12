@@ -1,4 +1,7 @@
 import { base, example, listening, questions, setTopics, source } from "../week02/shared";
+import { day06 } from "../week01/day06";
+import { day09 } from "../week02/day09";
+import { day18 } from "../week03/day18";
 import { day43 } from "./day43";
 import { day44 } from "./day44";
 import { day45 } from "./day45";
@@ -62,6 +65,11 @@ day49.exercises = questions(49, "ex", [
 ]);
 setTopics(day49, [["grammar-w7-49-review", "聴解と弱点の確認", 1]]);
 day49.grammar.push(...[day43, day44, day45, day46, day47, day48].flatMap((l) => l.grammar));
+day49.grammar.push(
+  ...day06.grammar.filter((g) => ["grammar-conjugation", "grammar-location"].includes(g.id)),
+  ...day09.grammar.filter((g) => g.id === "grammar-day09-conjugation"),
+  ...day18.grammar.filter((g) => g.id === "grammar-noun-and"),
+);
 day49.reviewTargets = day49.grammar.map((g) => g.id);
 const rows: [string, string, string, string[], string][] = [
   [
@@ -148,7 +156,12 @@ const inputs = questions(
 );
 inputs.forEach((q, i) => {
   q.id = `day-49-exit-input-${i + 1}`;
-  q.tags = ["grammar-w7-46-2"];
+  q.tags = [
+    ["grammar-conjugation"],
+    ["grammar-location"],
+    ["grammar-noun-and"],
+    ["grammar-day09-conjugation"],
+  ][i];
 });
 day49.exitTest.push(...inputs);
 const audio: [string, string, string, string[], string, string][] = [

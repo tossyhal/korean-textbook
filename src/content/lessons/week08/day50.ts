@@ -260,3 +260,7 @@ day50.exercises.find((q) => q.id === "day-50-ex-self")!.rubric = [
   "理由と順序を保ったか",
 ];
 linkReview(day50);
+
+day50.sections[0].paragraphs.push(
+  "店で밥 한 공기 주세요と言うと『ご飯を一杯ください』です。服なら큰 옷을 보여 주세요（大きい服を見せてください）と頼めます。공기はご飯を盛る茶碗、보여 주세요は見せてほしいという依頼です。",
+);

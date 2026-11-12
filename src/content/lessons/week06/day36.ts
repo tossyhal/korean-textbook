@@ -334,3 +334,6 @@ day36.exercises.push({
   skill: "reading",
   assessmentKind: "practice",
 });
+day36.sections[3].paragraphs.push(
+  "음악 취향이 비슷해요は『音楽の好みが似ています』です。취향は好みで、友達と好きな音楽を比べるときに使えます。",
+);

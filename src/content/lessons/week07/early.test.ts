@@ -26,7 +26,13 @@ describe("第43〜45課", () => {
         [q],
         [{ questionId: q.id, answer: q.answers[0], result: "correct", stage: "first", at: "now" }],
       );
-      expect(summary).toMatchObject({ attempted: 0, unattempted: 1, complete: false });
+      expect(summary).toMatchObject({
+        attempted: 0,
+        unattempted: 1,
+        unavailable: 1,
+        firstCorrect: 0,
+        complete: true,
+      });
     }
   });
   it("聴解には発音表記でなく元の表記を使う", () => {
