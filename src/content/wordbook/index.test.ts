@@ -78,6 +78,20 @@ describe("単語帳", () => {
     });
   });
 
+  it("基本語と언제の品詞別の用法を検索できる", () => {
+    for (const [form, part] of [
+      ["좀", "副詞"],
+      ["또", "副詞"],
+      ["나오다", "動詞"],
+      ["언제", "代名詞"],
+      ["언제", "副詞"],
+    ]) {
+      expect(
+        wordbook.some((word) => word.dictionaryForm === form && word.partOfSpeech === part),
+      ).toBe(true);
+    }
+  });
+
   it("教材外の復習をバックアップから復元し、不明IDを拒む", () => {
     const extra = wordbook.find((word) => word.firstDay === undefined)!;
     const progress = newProgress();

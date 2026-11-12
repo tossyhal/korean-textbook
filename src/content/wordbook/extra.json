@@ -2529,5 +2529,33 @@
     "meaning": "（髪を）洗う",
     "partOfSpeech": "動詞",
     "dictionaryForm": "감다"
+  },
+  {
+    "id": "wordbook-c880-부",
+    "korean": "좀",
+    "meaning": "少し",
+    "partOfSpeech": "副詞",
+    "dictionaryForm": "좀"
+  },
+  {
+    "id": "wordbook-b610-부",
+    "korean": "또",
+    "meaning": "また",
+    "partOfSpeech": "副詞",
+    "dictionaryForm": "또"
+  },
+  {
+    "id": "wordbook-b098-c624-b2e4-동",
+    "korean": "나오다",
+    "meaning": "出てくる",
+    "partOfSpeech": "動詞",
+    "dictionaryForm": "나오다"
+  },
+  {
+    "id": "wordbook-c5b8-c81c-대",
+    "korean": "언제",
+    "meaning": "いつ（時）",
+    "partOfSpeech": "代名詞",
+    "dictionaryForm": "언제"
   }
 ]

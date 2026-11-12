@@ -1,5 +1,4 @@
 import { expect, test } from "@playwright/test";
-import { lessons } from "../../src/content";
 
 test("単語帳を検索・品詞で絞り、意味を隠して復習に登録する", async ({ page }) => {
   await page.goto("#/reference");
@@ -67,11 +66,11 @@ test("文法に同じ節の例文と意味を表示し、音声を再生でき�
       },
     });
   });
-  const grammar = lessons.flatMap((lesson) => lesson.grammar)[0];
-  const example = lessons.find((lesson) => lesson.day === grammar.firstDay)!.examples[0];
+  const example = { korean: "책을 읽을 수 있어요.", japanese: "本を読めます。" };
   await page.goto("#/reference");
   await page.getByRole("button", { name: "文法", exact: true }).click();
-  const entry = page.locator(".grammar-entry").first();
+  await page.getByLabel("検索").fill("可能");
+  const entry = page.locator(".grammar-entry").filter({ hasText: "可能" }).first();
   await entry.locator("summary").click();
   await expect(entry).toContainText(`同じ節の例文：${example.korean}：${example.japanese}`);
   await entry.getByRole("button", { name: `${example.korean}を聞く` }).click();
