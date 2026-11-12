@@ -207,8 +207,12 @@ for (const lesson of lessons) {
       await expect(voiceTransfer.getByLabel("手本の声")).toBeVisible();
       await expect(voiceTransfer.getByLabel("別の合成音声")).toBeVisible();
       await expect(voiceTransfer.getByRole("button", { name: "手本を聞く" })).toBeVisible();
-      await expect(voiceTransfer.getByRole("button", { name: "別の声で同じ文を聞く" })).toBeVisible();
-      await expect(voiceTransfer.getByRole("button", { name: "別の声で別の文を聞く" })).toBeVisible();
+      await expect(
+        voiceTransfer.getByRole("button", { name: "別の声で同じ文を聞く" }),
+      ).toBeVisible();
+      await expect(
+        voiceTransfer.getByRole("button", { name: "別の声で別の文を聞く" }),
+      ).toBeVisible();
     }
     for (const item of [...lesson.recall, ...lesson.exercises, ...lesson.exitTest]) {
       await page
