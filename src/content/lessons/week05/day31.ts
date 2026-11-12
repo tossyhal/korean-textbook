@@ -202,7 +202,8 @@ export const day31 = makeLesson({
     ["gyotongkadeu", "교통카드", "交通カード", "名詞"],
   ],
   production: {
-    prompt: "目的地、乗り場、乗り換え、切符を尋ねる文を4文以上作りましょう。",
+    kind: "speaking",
+    prompt: "目的地、乗り場、乗り換え、切符を尋ねる質問と依頼を4文以上声に出しましょう。",
     model: "서울역에 가요. 승강장은 어디예요? 어디에서 갈아타요? 편도 표 한 장 주세요.",
     rubric: [
       "目的地を伝えたか",

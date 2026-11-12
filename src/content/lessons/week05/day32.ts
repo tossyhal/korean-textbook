@@ -305,6 +305,12 @@ day32.vocabulary.push(...supplementalVocabulary(32, [["geurigo", "그리고", "�
 import { day31 } from "./day31";
 day32.vocabulary.push(...day31.vocabulary.filter((v) => v.korean === "옆"));
 
+day32.production!.rubric = [
+  "目的地とその位置を尋ねたか",
+  "目印と方向を使って道順を確認したか",
+  "丁寧な語尾を使い分かち書きを確認したか",
+  "書いた道順を声に出して伝えたか",
+];
 day32.objectives = ["位置と方向を尋ねる", "目印を使って道順を伝える"];
 Object.assign(day32.recall[0], {
   prompt: "「乗り場」は韓国語で？",

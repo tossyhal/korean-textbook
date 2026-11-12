@@ -83,9 +83,14 @@ export const day01 = base(
 );
 
 day01.production = {
-  prompt: "가と나を組み立て、音節の位置を説明して発音する。",
-  model: "가 나 다. 아 오.",
-  rubric: ["母音の位置を確かめたか", "初声ㅇを発音していないか", "口の形を見て録音と比べたか"],
+  kind: "typing",
+  prompt: "子音ㄱ・ㄴと母音ㅏを組み合わせ、가と나を入力する。字母の位置を確かめ、声に出す。",
+  model: "가 나",
+  rubric: [
+    "子音と母音の位置を確かめたか",
+    "入力した音節を見本と比べたか",
+    "声に出して口の形を確かめたか",
+  ],
 };
 day01.lessonKind = "letters";
 day01.sections[0].paragraphs.push(

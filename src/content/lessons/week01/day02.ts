@@ -79,9 +79,15 @@ export const day02 = base(
 );
 
 day02.production = {
-  prompt: "平音・濃音・激音の音節と複合母音を声に出す。",
-  model: "가 까 카. 와 워.",
-  rubric: ["息の量を確かめたか", "母音を余分に足していないか", "録音を手本と比較したか"],
+  kind: "typing",
+  prompt:
+    "가・까・카と와・워を入力する。Shiftと複合母音の入力を試し、音節を声に出して息の違いを観察する。",
+  model: "가 까 카 와 워",
+  rubric: [
+    "濃音の入力でShiftを試したか",
+    "複合母音の構成を確認したか",
+    "声に出して息の違いを観察したか",
+  ],
 };
 day02.recall = questions(2, "recall", [["가の母音を入力", "ㅏ", "가はㄱとㅏから成ります。"]]);
 day02.lessonKind = "letters";

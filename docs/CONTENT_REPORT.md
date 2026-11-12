@@ -54,9 +54,9 @@
 | 第6章 第7節（42） | [会話の総合確認](../src/content/lessons/week06/day42.ts)                     |        1 |      121 |    1 |    1 |    1 |   24 |      0 | unverified | unverified | checked 0 / unverified 26 | 1件  |
 | 第7章 第1節（43） | [母音と平音・激音・濃音を聞き分ける](../src/content/lessons/week07/day43.ts) |        4 |      820 |   16 |    4 |   13 |    7 |      4 | unverified | unverified | checked 0 / unverified 21 | 3件  |
 | 第7章 第2節（44） | [パッチムと音のつながり](../src/content/lessons/week07/day44.ts)             |        4 |      845 |   16 |    2 |   13 |    7 |      2 | unverified | unverified | checked 0 / unverified 19 | 5件  |
-| 第7章 第3節（45） | [質問と数字を素早く理解する](../src/content/lessons/week07/day45.ts)         |        4 |      595 |    8 |    4 |   17 |   10 |      0 | unverified | unverified | checked 0 / unverified 21 | 1件  |
+| 第7章 第3節（45） | [質問と数字を素早く理解する](../src/content/lessons/week07/day45.ts)         |        4 |      599 |    8 |    4 |   17 |   10 |      0 | unverified | unverified | checked 0 / unverified 21 | 1件  |
 | 第7章 第4節（46） | [短い会話を聞いて書き取る](../src/content/lessons/week07/day46.ts)           |        4 |      500 |    6 |    2 |   13 |    7 |      0 | unverified | unverified | checked 0 / unverified 15 | 2件  |
-| 第7章 第5節（47） | [別の合成音声と別の文で聞く](../src/content/lessons/week07/day47.ts)         |        4 |      489 |    6 |    2 |   13 |    7 |      0 | unverified | unverified | checked 0 / unverified 16 | 2件  |
+| 第7章 第5節（47） | [予定の時・場所・行動を聞き取る](../src/content/lessons/week07/day47.ts)     |        4 |      483 |    6 |    2 |   13 |    7 |      0 | unverified | unverified | checked 0 / unverified 16 | 2件  |
 | 第7章 第6節（48） | [初めて聞く会話から情報を取り出す](../src/content/lessons/week07/day48.ts)   |        4 |      479 |    6 |    2 |   13 |    7 |      0 | unverified | unverified | checked 0 / unverified 15 | 2件  |
 | 第7章 第7節（49） | [聴解と弱点の確認](../src/content/lessons/week07/day49.ts)                   |        3 |      407 |    1 |    1 |    1 |   24 |      0 | unverified | unverified | checked 0 / unverified 14 | 2件  |
 | 第8章 第1節（50） | [初めて読む短文から情報を取り出す](../src/content/lessons/week08/day50.ts)   |        4 |      765 |    8 |    2 |   14 |    7 |      2 | unverified | unverified | checked 0 / unverified 14 | 2件  |

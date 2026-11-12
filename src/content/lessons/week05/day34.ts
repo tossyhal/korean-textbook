@@ -365,6 +365,12 @@ day34.exercises.push({
   assessmentKind: "practice",
 });
 
+day34.production!.rubric = [
+  "誘いと待ち合わせの時・場所を伝えたか",
+  "遅れる場合の連絡や予定変更を伝えたか",
+  "丁寧な語尾と分かち書きを確認したか",
+  "書いた連絡を声に出して伝えたか",
+];
 day34.objectives = ["待ち合わせの時と場所を決める", "遅れや予定変更を丁寧に伝える"];
 Object.assign(day34.recall[0], {
   prompt: "「隣」は韓国語で？",
