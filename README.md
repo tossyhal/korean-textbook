@@ -28,4 +28,7 @@ mise run dev
 
 ## ドキュメント
 
-[ドキュメント一覧](docs/README.md)から、[利用方法](docs/USAGE.md)、[教材の制作](docs/CONTENT_AUTHORING.md)、[検証記録](docs/VERIFICATION-pages.md)、[配信手順](docs/DEPLOYMENT.md)を確認できます。
+- [利用と検証の手引き](docs/USAGE.md)
+- [保守の手引き](docs/MAINTENANCE.md)
+- [教材の確認状態](docs/CONTENT_STATUS.md)
+- [出典](docs/SOURCES.md)

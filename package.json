@@ -14,7 +14,6 @@
     "test": "vitest run",
     "content:check": "tsx scripts/content-check.ts",
     "test:browser": "playwright test",
-    "content:report": "tsx scripts/content-report.ts && oxfmt docs/CONTENT_REPORT.md",
     "test:preview": "pnpm run build && playwright test --config playwright.production.config.ts"
   },
   "dependencies": {
