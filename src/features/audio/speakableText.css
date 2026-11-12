@@ -15,6 +15,12 @@
 .speakable-text:hover {
   background: #e4f2f1;
 }
+.speakable-text-inline {
+  min-height: 0;
+  border-bottom: 0;
+  text-decoration: underline dotted;
+  text-underline-offset: 0.15em;
+}
 .speakable-text:focus-visible {
   outline: 2px solid #176a72;
   outline-offset: 2px;

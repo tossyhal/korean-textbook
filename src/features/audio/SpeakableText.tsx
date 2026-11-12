@@ -49,11 +49,13 @@ export function SpeakableText({
   audio,
   onPlaybackComplete,
   sampleText,
+  inline = false,
 }: {
   text: string;
   audio?: AudioData;
   onPlaybackComplete?: () => void;
   sampleText?: string;
+  inline?: boolean;
 }) {
   const player = useAudio();
   const [playing, setPlaying] = useState(false);
@@ -118,7 +120,7 @@ export function SpeakableText({
     <span className="speakable-wrap">
       <button
         type="button"
-        className="speakable-text"
+        className={inline ? "speakable-text speakable-text-inline" : "speakable-text"}
         lang="ko"
         aria-label={playing ? `${label}（再生中、停止）` : label}
         title={label}

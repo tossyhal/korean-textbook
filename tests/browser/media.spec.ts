@@ -335,3 +335,66 @@ test("音声の生成に失敗した後、再試行できる", async ({ page }) 
   await expect(page.getByText("音声を再生できません。音声設定を確認してください。")).toHaveCount(0);
   expect(failures).toEqual([]);
 });
+
+test("本文の読み上げは行送りを広げずクリックとEnterで再生できる", async ({ page }) => {
+  await page.addInitScript(() => {
+    (window as any).spoken = [];
+    Object.defineProperty(window, "SpeechSynthesisUtterance", {
+      value: class {
+        constructor(public text: string) {}
+      },
+    });
+    Object.defineProperty(window, "speechSynthesis", {
+      value: {
+        getVoices: () => [{ lang: "ko-KR", voiceURI: "ko", name: "test" }],
+        addEventListener() {},
+        removeEventListener() {},
+        cancel() {},
+        speak: (utterance: SpeechSynthesisUtterance) => {
+          (window as any).spoken.push(utterance.text);
+          queueMicrotask(() => utterance.onend?.({} as SpeechSynthesisEvent));
+        },
+      },
+    });
+  });
+  await page.goto("#/lesson/day-22");
+  const paragraph = page
+    .locator("p")
+    .filter({ has: page.locator(".speakable-text-inline") })
+    .first();
+  const token = paragraph.locator(".speakable-text-inline").first();
+  await expect(token).toBeVisible();
+  const geometry = await token.evaluate((button) => {
+    const paragraph = button.closest("p")!;
+    const style = getComputedStyle(button);
+    const parentStyle = getComputedStyle(paragraph);
+    const before = paragraph.getBoundingClientRect().height;
+    const clone = paragraph.cloneNode(true) as HTMLElement;
+    for (const item of clone.querySelectorAll("button")) item.replaceWith(item.textContent ?? "");
+    paragraph.after(clone);
+    const plainHeight = clone.getBoundingClientRect().height;
+    clone.remove();
+    return {
+      height: button.getBoundingClientRect().height,
+      lineHeight: parseFloat(parentStyle.lineHeight),
+      buttonLineHeight: parseFloat(style.lineHeight),
+      minHeight: style.minHeight,
+      border: style.borderBottomWidth,
+      decoration: style.textDecorationLine,
+      before,
+      plainHeight,
+    };
+  });
+  expect(geometry.minHeight).toBe("0px");
+  expect(geometry.border).toBe("0px");
+  expect(geometry.decoration).toContain("underline");
+  expect(geometry.buttonLineHeight).toBeCloseTo(geometry.lineHeight, 1);
+  expect(geometry.height).toBeLessThanOrEqual(geometry.lineHeight + 1);
+  expect(geometry.before).toBeCloseTo(geometry.plainHeight, 1);
+  const spoken = await token.textContent();
+  await token.click();
+  await token.focus();
+  await page.keyboard.press("Enter");
+  await expect.poll(() => page.evaluate(() => (window as any).spoken)).toEqual([spoken, spoken]);
+  await expect(token).toHaveAttribute("lang", "ko");
+});
