@@ -115,10 +115,10 @@ export function validateContent(input: unknown[], strict = false): string[] {
   return errors;
 }
 
-export function contentIds(lessons: Lesson[]) {
+export function contentIds(lessons: Lesson[], additionalReviewIds: string[] = []) {
   const lessonIds = new Set<string>();
   const questions = new Set<string>();
-  const reviews = new Set<string>();
+  const reviews = new Set<string>(additionalReviewIds);
   for (const lesson of lessons) {
     lessonIds.add(lesson.id);
     for (const question of [...lesson.recall, ...lesson.exercises, ...lesson.exitTest]) {

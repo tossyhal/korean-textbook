@@ -1,0 +1,2533 @@
+[
+  {
+    "id": "wordbook-ac00-ad6c-명",
+    "korean": "가구",
+    "meaning": "家具",
+    "partOfSpeech": "名詞",
+    "dictionaryForm": "가구",
+    "frequencyRank": 7434
+  },
+  {
+    "id": "wordbook-ac00-ae5d-b2e4-형",
+    "korean": "가깝다",
+    "meaning": "近い",
+    "partOfSpeech": "形容詞",
+    "dictionaryForm": "가깝다",
+    "frequencyRank": 648
+  },
+  {
+    "id": "wordbook-ac00-b054-부",
+    "korean": "가끔",
+    "meaning": "時々",
+    "partOfSpeech": "副詞",
+    "dictionaryForm": "가끔",
+    "frequencyRank": 852
+  },
+  {
+    "id": "wordbook-ac00-b09c-d558-b2e4-형",
+    "korean": "가난하다",
+    "meaning": "貧しい",
+    "partOfSpeech": "形容詞",
+    "dictionaryForm": "가난하다",
+    "frequencyRank": 1716
+  },
+  {
+    "id": "wordbook-ac00-b298-b2e4-형",
+    "korean": "가늘다",
+    "meaning": "細い",
+    "partOfSpeech": "形容詞",
+    "dictionaryForm": "가늘다",
+    "frequencyRank": 2757
+  },
+  {
+    "id": "wordbook-ac00-b2a5-d558-b2e4-형",
+    "korean": "가능하다",
+    "meaning": "可能だ",
+    "partOfSpeech": "形容詞",
+    "dictionaryForm": "가능하다",
+    "frequencyRank": 501
+  },
+  {
+    "id": "wordbook-ac00-b4dd-부",
+    "korean": "가득",
+    "meaning": "いっぱい",
+    "partOfSpeech": "副詞",
+    "dictionaryForm": "가득",
+    "frequencyRank": 1196
+  },
+  {
+    "id": "wordbook-ac00-bccd-b2e4-형",
+    "korean": "가볍다",
+    "meaning": "軽い",
+    "partOfSpeech": "形容詞",
+    "dictionaryForm": "가볍다",
+    "frequencyRank": 1189
+  },
+  {
+    "id": "wordbook-ac00-c6b4-b370-명",
+    "korean": "가운데",
+    "meaning": "真ん中",
+    "partOfSpeech": "名詞",
+    "dictionaryForm": "가운데",
+    "frequencyRank": 264
+  },
+  {
+    "id": "wordbook-ac00-c704-명",
+    "korean": "가위",
+    "meaning": "はさみ",
+    "partOfSpeech": "名詞",
+    "dictionaryForm": "가위",
+    "frequencyRank": 6172
+  },
+  {
+    "id": "wordbook-ac00-c9c0-의",
+    "korean": "가지",
+    "meaning": "種類",
+    "partOfSpeech": "依存名詞",
+    "dictionaryForm": "가지",
+    "frequencyRank": 129
+  },
+  {
+    "id": "wordbook-ac04-b2e8-d558-b2e4-형",
+    "korean": "간단하다",
+    "meaning": "簡単だ",
+    "partOfSpeech": "形容詞",
+    "dictionaryForm": "간단하다",
+    "frequencyRank": 1336
+  },
+  {
+    "id": "wordbook-ac04-d638-c0ac-명",
+    "korean": "간호사",
+    "meaning": "看護師",
+    "partOfSpeech": "名詞",
+    "dictionaryForm": "간호사",
+    "frequencyRank": 7438
+  },
+  {
+    "id": "wordbook-ac08-c544-c785-b2e4-동",
+    "korean": "갈아입다",
+    "meaning": "着替える",
+    "partOfSpeech": "動詞",
+    "dictionaryForm": "갈아입다",
+    "frequencyRank": 4035
+  },
+  {
+    "id": "wordbook-ac10-ae30-명",
+    "korean": "감기",
+    "meaning": "風邪",
+    "partOfSpeech": "名詞",
+    "dictionaryForm": "감기",
+    "frequencyRank": 3343
+  },
+  {
+    "id": "wordbook-ac10-b2e4-동",
+    "korean": "감다",
+    "meaning": "巻く",
+    "partOfSpeech": "動詞",
+    "dictionaryForm": "감다",
+    "frequencyRank": 4036
+  },
+  {
+    "id": "wordbook-ac10-c0ac-명",
+    "korean": "감사",
+    "meaning": "感謝",
+    "partOfSpeech": "名詞",
+    "dictionaryForm": "감사",
+    "frequencyRank": 6352
+  },
+  {
+    "id": "wordbook-ac11-c790-ae30-부",
+    "korean": "갑자기",
+    "meaning": "突然",
+    "partOfSpeech": "副詞",
+    "dictionaryForm": "갑자기",
+    "frequencyRank": 475
+  },
+  {
+    "id": "wordbook-ac15-명",
+    "korean": "강",
+    "meaning": "川",
+    "partOfSpeech": "名詞",
+    "dictionaryForm": "강",
+    "frequencyRank": 1812
+  },
+  {
+    "id": "wordbook-ac15-c544-c9c0-명",
+    "korean": "강아지",
+    "meaning": "子犬",
+    "partOfSpeech": "名詞",
+    "dictionaryForm": "강아지",
+    "frequencyRank": 14028
+  },
+  {
+    "id": "wordbook-ac15-d558-b2e4-형",
+    "korean": "강하다",
+    "meaning": "強い",
+    "partOfSpeech": "形容詞",
+    "dictionaryForm": "강하다",
+    "frequencyRank": 584
+  },
+  {
+    "id": "wordbook-ac16-b2e4-동",
+    "korean": "갖다",
+    "meaning": "持つ",
+    "partOfSpeech": "動詞",
+    "dictionaryForm": "갖다",
+    "frequencyRank": 190
+  },
+  {
+    "id": "wordbook-ac70-c6b8-명",
+    "korean": "거울",
+    "meaning": "鏡",
+    "partOfSpeech": "名詞",
+    "dictionaryForm": "거울",
+    "frequencyRank": 2109
+  },
+  {
+    "id": "wordbook-ac70-c758-부",
+    "korean": "거의",
+    "meaning": "ほとんど",
+    "partOfSpeech": "副詞",
+    "dictionaryForm": "거의",
+    "frequencyRank": 306
+  },
+  {
+    "id": "wordbook-ac71-c815-명",
+    "korean": "걱정",
+    "meaning": "心配",
+    "partOfSpeech": "名詞",
+    "dictionaryForm": "걱정",
+    "frequencyRank": 1129
+  },
+  {
+    "id": "wordbook-ac71-c815-d558-b2e4-동",
+    "korean": "걱정하다",
+    "meaning": "心配する",
+    "partOfSpeech": "動詞",
+    "dictionaryForm": "걱정하다",
+    "frequencyRank": 2491
+  },
+  {
+    "id": "wordbook-ac74-ac15-명",
+    "korean": "건강",
+    "meaning": "健康",
+    "partOfSpeech": "名詞",
+    "dictionaryForm": "건강",
+    "frequencyRank": 647
+  },
+  {
+    "id": "wordbook-ac74-ac15-d558-b2e4-형",
+    "korean": "건강하다",
+    "meaning": "健康だ",
+    "partOfSpeech": "形容詞",
+    "dictionaryForm": "건강하다",
+    "frequencyRank": 1297
+  },
+  {
+    "id": "wordbook-ac74-bb3c-명",
+    "korean": "건물",
+    "meaning": "建物",
+    "partOfSpeech": "名詞",
+    "dictionaryForm": "건물",
+    "frequencyRank": 649
+  },
+  {
+    "id": "wordbook-ac78-b9ac-b2e4-동",
+    "korean": "걸리다",
+    "meaning": "かかる",
+    "partOfSpeech": "動詞",
+    "dictionaryForm": "걸리다",
+    "frequencyRank": 380
+  },
+  {
+    "id": "wordbook-ac80-c0ac-명",
+    "korean": "검사",
+    "meaning": "検査",
+    "partOfSpeech": "名詞",
+    "dictionaryForm": "검사",
+    "frequencyRank": 1512
+  },
+  {
+    "id": "wordbook-acb0-acfc-명",
+    "korean": "결과",
+    "meaning": "結果",
+    "partOfSpeech": "名詞",
+    "dictionaryForm": "결과",
+    "frequencyRank": 211
+  },
+  {
+    "id": "wordbook-acb0-ad6d-부",
+    "korean": "결국",
+    "meaning": "結局",
+    "partOfSpeech": "副詞",
+    "dictionaryForm": "결국"
+  },
+  {
+    "id": "wordbook-acbd-cc30-명",
+    "korean": "경찰",
+    "meaning": "警察",
+    "partOfSpeech": "名詞",
+    "dictionaryForm": "경찰",
+    "frequencyRank": 632
+  },
+  {
+    "id": "wordbook-acc4-c18d-부",
+    "korean": "계속",
+    "meaning": "続けて",
+    "partOfSpeech": "副詞",
+    "dictionaryForm": "계속",
+    "frequencyRank": 405
+  },
+  {
+    "id": "wordbook-acc4-d68d-d558-b2e4-동",
+    "korean": "계획하다",
+    "meaning": "計画する",
+    "partOfSpeech": "動詞",
+    "dictionaryForm": "계획하다",
+    "frequencyRank": 4862
+  },
+  {
+    "id": "wordbook-ace0-c7a5-명",
+    "korean": "고장",
+    "meaning": "故障",
+    "partOfSpeech": "名詞",
+    "dictionaryForm": "고장"
+  },
+  {
+    "id": "wordbook-ace0-ce58-b2e4-동",
+    "korean": "고치다",
+    "meaning": "直す",
+    "partOfSpeech": "動詞",
+    "dictionaryForm": "고치다",
+    "frequencyRank": 1503
+  },
+  {
+    "id": "wordbook-ace4-b780-d558-b2e4-형",
+    "korean": "곤란하다",
+    "meaning": "困難だ",
+    "partOfSpeech": "形容詞",
+    "dictionaryForm": "곤란하다",
+    "frequencyRank": 3675
+  },
+  {
+    "id": "wordbook-ace7-부",
+    "korean": "곧",
+    "meaning": "まもなく",
+    "partOfSpeech": "副詞",
+    "dictionaryForm": "곧",
+    "frequencyRank": 307
+  },
+  {
+    "id": "wordbook-acf5-ae30-명",
+    "korean": "공기",
+    "meaning": "空気",
+    "partOfSpeech": "名詞",
+    "dictionaryForm": "공기",
+    "frequencyRank": 1433
+  },
+  {
+    "id": "wordbook-acf5-bd80-명",
+    "korean": "공부",
+    "meaning": "勉強",
+    "partOfSpeech": "名詞",
+    "dictionaryForm": "공부",
+    "frequencyRank": 490
+  },
+  {
+    "id": "wordbook-acf5-c7a5-명",
+    "korean": "공장",
+    "meaning": "工場",
+    "partOfSpeech": "名詞",
+    "dictionaryForm": "공장",
+    "frequencyRank": 685
+  },
+  {
+    "id": "wordbook-acf5-d56d-명",
+    "korean": "공항",
+    "meaning": "空港",
+    "partOfSpeech": "名詞",
+    "dictionaryForm": "공항",
+    "frequencyRank": 2433
+  },
+  {
+    "id": "wordbook-acfc-c790-명",
+    "korean": "과자",
+    "meaning": "菓子",
+    "partOfSpeech": "名詞",
+    "dictionaryForm": "과자",
+    "frequencyRank": 4402
+  },
+  {
+    "id": "wordbook-ad00-acc4-명",
+    "korean": "관계",
+    "meaning": "関係",
+    "partOfSpeech": "名詞",
+    "dictionaryForm": "관계",
+    "frequencyRank": 152
+  },
+  {
+    "id": "wordbook-ad00-c2ec-명",
+    "korean": "관심",
+    "meaning": "関心",
+    "partOfSpeech": "名詞",
+    "dictionaryForm": "관심",
+    "frequencyRank": 312
+  },
+  {
+    "id": "wordbook-ad50-c2e4-명",
+    "korean": "교실",
+    "meaning": "教室",
+    "partOfSpeech": "名詞",
+    "dictionaryForm": "교실",
+    "frequencyRank": 1339
+  },
+  {
+    "id": "wordbook-ad50-d1b5-명",
+    "korean": "교통",
+    "meaning": "交通",
+    "partOfSpeech": "名詞",
+    "dictionaryForm": "교통",
+    "frequencyRank": 1249
+  },
+  {
+    "id": "wordbook-ad6c-acbd-d558-b2e4-동",
+    "korean": "구경하다",
+    "meaning": "見物する",
+    "partOfSpeech": "動詞",
+    "dictionaryForm": "구경하다",
+    "frequencyRank": 3176
+  },
+  {
+    "id": "wordbook-ad6c-b450-명",
+    "korean": "구두",
+    "meaning": "靴",
+    "partOfSpeech": "名詞",
+    "dictionaryForm": "구두",
+    "frequencyRank": 3217
+  },
+  {
+    "id": "wordbook-ad6c-b984-명",
+    "korean": "구름",
+    "meaning": "雲",
+    "partOfSpeech": "名詞",
+    "dictionaryForm": "구름",
+    "frequencyRank": 2493
+  },
+  {
+    "id": "wordbook-ad70-c778-명",
+    "korean": "군인",
+    "meaning": "軍人",
+    "partOfSpeech": "名詞",
+    "dictionaryForm": "군인",
+    "frequencyRank": 2434
+  },
+  {
+    "id": "wordbook-ad7d-b2e4-동",
+    "korean": "굽다",
+    "meaning": "焼く",
+    "partOfSpeech": "動詞",
+    "dictionaryForm": "굽다",
+    "frequencyRank": 1892
+  },
+  {
+    "id": "wordbook-adc0-명",
+    "korean": "귀",
+    "meaning": "耳",
+    "partOfSpeech": "名詞",
+    "dictionaryForm": "귀",
+    "frequencyRank": 840
+  },
+  {
+    "id": "wordbook-adc0-c5fd-b2e4-형",
+    "korean": "귀엽다",
+    "meaning": "かわいい",
+    "partOfSpeech": "形容詞",
+    "dictionaryForm": "귀엽다",
+    "frequencyRank": 2617
+  },
+  {
+    "id": "wordbook-addc-ce59-명",
+    "korean": "규칙",
+    "meaning": "規則",
+    "partOfSpeech": "名詞",
+    "dictionaryForm": "규칙",
+    "frequencyRank": 2127
+  },
+  {
+    "id": "wordbook-adf8-b0e5-부",
+    "korean": "그냥",
+    "meaning": "そのまま",
+    "partOfSpeech": "副詞",
+    "dictionaryForm": "그냥",
+    "frequencyRank": 303
+  },
+  {
+    "id": "wordbook-adf8-b3d9-c548-명",
+    "korean": "그동안",
+    "meaning": "その間",
+    "partOfSpeech": "名詞",
+    "dictionaryForm": "그동안",
+    "frequencyRank": 473
+  },
+  {
+    "id": "wordbook-adf8-ce58-b2e4-동",
+    "korean": "그치다",
+    "meaning": "やむ",
+    "partOfSpeech": "動詞",
+    "dictionaryForm": "그치다",
+    "frequencyRank": 1150
+  },
+  {
+    "id": "wordbook-adfc-cc98-명",
+    "korean": "근처",
+    "meaning": "近く",
+    "partOfSpeech": "名詞",
+    "dictionaryForm": "근처",
+    "frequencyRank": 1151
+  },
+  {
+    "id": "wordbook-ae00-명",
+    "korean": "글",
+    "meaning": "文章",
+    "partOfSpeech": "名詞",
+    "dictionaryForm": "글",
+    "frequencyRank": 252
+  },
+  {
+    "id": "wordbook-ae08-bc29-부",
+    "korean": "금방",
+    "meaning": "すぐに",
+    "partOfSpeech": "副詞",
+    "dictionaryForm": "금방",
+    "frequencyRank": 1597
+  },
+  {
+    "id": "wordbook-ae09-d558-b2e4-형",
+    "korean": "급하다",
+    "meaning": "急だ",
+    "partOfSpeech": "形容詞",
+    "dictionaryForm": "급하다",
+    "frequencyRank": 2437
+  },
+  {
+    "id": "wordbook-ae30-b974-b2e4-동",
+    "korean": "기르다",
+    "meaning": "育てる",
+    "partOfSpeech": "動詞",
+    "dictionaryForm": "기르다",
+    "frequencyRank": 882
+  },
+  {
+    "id": "wordbook-ae30-c5b5-d558-b2e4-동",
+    "korean": "기억하다",
+    "meaning": "覚えている",
+    "partOfSpeech": "動詞",
+    "dictionaryForm": "기억하다",
+    "frequencyRank": 1905
+  },
+  {
+    "id": "wordbook-ae30-c628-명",
+    "korean": "기온",
+    "meaning": "気温",
+    "partOfSpeech": "名詞",
+    "dictionaryForm": "기온",
+    "frequencyRank": 2379
+  },
+  {
+    "id": "wordbook-ae30-cc28-c5ed-명",
+    "korean": "기차역",
+    "meaning": "駅",
+    "partOfSpeech": "名詞",
+    "dictionaryForm": "기차역"
+  },
+  {
+    "id": "wordbook-ae34-c7a5-d558-b2e4-동",
+    "korean": "긴장하다",
+    "meaning": "緊張する",
+    "partOfSpeech": "動詞",
+    "dictionaryForm": "긴장하다",
+    "frequencyRank": 3856
+  },
+  {
+    "id": "wordbook-ae4a-b2e4-형",
+    "korean": "깊다",
+    "meaning": "深い",
+    "partOfSpeech": "形容詞",
+    "dictionaryForm": "깊다",
+    "frequencyRank": 461
+  },
+  {
+    "id": "wordbook-ae4c-b9e3-b2e4-형",
+    "korean": "까맣다",
+    "meaning": "黒い",
+    "partOfSpeech": "形容詞",
+    "dictionaryForm": "까맣다",
+    "frequencyRank": 3264
+  },
+  {
+    "id": "wordbook-ae68-b057-d558-b2e4-형",
+    "korean": "깨끗하다",
+    "meaning": "きれいだ",
+    "partOfSpeech": "形容詞",
+    "dictionaryForm": "깨끗하다",
+    "frequencyRank": 1471
+  },
+  {
+    "id": "wordbook-ae68-b2e4-동",
+    "korean": "깨다",
+    "meaning": "覚める",
+    "partOfSpeech": "動詞",
+    "dictionaryForm": "깨다"
+  },
+  {
+    "id": "wordbook-afb8-c900-d788-부",
+    "korean": "꾸준히",
+    "meaning": "こつこつと",
+    "partOfSpeech": "副詞",
+    "dictionaryForm": "꾸준히",
+    "frequencyRank": 2889
+  },
+  {
+    "id": "wordbook-b05d-b0b4-b2e4-동",
+    "korean": "끝내다",
+    "meaning": "終える",
+    "partOfSpeech": "動詞",
+    "dictionaryForm": "끝내다",
+    "frequencyRank": 1452
+  },
+  {
+    "id": "wordbook-b098-b204-b2e4-동",
+    "korean": "나누다",
+    "meaning": "分ける",
+    "partOfSpeech": "動詞",
+    "dictionaryForm": "나누다",
+    "frequencyRank": 304
+  },
+  {
+    "id": "wordbook-b0ae-b2e4-형",
+    "korean": "낮다",
+    "meaning": "低い",
+    "partOfSpeech": "形容詞",
+    "dictionaryForm": "낮다",
+    "frequencyRank": 974
+  },
+  {
+    "id": "wordbook-b0c4-c0c8-명",
+    "korean": "냄새",
+    "meaning": "におい",
+    "partOfSpeech": "名詞",
+    "dictionaryForm": "냄새",
+    "frequencyRank": 1061
+  },
+  {
+    "id": "wordbook-b113-b2e4-형",
+    "korean": "넓다",
+    "meaning": "広い",
+    "partOfSpeech": "形容詞",
+    "dictionaryForm": "넓다",
+    "frequencyRank": 638
+  },
+  {
+    "id": "wordbook-b118-b2e4-동",
+    "korean": "넘다",
+    "meaning": "越える",
+    "partOfSpeech": "動詞",
+    "dictionaryForm": "넘다",
+    "frequencyRank": 476
+  },
+  {
+    "id": "wordbook-b118-c5b4-c9c0-b2e4-동",
+    "korean": "넘어지다",
+    "meaning": "転ぶ",
+    "partOfSpeech": "動詞",
+    "dictionaryForm": "넘어지다",
+    "frequencyRank": 4332
+  },
+  {
+    "id": "wordbook-b123-b2e4-동",
+    "korean": "넣다",
+    "meaning": "入れる",
+    "partOfSpeech": "動詞",
+    "dictionaryForm": "넣다",
+    "frequencyRank": 219
+  },
+  {
+    "id": "wordbook-b178-b825-명",
+    "korean": "노력",
+    "meaning": "努力",
+    "partOfSpeech": "名詞",
+    "dictionaryForm": "노력",
+    "frequencyRank": 494
+  },
+  {
+    "id": "wordbook-b178-b825-d558-b2e4-동",
+    "korean": "노력하다",
+    "meaning": "努力する",
+    "partOfSpeech": "動詞",
+    "dictionaryForm": "노력하다",
+    "frequencyRank": 944
+  },
+  {
+    "id": "wordbook-b180-b2e4-동",
+    "korean": "놀다",
+    "meaning": "遊ぶ",
+    "partOfSpeech": "動詞",
+    "dictionaryForm": "놀다",
+    "frequencyRank": 418
+  },
+  {
+    "id": "wordbook-b180-b77c-b2e4-동",
+    "korean": "놀라다",
+    "meaning": "驚く",
+    "partOfSpeech": "動詞",
+    "dictionaryForm": "놀라다",
+    "frequencyRank": 594
+  },
+  {
+    "id": "wordbook-b192-b2e4-형",
+    "korean": "높다",
+    "meaning": "高い",
+    "partOfSpeech": "形容詞",
+    "dictionaryForm": "높다",
+    "frequencyRank": 277
+  },
+  {
+    "id": "wordbook-b208-bb3c-명",
+    "korean": "눈물",
+    "meaning": "涙",
+    "partOfSpeech": "名詞",
+    "dictionaryForm": "눈물",
+    "frequencyRank": 814
+  },
+  {
+    "id": "wordbook-b290-b9ac-b2e4-형",
+    "korean": "느리다",
+    "meaning": "遅い",
+    "partOfSpeech": "形容詞",
+    "dictionaryForm": "느리다",
+    "frequencyRank": 3860
+  },
+  {
+    "id": "wordbook-b2a6-b2e4-형",
+    "korean": "늦다",
+    "meaning": "遅い",
+    "partOfSpeech": "形容詞",
+    "dictionaryForm": "늦다",
+    "frequencyRank": 949
+  },
+  {
+    "id": "wordbook-b2e4-ce58-b2e4-동",
+    "korean": "다치다",
+    "meaning": "けがをする",
+    "partOfSpeech": "動詞",
+    "dictionaryForm": "다치다",
+    "frequencyRank": 3110
+  },
+  {
+    "id": "wordbook-b2ec-b9ac-b2e4-동",
+    "korean": "달리다",
+    "meaning": "走る",
+    "partOfSpeech": "動詞",
+    "dictionaryForm": "달리다",
+    "frequencyRank": 867
+  },
+  {
+    "id": "wordbook-b2ed-명",
+    "korean": "닭",
+    "meaning": "鶏",
+    "partOfSpeech": "名詞",
+    "dictionaryForm": "닭",
+    "frequencyRank": 2857
+  },
+  {
+    "id": "wordbook-b2f4-b2e4-동",
+    "korean": "담다",
+    "meaning": "盛る",
+    "partOfSpeech": "動詞",
+    "dictionaryForm": "담다",
+    "frequencyRank": 609
+  },
+  {
+    "id": "wordbook-b2f9-adfc-명",
+    "korean": "당근",
+    "meaning": "にんじん",
+    "partOfSpeech": "名詞",
+    "dictionaryForm": "당근",
+    "frequencyRank": 3312
+  },
+  {
+    "id": "wordbook-b300-b2f5-명",
+    "korean": "대답",
+    "meaning": "返事",
+    "partOfSpeech": "名詞",
+    "dictionaryForm": "대답",
+    "frequencyRank": 1453
+  },
+  {
+    "id": "wordbook-b300-b2f5-d558-b2e4-동",
+    "korean": "대답하다",
+    "meaning": "返事する",
+    "partOfSpeech": "動詞",
+    "dictionaryForm": "대답하다",
+    "frequencyRank": 1096
+  },
+  {
+    "id": "wordbook-b300-bd80-bd84-명",
+    "korean": "대부분",
+    "meaning": "大部分",
+    "partOfSpeech": "名詞",
+    "dictionaryForm": "대부분",
+    "frequencyRank": 391
+  },
+  {
+    "id": "wordbook-b300-c2e0-명",
+    "korean": "대신",
+    "meaning": "代わり",
+    "partOfSpeech": "名詞",
+    "dictionaryForm": "대신",
+    "frequencyRank": 655
+  },
+  {
+    "id": "wordbook-b354-b7fd-b2e4-형",
+    "korean": "더럽다",
+    "meaning": "汚い",
+    "partOfSpeech": "形容詞",
+    "dictionaryForm": "더럽다",
+    "frequencyRank": 3269
+  },
+  {
+    "id": "wordbook-b358-c9c0-b2e4-동",
+    "korean": "던지다",
+    "meaning": "投げる",
+    "partOfSpeech": "動詞",
+    "dictionaryForm": "던지다",
+    "frequencyRank": 621
+  },
+  {
+    "id": "wordbook-b370-b9ac-b2e4-동",
+    "korean": "데리다",
+    "meaning": "連れる",
+    "partOfSpeech": "動詞",
+    "dictionaryForm": "데리다",
+    "frequencyRank": 1167
+  },
+  {
+    "id": "wordbook-b3c4-b451-명",
+    "korean": "도둑",
+    "meaning": "泥棒",
+    "partOfSpeech": "名詞",
+    "dictionaryForm": "도둑",
+    "frequencyRank": 4052
+  },
+  {
+    "id": "wordbook-b3c4-c6c0-명",
+    "korean": "도움",
+    "meaning": "助け",
+    "partOfSpeech": "名詞",
+    "dictionaryForm": "도움",
+    "frequencyRank": 714
+  },
+  {
+    "id": "wordbook-b3c4-cc29-d558-b2e4-동",
+    "korean": "도착하다",
+    "meaning": "到着する",
+    "partOfSpeech": "動詞",
+    "dictionaryForm": "도착하다",
+    "frequencyRank": 1305
+  },
+  {
+    "id": "wordbook-b3cc-c544-ac00-b2e4-동",
+    "korean": "돌아가다",
+    "meaning": "帰る",
+    "partOfSpeech": "動詞",
+    "dictionaryForm": "돌아가다",
+    "frequencyRank": 519
+  },
+  {
+    "id": "wordbook-b3cc-c544-c624-b2e4-동",
+    "korean": "돌아오다",
+    "meaning": "戻る",
+    "partOfSpeech": "動詞",
+    "dictionaryForm": "돌아오다",
+    "frequencyRank": 377
+  },
+  {
+    "id": "wordbook-b3d9-bb3c-명",
+    "korean": "동물",
+    "meaning": "動物",
+    "partOfSpeech": "名詞",
+    "dictionaryForm": "동물",
+    "frequencyRank": 1294
+  },
+  {
+    "id": "wordbook-b450-aecd-b2e4-형",
+    "korean": "두껍다",
+    "meaning": "厚い",
+    "partOfSpeech": "形容詞",
+    "dictionaryForm": "두껍다",
+    "frequencyRank": 2827
+  },
+  {
+    "id": "wordbook-b450-b835-b2e4-형",
+    "korean": "두렵다",
+    "meaning": "怖い",
+    "partOfSpeech": "形容詞",
+    "dictionaryForm": "두렵다",
+    "frequencyRank": 3034
+  },
+  {
+    "id": "wordbook-b458-b7ec-bcf4-b2e4-동",
+    "korean": "둘러보다",
+    "meaning": "見回す",
+    "partOfSpeech": "動詞",
+    "dictionaryForm": "둘러보다",
+    "frequencyRank": 2594
+  },
+  {
+    "id": "wordbook-b4dc-b77c-b9c8-명",
+    "korean": "드라마",
+    "meaning": "ドラマ",
+    "partOfSpeech": "名詞",
+    "dictionaryForm": "드라마",
+    "frequencyRank": 1237
+  },
+  {
+    "id": "wordbook-b4e4-b2e4-동",
+    "korean": "들다",
+    "meaning": "持つ",
+    "partOfSpeech": "動詞",
+    "dictionaryForm": "들다",
+    "frequencyRank": 130
+  },
+  {
+    "id": "wordbook-b4e4-c5b4-ac00-b2e4-동",
+    "korean": "들어가다",
+    "meaning": "入る",
+    "partOfSpeech": "動詞",
+    "dictionaryForm": "들어가다",
+    "frequencyRank": 158
+  },
+  {
+    "id": "wordbook-b4e4-c5b4-c624-b2e4-동",
+    "korean": "들어오다",
+    "meaning": "入って来る",
+    "partOfSpeech": "動詞",
+    "dictionaryForm": "들어오다",
+    "frequencyRank": 256
+  },
+  {
+    "id": "wordbook-b4f1-명",
+    "korean": "등",
+    "meaning": "背中",
+    "partOfSpeech": "名詞",
+    "dictionaryForm": "등",
+    "frequencyRank": 1019
+  },
+  {
+    "id": "wordbook-b530-b974-b2e4-동",
+    "korean": "따르다",
+    "meaning": "従う",
+    "partOfSpeech": "動詞",
+    "dictionaryForm": "따르다",
+    "frequencyRank": 51
+  },
+  {
+    "id": "wordbook-b530-b85c-부",
+    "korean": "따로",
+    "meaning": "別々に",
+    "partOfSpeech": "副詞",
+    "dictionaryForm": "따로",
+    "frequencyRank": 1313
+  },
+  {
+    "id": "wordbook-b5a8-c5b4-c9c0-b2e4-동",
+    "korean": "떨어지다",
+    "meaning": "落ちる",
+    "partOfSpeech": "動詞",
+    "dictionaryForm": "떨어지다",
+    "frequencyRank": 299
+  },
+  {
+    "id": "wordbook-b5a0-b098-b2e4-동",
+    "korean": "떠나다",
+    "meaning": "出発する",
+    "partOfSpeech": "動詞",
+    "dictionaryForm": "떠나다",
+    "frequencyRank": 327
+  },
+  {
+    "id": "wordbook-b5a0-b4e4-b2e4-동",
+    "korean": "떠들다",
+    "meaning": "騒ぐ",
+    "partOfSpeech": "動詞",
+    "dictionaryForm": "떠들다",
+    "frequencyRank": 2765
+  },
+  {
+    "id": "wordbook-b5a1-명",
+    "korean": "떡",
+    "meaning": "餅",
+    "partOfSpeech": "名詞",
+    "dictionaryForm": "떡",
+    "frequencyRank": 1443
+  },
+  {
+    "id": "wordbook-b611-ac19-b2e4-형",
+    "korean": "똑같다",
+    "meaning": "全く同じだ",
+    "partOfSpeech": "形容詞",
+    "dictionaryForm": "똑같다",
+    "frequencyRank": 1376
+  },
+  {
+    "id": "wordbook-b611-bc14-b85c-부",
+    "korean": "똑바로",
+    "meaning": "まっすぐ",
+    "partOfSpeech": "副詞",
+    "dictionaryForm": "똑바로",
+    "frequencyRank": 5201
+  },
+  {
+    "id": "wordbook-b73b-명",
+    "korean": "뜻",
+    "meaning": "意味",
+    "partOfSpeech": "名詞",
+    "dictionaryForm": "뜻",
+    "frequencyRank": 296
+  },
+  {
+    "id": "wordbook-b77c-b514-c624-명",
+    "korean": "라디오",
+    "meaning": "ラジオ",
+    "partOfSpeech": "名詞",
+    "dictionaryForm": "라디오",
+    "frequencyRank": 1571
+  },
+  {
+    "id": "wordbook-b9c8-b974-b2e4-동",
+    "korean": "마르다",
+    "meaning": "乾く",
+    "partOfSpeech": "動詞",
+    "dictionaryForm": "마르다",
+    "frequencyRank": 1649
+  },
+  {
+    "id": "wordbook-b9c8-c74c-명",
+    "korean": "마음",
+    "meaning": "心",
+    "partOfSpeech": "名詞",
+    "dictionaryForm": "마음",
+    "frequencyRank": 148
+  },
+  {
+    "id": "wordbook-b9c8-ce68-부",
+    "korean": "마침",
+    "meaning": "ちょうど",
+    "partOfSpeech": "副詞",
+    "dictionaryForm": "마침",
+    "frequencyRank": 2265
+  },
+  {
+    "id": "wordbook-b9c9-b2e4-동",
+    "korean": "막다",
+    "meaning": "防ぐ",
+    "partOfSpeech": "動詞",
+    "dictionaryForm": "막다",
+    "frequencyRank": 700
+  },
+  {
+    "id": "wordbook-b9cc-c9c0-b2e4-동",
+    "korean": "만지다",
+    "meaning": "触る",
+    "partOfSpeech": "動詞",
+    "dictionaryForm": "만지다",
+    "frequencyRank": 2522
+  },
+  {
+    "id": "wordbook-b9d1-b2e4-형",
+    "korean": "맑다",
+    "meaning": "晴れている",
+    "partOfSpeech": "形容詞",
+    "dictionaryForm": "맑다",
+    "frequencyRank": 1077
+  },
+  {
+    "id": "wordbook-b9de-b2e4-동",
+    "korean": "맞다",
+    "meaning": "合う",
+    "partOfSpeech": "動詞",
+    "dictionaryForm": "맞다",
+    "frequencyRank": 378
+  },
+  {
+    "id": "wordbook-b9e4-c6b0-부",
+    "korean": "매우",
+    "meaning": "とても",
+    "partOfSpeech": "副詞",
+    "dictionaryForm": "매우",
+    "frequencyRank": 393
+  },
+  {
+    "id": "wordbook-ba38-b9ac-명",
+    "korean": "머리",
+    "meaning": "頭",
+    "partOfSpeech": "名詞",
+    "dictionaryForm": "머리",
+    "frequencyRank": 288
+  },
+  {
+    "id": "wordbook-ba40-b2e4-형",
+    "korean": "멀다",
+    "meaning": "遠い",
+    "partOfSpeech": "形容詞",
+    "dictionaryForm": "멀다",
+    "frequencyRank": 718
+  },
+  {
+    "id": "wordbook-ba4b-c788-b2e4-형",
+    "korean": "멋있다",
+    "meaning": "すてきだ",
+    "partOfSpeech": "形容詞",
+    "dictionaryForm": "멋있다",
+    "frequencyRank": 5206
+  },
+  {
+    "id": "wordbook-ba48-cd94-b2e4-동",
+    "korean": "멈추다",
+    "meaning": "止まる",
+    "partOfSpeech": "動詞",
+    "dictionaryForm": "멈추다",
+    "frequencyRank": 1418
+  },
+  {
+    "id": "wordbook-ba54-baa8-명",
+    "korean": "메모",
+    "meaning": "メモ",
+    "partOfSpeech": "名詞",
+    "dictionaryForm": "메모",
+    "frequencyRank": 7231
+  },
+  {
+    "id": "wordbook-ba74-c811-명",
+    "korean": "면접",
+    "meaning": "面接",
+    "partOfSpeech": "名詞",
+    "dictionaryForm": "면접",
+    "frequencyRank": 9555
+  },
+  {
+    "id": "wordbook-baa8-b450-부",
+    "korean": "모두",
+    "meaning": "みんな",
+    "partOfSpeech": "副詞",
+    "dictionaryForm": "모두",
+    "frequencyRank": 145
+  },
+  {
+    "id": "wordbook-baa8-c73c-b2e4-동",
+    "korean": "모으다",
+    "meaning": "集める",
+    "partOfSpeech": "動詞",
+    "dictionaryForm": "모으다",
+    "frequencyRank": 508
+  },
+  {
+    "id": "wordbook-baa8-c790-b77c-b2e4-동",
+    "korean": "모자라다",
+    "meaning": "足りない",
+    "partOfSpeech": "動詞",
+    "dictionaryForm": "모자라다",
+    "frequencyRank": 2829
+  },
+  {
+    "id": "wordbook-baa9-명",
+    "korean": "목",
+    "meaning": "首",
+    "partOfSpeech": "名詞",
+    "dictionaryForm": "목",
+    "frequencyRank": 1230
+  },
+  {
+    "id": "wordbook-bab8-명",
+    "korean": "몸",
+    "meaning": "体",
+    "partOfSpeech": "名詞",
+    "dictionaryForm": "몸",
+    "frequencyRank": 156
+  },
+  {
+    "id": "wordbook-bb34-b8cc-명",
+    "korean": "무료",
+    "meaning": "無料",
+    "partOfSpeech": "名詞",
+    "dictionaryForm": "무료",
+    "frequencyRank": 3688
+  },
+  {
+    "id": "wordbook-bb34-b98e-명",
+    "korean": "무릎",
+    "meaning": "ひざ",
+    "partOfSpeech": "名詞",
+    "dictionaryForm": "무릎",
+    "frequencyRank": 1637
+  },
+  {
+    "id": "wordbook-bb34-c12d-b2e4-형",
+    "korean": "무섭다",
+    "meaning": "怖い",
+    "partOfSpeech": "形容詞",
+    "dictionaryForm": "무섭다",
+    "frequencyRank": 1051
+  },
+  {
+    "id": "wordbook-bb34-c870-ac74-명",
+    "korean": "무조건",
+    "meaning": "無条件",
+    "partOfSpeech": "名詞",
+    "dictionaryForm": "무조건"
+  },
+  {
+    "id": "wordbook-bb3b-b2e4-동",
+    "korean": "묻다",
+    "meaning": "尋ねる",
+    "partOfSpeech": "動詞",
+    "dictionaryForm": "묻다",
+    "frequencyRank": 289
+  },
+  {
+    "id": "wordbook-bb3c-ac74-명",
+    "korean": "물건",
+    "meaning": "物",
+    "partOfSpeech": "名詞",
+    "dictionaryForm": "물건",
+    "frequencyRank": 560
+  },
+  {
+    "id": "wordbook-bbf8-b044-b7fd-b2e4-형",
+    "korean": "미끄럽다",
+    "meaning": "滑りやすい",
+    "partOfSpeech": "形容詞",
+    "dictionaryForm": "미끄럽다",
+    "frequencyRank": 13330
+  },
+  {
+    "id": "wordbook-bbff-b2e4-동",
+    "korean": "믿다",
+    "meaning": "信じる",
+    "partOfSpeech": "動詞",
+    "dictionaryForm": "믿다",
+    "frequencyRank": 431
+  },
+  {
+    "id": "wordbook-bc14-afb8-b2e4-동",
+    "korean": "바꾸다",
+    "meaning": "変える",
+    "partOfSpeech": "動詞",
+    "dictionaryForm": "바꾸다",
+    "frequencyRank": 432
+  },
+  {
+    "id": "wordbook-bc14-b77c-b2e4-동",
+    "korean": "바라다",
+    "meaning": "望む",
+    "partOfSpeech": "動詞",
+    "dictionaryForm": "바라다",
+    "frequencyRank": 583
+  },
+  {
+    "id": "wordbook-bc14-b78c-명",
+    "korean": "바람",
+    "meaning": "風",
+    "partOfSpeech": "名詞",
+    "dictionaryForm": "바람",
+    "frequencyRank": 478
+  },
+  {
+    "id": "wordbook-bc14-b85c-부",
+    "korean": "바로",
+    "meaning": "すぐ",
+    "partOfSpeech": "副詞",
+    "dictionaryForm": "바로",
+    "frequencyRank": 132
+  },
+  {
+    "id": "wordbook-bc15-bb3c-ad00-명",
+    "korean": "박물관",
+    "meaning": "博物館",
+    "partOfSpeech": "名詞",
+    "dictionaryForm": "박물관",
+    "frequencyRank": 1517
+  },
+  {
+    "id": "wordbook-bc18-ac11-b2e4-형",
+    "korean": "반갑다",
+    "meaning": "うれしい",
+    "partOfSpeech": "形容詞",
+    "dictionaryForm": "반갑다",
+    "frequencyRank": 1868
+  },
+  {
+    "id": "wordbook-bc18-b4dc-c2dc-부",
+    "korean": "반드시",
+    "meaning": "必ず",
+    "partOfSpeech": "副詞",
+    "dictionaryForm": "반드시",
+    "frequencyRank": 781
+  },
+  {
+    "id": "wordbook-bc18-b300-명",
+    "korean": "반대",
+    "meaning": "反対",
+    "partOfSpeech": "名詞",
+    "dictionaryForm": "반대",
+    "frequencyRank": 1218
+  },
+  {
+    "id": "wordbook-bc18-c9c0-명",
+    "korean": "반지",
+    "meaning": "指輪",
+    "partOfSpeech": "名詞",
+    "dictionaryForm": "반지",
+    "frequencyRank": 6060
+  },
+  {
+    "id": "wordbook-bc1c-acac-d558-b2e4-동",
+    "korean": "발견하다",
+    "meaning": "発見する",
+    "partOfSpeech": "動詞",
+    "dictionaryForm": "발견하다",
+    "frequencyRank": 826
+  },
+  {
+    "id": "wordbook-bc1c-c74c-명",
+    "korean": "발음",
+    "meaning": "発音",
+    "partOfSpeech": "名詞",
+    "dictionaryForm": "발음",
+    "frequencyRank": 5491
+  },
+  {
+    "id": "wordbook-bc29-bc95-명",
+    "korean": "방법",
+    "meaning": "方法",
+    "partOfSpeech": "名詞",
+    "dictionaryForm": "방법",
+    "frequencyRank": 179
+  },
+  {
+    "id": "wordbook-bc29-c1a1-명",
+    "korean": "방송",
+    "meaning": "放送",
+    "partOfSpeech": "名詞",
+    "dictionaryForm": "방송",
+    "frequencyRank": 538
+  },
+  {
+    "id": "wordbook-bc30-c6b0-b2e4-동",
+    "korean": "배우다",
+    "meaning": "習う",
+    "partOfSpeech": "動詞",
+    "dictionaryForm": "배우다",
+    "frequencyRank": 441
+  },
+  {
+    "id": "wordbook-bc30-cd94-명",
+    "korean": "배추",
+    "meaning": "白菜",
+    "partOfSpeech": "名詞",
+    "dictionaryForm": "배추",
+    "frequencyRank": 4129
+  },
+  {
+    "id": "wordbook-bc84-b9ac-b2e4-동",
+    "korean": "버리다",
+    "meaning": "捨てる",
+    "partOfSpeech": "動詞",
+    "dictionaryForm": "버리다",
+    "frequencyRank": 704
+  },
+  {
+    "id": "wordbook-bc84-c12f-명",
+    "korean": "버섯",
+    "meaning": "きのこ",
+    "partOfSpeech": "名詞",
+    "dictionaryForm": "버섯",
+    "frequencyRank": 5906
+  },
+  {
+    "id": "wordbook-bc8c-c368-부",
+    "korean": "벌써",
+    "meaning": "もう",
+    "partOfSpeech": "副詞",
+    "dictionaryForm": "벌써",
+    "frequencyRank": 686
+  },
+  {
+    "id": "wordbook-bcc0-d558-b2e4-동",
+    "korean": "변하다",
+    "meaning": "変わる",
+    "partOfSpeech": "動詞",
+    "dictionaryForm": "변하다",
+    "frequencyRank": 690
+  },
+  {
+    "id": "wordbook-bcc4-명",
+    "korean": "별",
+    "meaning": "星",
+    "partOfSpeech": "名詞",
+    "dictionaryForm": "별",
+    "frequencyRank": 1346
+  },
+  {
+    "id": "wordbook-bcf5-c7a1-d558-b2e4-형",
+    "korean": "복잡하다",
+    "meaning": "複雑だ",
+    "partOfSpeech": "形容詞",
+    "dictionaryForm": "복잡하다",
+    "frequencyRank": 1347
+  },
+  {
+    "id": "wordbook-bd80-b974-b2e4-동",
+    "korean": "부르다",
+    "meaning": "呼ぶ",
+    "partOfSpeech": "動詞",
+    "dictionaryForm": "부르다",
+    "frequencyRank": 227
+  },
+  {
+    "id": "wordbook-bd80-baa8-명",
+    "korean": "부모",
+    "meaning": "両親",
+    "partOfSpeech": "名詞",
+    "dictionaryForm": "부모",
+    "frequencyRank": 665
+  },
+  {
+    "id": "wordbook-bd80-d0c1-명",
+    "korean": "부탁",
+    "meaning": "お願い",
+    "partOfSpeech": "名詞",
+    "dictionaryForm": "부탁",
+    "frequencyRank": 3582
+  },
+  {
+    "id": "wordbook-bd84-c704-ae30-명",
+    "korean": "분위기",
+    "meaning": "雰囲気",
+    "partOfSpeech": "名詞",
+    "dictionaryForm": "분위기",
+    "frequencyRank": 425
+  },
+  {
+    "id": "wordbook-bd88-d3b8-d558-b2e4-형",
+    "korean": "불편하다",
+    "meaning": "不便だ",
+    "partOfSpeech": "形容詞",
+    "dictionaryForm": "불편하다",
+    "frequencyRank": 1808
+  },
+  {
+    "id": "wordbook-be44-ad50-d558-b2e4-동",
+    "korean": "비교하다",
+    "meaning": "比較する",
+    "partOfSpeech": "動詞",
+    "dictionaryForm": "비교하다",
+    "frequencyRank": 1508
+  },
+  {
+    "id": "wordbook-be44-c2b7-d558-b2e4-형",
+    "korean": "비슷하다",
+    "meaning": "似ている",
+    "partOfSpeech": "形容詞",
+    "dictionaryForm": "비슷하다",
+    "frequencyRank": 760
+  },
+  {
+    "id": "wordbook-be4c-b9ac-b2e4-동",
+    "korean": "빌리다",
+    "meaning": "借りる",
+    "partOfSpeech": "動詞",
+    "dictionaryForm": "빌리다",
+    "frequencyRank": 1315
+  },
+  {
+    "id": "wordbook-be60-c9c0-b2e4-동",
+    "korean": "빠지다",
+    "meaning": "落ちる・抜ける",
+    "partOfSpeech": "動詞",
+    "dictionaryForm": "빠지다"
+  },
+  {
+    "id": "wordbook-be68-ac1b-b2e4-형",
+    "korean": "빨갛다",
+    "meaning": "赤い",
+    "partOfSpeech": "形容詞",
+    "dictionaryForm": "빨갛다",
+    "frequencyRank": 2385
+  },
+  {
+    "id": "wordbook-c0ac-ace0-명",
+    "korean": "사고",
+    "meaning": "事故",
+    "partOfSpeech": "名詞",
+    "dictionaryForm": "사고",
+    "frequencyRank": 691
+  },
+  {
+    "id": "wordbook-c0ac-b77c-c9c0-b2e4-동",
+    "korean": "사라지다",
+    "meaning": "消える",
+    "partOfSpeech": "動詞",
+    "dictionaryForm": "사라지다",
+    "frequencyRank": 844
+  },
+  {
+    "id": "wordbook-c0ac-c6a9-명",
+    "korean": "사용",
+    "meaning": "使用",
+    "partOfSpeech": "名詞",
+    "dictionaryForm": "사용",
+    "frequencyRank": 1026
+  },
+  {
+    "id": "wordbook-c0ac-c6a9-d558-b2e4-동",
+    "korean": "사용하다",
+    "meaning": "使う",
+    "partOfSpeech": "動詞",
+    "dictionaryForm": "사용하다",
+    "frequencyRank": 254
+  },
+  {
+    "id": "wordbook-c0c1-c790-명",
+    "korean": "상자",
+    "meaning": "箱",
+    "partOfSpeech": "名詞",
+    "dictionaryForm": "상자",
+    "frequencyRank": 3587
+  },
+  {
+    "id": "wordbook-c0c8-명",
+    "korean": "새",
+    "meaning": "鳥",
+    "partOfSpeech": "名詞",
+    "dictionaryForm": "새",
+    "frequencyRank": 1089
+  },
+  {
+    "id": "wordbook-c0dd-ac01-명",
+    "korean": "생각",
+    "meaning": "考え",
+    "partOfSpeech": "名詞",
+    "dictionaryForm": "생각",
+    "frequencyRank": 75
+  },
+  {
+    "id": "wordbook-c0dd-c77c-명",
+    "korean": "생일",
+    "meaning": "誕生日",
+    "partOfSpeech": "名詞",
+    "dictionaryForm": "생일",
+    "frequencyRank": 1963
+  },
+  {
+    "id": "wordbook-c11c-ba85-명",
+    "korean": "서명",
+    "meaning": "署名",
+    "partOfSpeech": "名詞",
+    "dictionaryForm": "서명",
+    "frequencyRank": 6826
+  },
+  {
+    "id": "wordbook-c120-d0dd-d558-b2e4-동",
+    "korean": "선택하다",
+    "meaning": "選ぶ",
+    "partOfSpeech": "動詞",
+    "dictionaryForm": "선택하다",
+    "frequencyRank": 1332
+  },
+  {
+    "id": "wordbook-c124-ba85-명",
+    "korean": "설명",
+    "meaning": "説明",
+    "partOfSpeech": "名詞",
+    "dictionaryForm": "설명",
+    "frequencyRank": 965
+  },
+  {
+    "id": "wordbook-c131-acf5-명",
+    "korean": "성공",
+    "meaning": "成功",
+    "partOfSpeech": "名詞",
+    "dictionaryForm": "성공",
+    "frequencyRank": 2357
+  },
+  {
+    "id": "wordbook-c131-acf5-d558-b2e4-동",
+    "korean": "성공하다",
+    "meaning": "成功する",
+    "partOfSpeech": "動詞",
+    "dictionaryForm": "성공하다",
+    "frequencyRank": 2082
+  },
+  {
+    "id": "wordbook-c138-d0c1-명",
+    "korean": "세탁",
+    "meaning": "洗濯",
+    "partOfSpeech": "名詞",
+    "dictionaryForm": "세탁",
+    "frequencyRank": 8116
+  },
+  {
+    "id": "wordbook-c18c-ae08-명",
+    "korean": "소금",
+    "meaning": "塩",
+    "partOfSpeech": "名詞",
+    "dictionaryForm": "소금",
+    "frequencyRank": 1221
+  },
+  {
+    "id": "wordbook-c18c-c2dd-명",
+    "korean": "소식",
+    "meaning": "知らせ",
+    "partOfSpeech": "名詞",
+    "dictionaryForm": "소식",
+    "frequencyRank": 1079
+  },
+  {
+    "id": "wordbook-c18c-c911-d558-b2e4-형",
+    "korean": "소중하다",
+    "meaning": "大切だ",
+    "partOfSpeech": "形容詞",
+    "dictionaryForm": "소중하다",
+    "frequencyRank": 1993
+  },
+  {
+    "id": "wordbook-c190-ac00-b77d-명",
+    "korean": "손가락",
+    "meaning": "指",
+    "partOfSpeech": "名詞",
+    "dictionaryForm": "손가락",
+    "frequencyRank": 1273
+  },
+  {
+    "id": "wordbook-c190-b2d8-명",
+    "korean": "손님",
+    "meaning": "客",
+    "partOfSpeech": "名詞",
+    "dictionaryForm": "손님",
+    "frequencyRank": 902
+  },
+  {
+    "id": "wordbook-c190-c7a1-c774-명",
+    "korean": "손잡이",
+    "meaning": "取っ手",
+    "partOfSpeech": "名詞",
+    "dictionaryForm": "손잡이",
+    "frequencyRank": 7281
+  },
+  {
+    "id": "wordbook-c218-c601-명",
+    "korean": "수영",
+    "meaning": "水泳",
+    "partOfSpeech": "名詞",
+    "dictionaryForm": "수영",
+    "frequencyRank": 2899
+  },
+  {
+    "id": "wordbook-c27d-b2e4-형",
+    "korean": "쉽다",
+    "meaning": "簡単だ",
+    "partOfSpeech": "形容詞",
+    "dictionaryForm": "쉽다",
+    "frequencyRank": 246
+  },
+  {
+    "id": "wordbook-c2dc-b044-b7fd-b2e4-형",
+    "korean": "시끄럽다",
+    "meaning": "うるさい",
+    "partOfSpeech": "形容詞",
+    "dictionaryForm": "시끄럽다",
+    "frequencyRank": 4809
+  },
+  {
+    "id": "wordbook-c2dc-c791-d558-b2e4-동",
+    "korean": "시작하다",
+    "meaning": "始める",
+    "partOfSpeech": "動詞",
+    "dictionaryForm": "시작하다",
+    "frequencyRank": 131
+  },
+  {
+    "id": "wordbook-c2dc-ccad-명",
+    "korean": "시청",
+    "meaning": "市役所",
+    "partOfSpeech": "名詞",
+    "dictionaryForm": "시청",
+    "frequencyRank": 5639
+  },
+  {
+    "id": "wordbook-c2e4-c218-명",
+    "korean": "실수",
+    "meaning": "失敗",
+    "partOfSpeech": "名詞",
+    "dictionaryForm": "실수",
+    "frequencyRank": 1540
+  },
+  {
+    "id": "wordbook-c2ec-ac01-d558-b2e4-형",
+    "korean": "심각하다",
+    "meaning": "深刻だ",
+    "partOfSpeech": "形容詞",
+    "dictionaryForm": "심각하다",
+    "frequencyRank": 1073
+  },
+  {
+    "id": "wordbook-c2ec-c2ec-d558-b2e4-형",
+    "korean": "심심하다",
+    "meaning": "退屈だ",
+    "partOfSpeech": "形容詞",
+    "dictionaryForm": "심심하다",
+    "frequencyRank": 6634
+  },
+  {
+    "id": "wordbook-c2f8-c6b0-b2e4-동",
+    "korean": "싸우다",
+    "meaning": "けんかする",
+    "partOfSpeech": "動詞",
+    "dictionaryForm": "싸우다",
+    "frequencyRank": 1007
+  },
+  {
+    "id": "wordbook-c4f0-b7ec-c9c0-b2e4-동",
+    "korean": "쓰러지다",
+    "meaning": "倒れる",
+    "partOfSpeech": "動詞",
+    "dictionaryForm": "쓰러지다",
+    "frequencyRank": 2576
+  },
+  {
+    "id": "wordbook-c4f0-b808-ae30-명",
+    "korean": "쓰레기",
+    "meaning": "ごみ",
+    "partOfSpeech": "名詞",
+    "dictionaryForm": "쓰레기",
+    "frequencyRank": 1046
+  },
+  {
+    "id": "wordbook-c544-ae5d-b2e4-형",
+    "korean": "아깝다",
+    "meaning": "もったいない",
+    "partOfSpeech": "形容詞",
+    "dictionaryForm": "아깝다",
+    "frequencyRank": 3695
+  },
+  {
+    "id": "wordbook-c544-ae30-명",
+    "korean": "아기",
+    "meaning": "赤ちゃん",
+    "partOfSpeech": "名詞",
+    "dictionaryForm": "아기",
+    "frequencyRank": 615
+  },
+  {
+    "id": "wordbook-c544-b984-b2f5-b2e4-형",
+    "korean": "아름답다",
+    "meaning": "美しい",
+    "partOfSpeech": "形容詞",
+    "dictionaryForm": "아름답다",
+    "frequencyRank": 332
+  },
+  {
+    "id": "wordbook-c548-c804-명",
+    "korean": "안전",
+    "meaning": "安全",
+    "partOfSpeech": "名詞",
+    "dictionaryForm": "안전",
+    "frequencyRank": 2115
+  },
+  {
+    "id": "wordbook-c54c-b2e4-동",
+    "korean": "알다",
+    "meaning": "知る",
+    "partOfSpeech": "動詞",
+    "dictionaryForm": "알다",
+    "frequencyRank": 36
+  },
+  {
+    "id": "wordbook-c54c-b9ac-b2e4-동",
+    "korean": "알리다",
+    "meaning": "知らせる",
+    "partOfSpeech": "動詞",
+    "dictionaryForm": "알리다",
+    "frequencyRank": 993
+  },
+  {
+    "id": "wordbook-c54c-b9de-b2e4-형",
+    "korean": "알맞다",
+    "meaning": "適切だ",
+    "partOfSpeech": "形容詞",
+    "dictionaryForm": "알맞다",
+    "frequencyRank": 1364
+  },
+  {
+    "id": "wordbook-c549-b2e4-동",
+    "korean": "앉다",
+    "meaning": "座る",
+    "partOfSpeech": "動詞",
+    "dictionaryForm": "앉다",
+    "frequencyRank": 183
+  },
+  {
+    "id": "wordbook-c591-b9d0-명",
+    "korean": "양말",
+    "meaning": "靴下",
+    "partOfSpeech": "名詞",
+    "dictionaryForm": "양말",
+    "frequencyRank": 5248
+  },
+  {
+    "id": "wordbook-c587-b2e4-형",
+    "korean": "얇다",
+    "meaning": "薄い",
+    "partOfSpeech": "形容詞",
+    "dictionaryForm": "얇다",
+    "frequencyRank": 3421
+  },
+  {
+    "id": "wordbook-c5b4-b461-b2e4-형",
+    "korean": "어둡다",
+    "meaning": "暗い",
+    "partOfSpeech": "形容詞",
+    "dictionaryForm": "어둡다",
+    "frequencyRank": 1476
+  },
+  {
+    "id": "wordbook-c5b4-c6b8-b9ac-b2e4-동",
+    "korean": "어울리다",
+    "meaning": "似合う",
+    "partOfSpeech": "動詞",
+    "dictionaryForm": "어울리다",
+    "frequencyRank": 990
+  },
+  {
+    "id": "wordbook-c5b4-cc28-d53c-부",
+    "korean": "어차피",
+    "meaning": "どうせ",
+    "partOfSpeech": "副詞",
+    "dictionaryForm": "어차피"
+  },
+  {
+    "id": "wordbook-c5b8-c81c-b098-부",
+    "korean": "언제나",
+    "meaning": "いつも",
+    "partOfSpeech": "副詞",
+    "dictionaryForm": "언제나",
+    "frequencyRank": 794
+  },
+  {
+    "id": "wordbook-c5bc-c74c-명",
+    "korean": "얼음",
+    "meaning": "氷",
+    "partOfSpeech": "名詞",
+    "dictionaryForm": "얼음",
+    "frequencyRank": 3593
+  },
+  {
+    "id": "wordbook-c5c6-c5b4-c9c0-b2e4-동",
+    "korean": "없어지다",
+    "meaning": "なくなる",
+    "partOfSpeech": "動詞",
+    "dictionaryForm": "없어지다",
+    "frequencyRank": 1039
+  },
+  {
+    "id": "wordbook-c5f0-b77d-명",
+    "korean": "연락",
+    "meaning": "連絡",
+    "partOfSpeech": "名詞",
+    "dictionaryForm": "연락",
+    "frequencyRank": 2267
+  },
+  {
+    "id": "wordbook-c5f4-c2ec-d788-부",
+    "korean": "열심히",
+    "meaning": "一生懸命に",
+    "partOfSpeech": "副詞",
+    "dictionaryForm": "열심히",
+    "frequencyRank": 660
+  },
+  {
+    "id": "wordbook-c624-b798-부",
+    "korean": "오래",
+    "meaning": "長く",
+    "partOfSpeech": "副詞",
+    "dictionaryForm": "오래",
+    "frequencyRank": 978
+  },
+  {
+    "id": "wordbook-c624-b974-b2e4-동",
+    "korean": "오르다",
+    "meaning": "上がる",
+    "partOfSpeech": "動詞",
+    "dictionaryForm": "오르다",
+    "frequencyRank": 394
+  },
+  {
+    "id": "wordbook-c628-b3c4-명",
+    "korean": "온도",
+    "meaning": "温度",
+    "partOfSpeech": "名詞",
+    "dictionaryForm": "온도",
+    "frequencyRank": 2475
+  },
+  {
+    "id": "wordbook-c62e-ae30-b2e4-동",
+    "korean": "옮기다",
+    "meaning": "移す",
+    "partOfSpeech": "動詞",
+    "dictionaryForm": "옮기다",
+    "frequencyRank": 753
+  },
+  {
+    "id": "wordbook-c644-c804-d788-부",
+    "korean": "완전히",
+    "meaning": "完全に",
+    "partOfSpeech": "副詞",
+    "dictionaryForm": "완전히",
+    "frequencyRank": 795
+  },
+  {
+    "id": "wordbook-c678-b86d-b2e4-형",
+    "korean": "외롭다",
+    "meaning": "寂しい",
+    "partOfSpeech": "形容詞",
+    "dictionaryForm": "외롭다",
+    "frequencyRank": 3322
+  },
+  {
+    "id": "wordbook-c678-c6b0-b2e4-동",
+    "korean": "외우다",
+    "meaning": "覚える",
+    "partOfSpeech": "動詞",
+    "dictionaryForm": "외우다",
+    "frequencyRank": 4718
+  },
+  {
+    "id": "wordbook-c694-b9ac-명",
+    "korean": "요리",
+    "meaning": "料理",
+    "partOfSpeech": "名詞",
+    "dictionaryForm": "요리",
+    "frequencyRank": 1604
+  },
+  {
+    "id": "wordbook-c6b4-b3d9-명",
+    "korean": "운동",
+    "meaning": "運動",
+    "partOfSpeech": "名詞",
+    "dictionaryForm": "운동",
+    "frequencyRank": 123
+  },
+  {
+    "id": "wordbook-c6b8-b2e4-동",
+    "korean": "울다",
+    "meaning": "泣く",
+    "partOfSpeech": "動詞",
+    "dictionaryForm": "울다",
+    "frequencyRank": 596
+  },
+  {
+    "id": "wordbook-c704-d5d8-d558-b2e4-형",
+    "korean": "위험하다",
+    "meaning": "危険だ",
+    "partOfSpeech": "形容詞",
+    "dictionaryForm": "위험하다",
+    "frequencyRank": 2141
+  },
+  {
+    "id": "wordbook-c720-ba85-d558-b2e4-형",
+    "korean": "유명하다",
+    "meaning": "有名だ",
+    "partOfSpeech": "形容詞",
+    "dictionaryForm": "유명하다",
+    "frequencyRank": 1605
+  },
+  {
+    "id": "wordbook-c758-bbf8-명",
+    "korean": "의미",
+    "meaning": "意味",
+    "partOfSpeech": "名詞",
+    "dictionaryForm": "의미",
+    "frequencyRank": 228
+  },
+  {
+    "id": "wordbook-c758-c790-명",
+    "korean": "의자",
+    "meaning": "椅子",
+    "partOfSpeech": "名詞",
+    "dictionaryForm": "의자",
+    "frequencyRank": 2292
+  },
+  {
+    "id": "wordbook-c774-c0c1-d558-b2e4-형",
+    "korean": "이상하다",
+    "meaning": "おかしい",
+    "partOfSpeech": "形容詞",
+    "dictionaryForm": "이상하다",
+    "frequencyRank": 732
+  },
+  {
+    "id": "wordbook-c774-d574-명",
+    "korean": "이해",
+    "meaning": "理解",
+    "partOfSpeech": "名詞",
+    "dictionaryForm": "이해",
+    "frequencyRank": 930
+  },
+  {
+    "id": "wordbook-c774-d574-d558-b2e4-동",
+    "korean": "이해하다",
+    "meaning": "理解する",
+    "partOfSpeech": "動詞",
+    "dictionaryForm": "이해하다",
+    "frequencyRank": 515
+  },
+  {
+    "id": "wordbook-c778-c0ac-명",
+    "korean": "인사",
+    "meaning": "あいさつ",
+    "partOfSpeech": "名詞",
+    "dictionaryForm": "인사"
+  },
+  {
+    "id": "wordbook-c778-c0ac-d558-b2e4-동",
+    "korean": "인사하다",
+    "meaning": "あいさつする",
+    "partOfSpeech": "動詞",
+    "dictionaryForm": "인사하다",
+    "frequencyRank": 4096
+  },
+  {
+    "id": "wordbook-c778-d130-b137-명",
+    "korean": "인터넷",
+    "meaning": "インターネット",
+    "partOfSpeech": "名詞",
+    "dictionaryForm": "인터넷",
+    "frequencyRank": 2452
+  },
+  {
+    "id": "wordbook-c783-b2e4-동",
+    "korean": "잃다",
+    "meaning": "失う",
+    "partOfSpeech": "動詞",
+    "dictionaryForm": "잃다",
+    "frequencyRank": 756
+  },
+  {
+    "id": "wordbook-c78a-b2e4-동",
+    "korean": "잊다",
+    "meaning": "忘れる",
+    "partOfSpeech": "動詞",
+    "dictionaryForm": "잊다",
+    "frequencyRank": 931
+  },
+  {
+    "id": "wordbook-c790-b974-b2e4-동",
+    "korean": "자르다",
+    "meaning": "切る",
+    "partOfSpeech": "動詞",
+    "dictionaryForm": "자르다",
+    "frequencyRank": 1166
+  },
+  {
+    "id": "wordbook-c790-c138-d788-부",
+    "korean": "자세히",
+    "meaning": "詳しく",
+    "partOfSpeech": "副詞",
+    "dictionaryForm": "자세히",
+    "frequencyRank": 2255
+  },
+  {
+    "id": "wordbook-c798-babb-명",
+    "korean": "잘못",
+    "meaning": "間違い",
+    "partOfSpeech": "名詞",
+    "dictionaryForm": "잘못",
+    "frequencyRank": 1371
+  },
+  {
+    "id": "wordbook-c7a0-ae50-부",
+    "korean": "잠깐",
+    "meaning": "少しの間",
+    "partOfSpeech": "副詞",
+    "dictionaryForm": "잠깐",
+    "frequencyRank": 2607
+  },
+  {
+    "id": "wordbook-c7a5-ac11-명",
+    "korean": "장갑",
+    "meaning": "手袋",
+    "partOfSpeech": "名詞",
+    "dictionaryForm": "장갑",
+    "frequencyRank": 12051
+  },
+  {
+    "id": "wordbook-c7ac-b8cc-명",
+    "korean": "재료",
+    "meaning": "材料",
+    "partOfSpeech": "名詞",
+    "dictionaryForm": "재료",
+    "frequencyRank": 750
+  },
+  {
+    "id": "wordbook-c7ac-bbf8-명",
+    "korean": "재미",
+    "meaning": "面白さ",
+    "partOfSpeech": "名詞",
+    "dictionaryForm": "재미",
+    "frequencyRank": 1439
+  },
+  {
+    "id": "wordbook-c800-b834-d558-b2e4-형",
+    "korean": "저렴하다",
+    "meaning": "安い",
+    "partOfSpeech": "形容詞",
+    "dictionaryForm": "저렴하다"
+  },
+  {
+    "id": "wordbook-c804-bd80-명",
+    "korean": "전부",
+    "meaning": "全部",
+    "partOfSpeech": "名詞",
+    "dictionaryForm": "전부",
+    "frequencyRank": 3202
+  },
+  {
+    "id": "wordbook-c804-d558-b2e4-동",
+    "korean": "전하다",
+    "meaning": "伝える",
+    "partOfSpeech": "動詞",
+    "dictionaryForm": "전하다",
+    "frequencyRank": 797
+  },
+  {
+    "id": "wordbook-c815-b9ac-명",
+    "korean": "정리",
+    "meaning": "整理",
+    "partOfSpeech": "名詞",
+    "dictionaryForm": "정리",
+    "frequencyRank": 2323
+  },
+  {
+    "id": "wordbook-c815-b9d0-부",
+    "korean": "정말",
+    "meaning": "本当に",
+    "partOfSpeech": "副詞",
+    "dictionaryForm": "정말",
+    "frequencyRank": 349
+  },
+  {
+    "id": "wordbook-c815-d558-b2e4-동",
+    "korean": "정하다",
+    "meaning": "決める",
+    "partOfSpeech": "動詞",
+    "dictionaryForm": "정하다",
+    "frequencyRank": 803
+  },
+  {
+    "id": "wordbook-c81c-baa9-명",
+    "korean": "제목",
+    "meaning": "題名",
+    "partOfSpeech": "名詞",
+    "dictionaryForm": "제목",
+    "frequencyRank": 1524
+  },
+  {
+    "id": "wordbook-c870-c2ec-d558-b2e4-동",
+    "korean": "조심하다",
+    "meaning": "気をつける",
+    "partOfSpeech": "動詞",
+    "dictionaryForm": "조심하다",
+    "frequencyRank": 2666
+  },
+  {
+    "id": "wordbook-c878-b9ac-b2e4-동",
+    "korean": "졸리다",
+    "meaning": "眠い",
+    "partOfSpeech": "動詞",
+    "dictionaryForm": "졸리다",
+    "frequencyRank": 10242
+  },
+  {
+    "id": "wordbook-c885-c774-명",
+    "korean": "종이",
+    "meaning": "紙",
+    "partOfSpeech": "名詞",
+    "dictionaryForm": "종이",
+    "frequencyRank": 1423
+  },
+  {
+    "id": "wordbook-c8c4-c1a1-d558-b2e4-형",
+    "korean": "죄송하다",
+    "meaning": "申し訳ない",
+    "partOfSpeech": "形容詞",
+    "dictionaryForm": "죄송하다",
+    "frequencyRank": 2724
+  },
+  {
+    "id": "wordbook-c8fc-bb38-명",
+    "korean": "주문",
+    "meaning": "注文",
+    "partOfSpeech": "名詞",
+    "dictionaryForm": "주문"
+  },
+  {
+    "id": "wordbook-c900-be44-명",
+    "korean": "준비",
+    "meaning": "準備",
+    "partOfSpeech": "名詞",
+    "dictionaryForm": "준비",
+    "frequencyRank": 1074
+  },
+  {
+    "id": "wordbook-c911-c694-d558-b2e4-형",
+    "korean": "중요하다",
+    "meaning": "重要だ",
+    "partOfSpeech": "形容詞",
+    "dictionaryForm": "중요하다",
+    "frequencyRank": 220
+  },
+  {
+    "id": "wordbook-c9c0-b098-b2e4-동",
+    "korean": "지나다",
+    "meaning": "過ぎる",
+    "partOfSpeech": "動詞",
+    "dictionaryForm": "지나다",
+    "frequencyRank": 97
+  },
+  {
+    "id": "wordbook-c9c0-c6b0-b2e4-동",
+    "korean": "지우다",
+    "meaning": "消す",
+    "partOfSpeech": "動詞",
+    "dictionaryForm": "지우다",
+    "frequencyRank": 2812
+  },
+  {
+    "id": "wordbook-c9c0-d0a4-b2e4-동",
+    "korean": "지키다",
+    "meaning": "守る",
+    "partOfSpeech": "動詞",
+    "dictionaryForm": "지키다",
+    "frequencyRank": 381
+  },
+  {
+    "id": "wordbook-c9c1-c811-부",
+    "korean": "직접",
+    "meaning": "直接",
+    "partOfSpeech": "副詞",
+    "dictionaryForm": "직접",
+    "frequencyRank": 561
+  },
+  {
+    "id": "wordbook-c9c4-c9dc-명",
+    "korean": "진짜",
+    "meaning": "本当",
+    "partOfSpeech": "名詞",
+    "dictionaryForm": "진짜",
+    "frequencyRank": 2480
+  },
+  {
+    "id": "wordbook-c9d0-명",
+    "korean": "짐",
+    "meaning": "荷物",
+    "partOfSpeech": "名詞",
+    "dictionaryForm": "짐",
+    "frequencyRank": 2538
+  },
+  {
+    "id": "wordbook-c9d1-c911-d558-b2e4-동",
+    "korean": "집중하다",
+    "meaning": "集中する",
+    "partOfSpeech": "動詞",
+    "dictionaryForm": "집중하다",
+    "frequencyRank": 9354
+  },
+  {
+    "id": "wordbook-c9e7-b2e4-형",
+    "korean": "짧다",
+    "meaning": "短い",
+    "partOfSpeech": "形容詞",
+    "dictionaryForm": "짧다",
+    "frequencyRank": 856
+  },
+  {
+    "id": "wordbook-cc45-c0c1-명",
+    "korean": "책상",
+    "meaning": "机",
+    "partOfSpeech": "名詞",
+    "dictionaryForm": "책상",
+    "frequencyRank": 1653
+  },
+  {
+    "id": "wordbook-ccad-c18c-명",
+    "korean": "청소",
+    "meaning": "掃除",
+    "partOfSpeech": "名詞",
+    "dictionaryForm": "청소",
+    "frequencyRank": 2484
+  },
+  {
+    "id": "wordbook-cd95-d558-명",
+    "korean": "축하",
+    "meaning": "祝い",
+    "partOfSpeech": "名詞",
+    "dictionaryForm": "축하",
+    "frequencyRank": 5982
+  },
+  {
+    "id": "wordbook-cee4-c9c0-b2e4-동",
+    "korean": "커지다",
+    "meaning": "大きくなる",
+    "partOfSpeech": "動詞",
+    "dictionaryForm": "커지다",
+    "frequencyRank": 1510
+  },
+  {
+    "id": "wordbook-cf1c-b2e4-동",
+    "korean": "켜다",
+    "meaning": "つける",
+    "partOfSpeech": "動詞",
+    "dictionaryForm": "켜다",
+    "frequencyRank": 2427
+  },
+  {
+    "id": "wordbook-cf54-명",
+    "korean": "코",
+    "meaning": "鼻",
+    "partOfSpeech": "名詞",
+    "dictionaryForm": "코",
+    "frequencyRank": 1335
+  },
+  {
+    "id": "wordbook-d0dc-c5b4-b098-b2e4-동",
+    "korean": "태어나다",
+    "meaning": "生まれる",
+    "partOfSpeech": "動詞",
+    "dictionaryForm": "태어나다",
+    "frequencyRank": 684
+  },
+  {
+    "id": "wordbook-d2c0-b9ac-b2e4-동",
+    "korean": "틀리다",
+    "meaning": "間違う",
+    "partOfSpeech": "動詞",
+    "dictionaryForm": "틀리다",
+    "frequencyRank": 1837
+  },
+  {
+    "id": "wordbook-d2b9-bcc4-d558-b2e4-형",
+    "korean": "특별하다",
+    "meaning": "特別だ",
+    "partOfSpeech": "形容詞",
+    "dictionaryForm": "특별하다",
+    "frequencyRank": 1693
+  },
+  {
+    "id": "wordbook-d558-b298-명",
+    "korean": "하늘",
+    "meaning": "空",
+    "partOfSpeech": "名詞",
+    "dictionaryForm": "하늘",
+    "frequencyRank": 344
+  },
+  {
+    "id": "wordbook-d55c-bc88-부",
+    "korean": "한번",
+    "meaning": "一度",
+    "partOfSpeech": "副詞",
+    "dictionaryForm": "한번"
+  },
+  {
+    "id": "wordbook-d568-aed8-부",
+    "korean": "함께",
+    "meaning": "一緒に",
+    "partOfSpeech": "副詞",
+    "dictionaryForm": "함께",
+    "frequencyRank": 95
+  },
+  {
+    "id": "wordbook-d589-bcf5-d558-b2e4-형",
+    "korean": "행복하다",
+    "meaning": "幸せだ",
+    "partOfSpeech": "形容詞",
+    "dictionaryForm": "행복하다",
+    "frequencyRank": 1891
+  },
+  {
+    "id": "wordbook-d63c-c790-부",
+    "korean": "혼자",
+    "meaning": "一人で",
+    "partOfSpeech": "副詞",
+    "dictionaryForm": "혼자"
+  },
+  {
+    "id": "wordbook-d654-c7a5-c2e4-명",
+    "korean": "화장실",
+    "meaning": "トイレ",
+    "partOfSpeech": "名詞",
+    "dictionaryForm": "화장실",
+    "frequencyRank": 1904
+  },
+  {
+    "id": "wordbook-d655-c778-명",
+    "korean": "확인",
+    "meaning": "確認",
+    "partOfSpeech": "名詞",
+    "dictionaryForm": "확인",
+    "frequencyRank": 2788
+  },
+  {
+    "id": "wordbook-d655-c778-d558-b2e4-동",
+    "korean": "확인하다",
+    "meaning": "確認する",
+    "partOfSpeech": "動詞",
+    "dictionaryForm": "확인하다",
+    "frequencyRank": 905
+  },
+  {
+    "id": "wordbook-d6c4-d68c-d558-b2e4-동",
+    "korean": "후회하다",
+    "meaning": "後悔する",
+    "partOfSpeech": "動詞",
+    "dictionaryForm": "후회하다",
+    "frequencyRank": 5166
+  },
+  {
+    "id": "wordbook-d798-b4e4-b2e4-형",
+    "korean": "힘들다",
+    "meaning": "大変だ",
+    "partOfSpeech": "形容詞",
+    "dictionaryForm": "힘들다",
+    "frequencyRank": 489
+  },
+  {
+    "id": "wordbook-ac83-의",
+    "korean": "것",
+    "meaning": "こと・もの",
+    "partOfSpeech": "依存名詞",
+    "dictionaryForm": "것",
+    "frequencyRank": 1
+  },
+  {
+    "id": "wordbook-d558-b2e4-동",
+    "korean": "하다",
+    "meaning": "する",
+    "partOfSpeech": "動詞",
+    "dictionaryForm": "하다",
+    "frequencyRank": 2
+  },
+  {
+    "id": "wordbook-b418-b2e4-동",
+    "korean": "되다",
+    "meaning": "なる",
+    "partOfSpeech": "動詞",
+    "dictionaryForm": "되다",
+    "frequencyRank": 5
+  },
+  {
+    "id": "wordbook-b098-대",
+    "korean": "나",
+    "meaning": "私（くだけた言い方）",
+    "partOfSpeech": "代名詞",
+    "dictionaryForm": "나",
+    "frequencyRank": 8
+  },
+  {
+    "id": "wordbook-c6b0-b9ac-대",
+    "korean": "우리",
+    "meaning": "私たち",
+    "partOfSpeech": "代名詞",
+    "dictionaryForm": "우리",
+    "frequencyRank": 13
+  },
+  {
+    "id": "wordbook-b144-의",
+    "korean": "년",
+    "meaning": "年（年数）",
+    "partOfSpeech": "依存名詞",
+    "dictionaryForm": "년",
+    "frequencyRank": 26
+  },
+  {
+    "id": "wordbook-b54c-명",
+    "korean": "때",
+    "meaning": "時",
+    "partOfSpeech": "名詞",
+    "dictionaryForm": "때",
+    "frequencyRank": 19
+  },
+  {
+    "id": "wordbook-ac19-b2e4-형",
+    "korean": "같다",
+    "meaning": "同じだ・似ている",
+    "partOfSpeech": "形容詞",
+    "dictionaryForm": "같다",
+    "frequencyRank": 22
+  },
+  {
+    "id": "wordbook-c798-부",
+    "korean": "잘",
+    "meaning": "上手に・よく",
+    "partOfSpeech": "副詞",
+    "dictionaryForm": "잘",
+    "frequencyRank": 68
+  },
+  {
+    "id": "wordbook-b9d0-명",
+    "korean": "말",
+    "meaning": "言葉・話",
+    "partOfSpeech": "名詞",
+    "dictionaryForm": "말",
+    "frequencyRank": 28
+  },
+  {
+    "id": "wordbook-b9d0-d558-b2e4-동",
+    "korean": "말하다",
+    "meaning": "話す",
+    "partOfSpeech": "動詞",
+    "dictionaryForm": "말하다",
+    "frequencyRank": 32
+  },
+  {
+    "id": "wordbook-c0dd-ac01-d558-b2e4-동",
+    "korean": "생각하다",
+    "meaning": "考える",
+    "partOfSpeech": "動詞",
+    "dictionaryForm": "생각하다",
+    "frequencyRank": 58
+  },
+  {
+    "id": "wordbook-b54c-bb38-의",
+    "korean": "때문",
+    "meaning": "ため・せい",
+    "partOfSpeech": "依存名詞",
+    "dictionaryForm": "때문",
+    "frequencyRank": 31
+  },
+  {
+    "id": "wordbook-b124-감",
+    "korean": "네",
+    "meaning": "はい",
+    "partOfSpeech": "感動詞",
+    "dictionaryForm": "네",
+    "frequencyRank": 357
+  },
+  {
+    "id": "wordbook-ac10-b2e4-동-wash",
+    "korean": "감다",
+    "meaning": "（髪を）洗う",
+    "partOfSpeech": "動詞",
+    "dictionaryForm": "감다"
+  }
+]
